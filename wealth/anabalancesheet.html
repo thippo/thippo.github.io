@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../static/bootstrap4/css/bootstrap.min.css">
+		<script src="../static/jquery-3.2.1.min.js"></script>
+		<script src="../static/bootstrap4/popper.js"></script>
+		<script src="../static/bootstrap4/js/bootstrap.min.js"></script>
+		<script src="../static/vue.min.js"></script>
+		<script src="../static/echarts.min.js"></script>
+	</head>
+	
+	<body>
+
+		<div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+				<a class="navbar-brand" href="#">THIPPO</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="../weight/index.html">体重记录 </a>
+						</li>
+						<li class="nav-item active">
+							<a class="nav-link" href="anabalancesheet.html">投资分析 </a>
+						</li>
+						<li class="nav-item ">
+							<a class="nav-link" href="balancesheet.html">资产负债表 </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			
+			<div class="progress" style="margin-top:10px;">
+				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+			</div>
+					
+        
+
+<script src="static/echarts.min.js"></script>
+
+<div id="main" style="width:100%;height:500px;"></div>
+<div id="profitmain" style="width:100%;height:500px;"></div>
+<div id="fuzhailv" style="width:100%;height:450px;"></div>
+<div id="zijinfenpei" style="width:100%;height:550px;"></div>
+
+		</div>
+		
+		<script src="data/month.js"></script>
+		
+		<script>
+			var upColor = '#ec0000';
+			var upBorderColor = '#8A0000';
+			var downColor = '#00da3c';
+			var downBorderColor = '#008F28';
+
+
+			// 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
+			var data0 = splitData(month_data);
+
+			function splitData(rawData) {
+				var categoryData = [];
+				var values = []
+				for (var i = 0; i < rawData.length; i++) {
+					categoryData.push(rawData[i].splice(0, 1)[0]);
+					values.push(rawData[i])
+				}
+				return {
+					categoryData: categoryData,
+					values: values
+				};
+			}
+
+			option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross'
+					}
+				},
+				grid: {
+					left: '10%',
+					right: '10%',
+					bottom: '15%'
+				},
+				xAxis: {
+					type: 'category',
+					data: data0.categoryData,
+					scale: true,
+					boundaryGap : false,
+					axisLine: {onZero: false},
+					splitLine: {show: false},
+					splitNumber: 20,
+					min: 'dataMin',
+					max: 'dataMax'
+				},
+				yAxis: {
+					scale: true,
+					splitArea: {
+						show: true
+					}
+				},
+				dataZoom: [
+					{
+						type: 'inside',
+						start: 50,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						y: '90%',
+						start: 50,
+						end: 100
+					}
+				],
+				series: [
+					{
+						name: '日K',
+						type: 'candlestick',
+						data: data0.values,
+						itemStyle: {
+							normal: {
+								color: upColor,
+								color0: downColor,
+								borderColor: upBorderColor,
+								borderColor0: downBorderColor
+							}
+						},
+
+					},
+
+				]
+			};
+			var myChart = echarts.init(document.getElementById('main'));
+			myChart.setOption(option,true);
+
+
+			// 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
+			var data1 = splitData(profit_data);
+
+			option1 = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross'
+					}
+				},
+				grid: {
+					left: '10%',
+					right: '10%',
+					bottom: '15%'
+				},
+				xAxis: {
+					type: 'category',
+					data: data1.categoryData,
+					scale: true,
+					boundaryGap : false,
+					axisLine: {onZero: false},
+					splitLine: {show: false},
+					splitNumber: 20,
+					min: 'dataMin',
+					max: 'dataMax'
+				},
+				yAxis: {
+					scale: true,
+					splitArea: {
+						show: true
+					}
+				},
+				dataZoom: [
+					{
+						type: 'inside',
+						start: 50,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						y: '90%',
+						start: 50,
+						end: 100
+					}
+				],
+				series: [
+					{
+						name: '日K',
+						type: 'candlestick',
+						data: data1.values,
+						itemStyle: {
+							normal: {
+								color: upColor,
+								color0: downColor,
+								borderColor: upBorderColor,
+								borderColor0: downBorderColor
+							}
+						},
+
+					},
+
+				]
+			};
+			var myChart1 = echarts.init(document.getElementById('profitmain'));
+			myChart1.setOption(option1,true);
+			
+			
+			optionfzl = {
+				tooltip: {
+					trigger: 'item',
+					formatter: "{b}: {c} ({d}%)"
+				},
+				legend: {
+					orient: 'vertical',
+					x: 'left',
+					data:['负债','所有者权益']
+				},
+				series: [
+					{
+						type:'pie',
+						radius: ['50%', '70%'],
+						avoidLabelOverlap: false,
+						label: {
+							normal: {
+								show: false,
+								position: 'center'
+							},
+							emphasis: {
+								show: true,
+								textStyle: {
+									fontSize: '30',
+									fontWeight: 'bold'
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								show: false
+							}
+						},
+						data:[
+							{value:156255.63, name:'负债'},
+							{value:203606.44, name:'所有者权益'}
+						]
+					}
+				]
+			};
+			var fuzhailv = echarts.init(document.getElementById('fuzhailv'));
+			fuzhailv.setOption(optionfzl);
+
+			
+			optionzjfp = {
+			    title : {
+				text: '资金分配',
+				subtext: '20190731',
+				x:'center'
+			    },
+			    tooltip : {
+				trigger: 'item',
+				formatter: "{a} <br/>{b} : {c} ({d}%)"
+			    },
+			    legend: {
+				orient: 'vertical',
+				left: 'left',
+				data: ['股票','基金','债券','外汇','现金','其他']
+			    },
+			    series : [
+				{
+				    name: '访问来源',
+				    type: 'pie',
+				    radius : '75%',
+				    center: ['50%', '60%'],
+				    data:[
+					{value:17042.2, name:'股票'},
+					{value:30065.97, name:'基金'},
+					{value:99189.16, name:'债券'},
+					{value:41549.45, name:'外汇'},
+					{value:170660.51, name:'现金'},
+					{value:1354.78, name:'其他'},
+				    ],
+				    itemStyle: {
+					emphasis: {
+					    shadowBlur: 10,
+					    shadowOffsetX: 0,
+					    shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				    }
+				}
+			    ]
+			};
+			var zijinfenpei = echarts.init(document.getElementById('zijinfenpei'));
+			zijinfenpei.setOption(optionzjfp);
+		</script>
+
+		<script>
+			var year=new Date().getFullYear();
+			var month=new Date().getMonth()+1;
+			var date=new Date().getDate();
+			s1  =  "1991-2-1";
+			s2  =  year+'-'+month+'-'+date;
+			day = DateDiff(s1, s2)/36525;
+			if (day<0.2){
+				$("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+			} else if (0.2<=day && day<0.4){
+				$("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+			} else if (0.4<=day && day<0.60){
+				$("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+			} else {
+				$("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+			};
+			function DateDiff(sDate1, sDate2){  
+				var aDate, oDate1, oDate2, iDays;
+				aDate = sDate1.split("-");
+				oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				aDate = sDate2.split("-");
+				oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+				return iDays;
+			};
+		</script>
+
+    </body>
+	
+</html>
