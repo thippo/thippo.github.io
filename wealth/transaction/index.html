@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../../static/bootstrap4/css/bootstrap.min.css">
+		<script src="../../static/jquery-3.2.1.min.js"></script>
+		<script src="../../static/bootstrap4/popper.js"></script>
+		<script src="../../static/bootstrap4/js/bootstrap.min.js"></script>
+		<script src="../../static/vue.min.js"></script>
+	</head>
+	
+	<body>
+
+		<div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+				<a class="navbar-brand" href="#">THIPPO</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="../../weight/index.html">体重记录 </a>
+						</li>
+						<li class="nav-item ">
+							<a class="nav-link" href="../anabalancesheet.html">投资分析 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="../balancesheet.html">资产负债表 </a>
+						</li>
+						<li class="nav-item active">
+							<a class="nav-link" href="../balancesheet.html">投资记录 </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			
+			<div class="progress" style="margin-top:10px;">
+				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+			</div>
+					
+		
+			<div class="container">
+			
+				<div class="row">
+
+					<div class="card-columns">
+						<div class="card bg-light mb-3" v-for="x in datas">
+							<div class="card-header"><a :href="x[0][1]" target="_blank">{{ x[0][0] }}</a></div>
+							<div class="card-body">
+								<table class="table">
+									<tbody>
+										<tr v-for="y in x[1]">
+											<td>{{ y[0] }}</td>
+											<td>{{ y[1] }}</td>
+											<td>{{ y[2] }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			
+				
+			</div>
+
+		</div>
+
+		<script src="data.js"></script>
+
+		<script>
+		var app_vue = new Vue({
+				el: '#appvue',
+				data: {
+					datas: [],
+				},
+		})
+			app_vue.datas = invest_data
+		</script>
+
+		<script>
+			var year=new Date().getFullYear();
+			var month=new Date().getMonth()+1;
+			var date=new Date().getDate();
+			s1  =  "1991-2-1";
+			s2  =  year+'-'+month+'-'+date;
+			day = DateDiff(s1, s2)/36525;
+			if (day<0.2){
+				$("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+			} else if (0.2<=day && day<0.4){
+				$("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+			} else if (0.4<=day && day<0.60){
+				$("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+			} else {
+				$("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+			};
+			function DateDiff(sDate1, sDate2){  
+				var aDate, oDate1, oDate2, iDays;
+				aDate = sDate1.split("-");
+				oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				aDate = sDate2.split("-");
+				oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+				return iDays;
+			};
+		</script>
+		
+    </body>
+	
+</html>
+
