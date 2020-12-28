@@ -47,7 +47,7 @@
 
 					<div class="card-columns">
 						<div class="card bg-light mb-3" v-for="x in datas">
-							<div class="card-header"><a :href="x[0][1]" target="_blank">{{ x[0][0] }}</a></div>
+							<div class="card-header"><a :href="x[0][1]" target="_blank">{{ x[0][0] }}</a><span class="badge badge-secondary">{{ sum_count(x[1]) }}</span></div>
 							<div class="card-body">
 								<table class="table">
 									<tbody>
@@ -77,6 +77,15 @@
 				data: {
 					datas: [],
 				},
+				computed: {
+					sum_count: function(myData){
+						var myTotal = 0;
+						for(var i = 0, len = myData.length; i < len; i++) {
+						    myTotal += myData[i][2];
+						}
+						return myTotal
+					}
+				}
 		})
 			app_vue.datas = invest_data
 		</script>
