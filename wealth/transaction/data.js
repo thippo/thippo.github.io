@@ -14,6 +14,7 @@ var invest_data = [
             ['2020.12.22','69.2800','+10'],
         ]
     ],
+    [
         ['维格转债 sh113527','http://money.finance.sina.com.cn/bond/quotes/sh113527.html','1'],
         [
             ['2020.12.23','84.8700','+10'],
