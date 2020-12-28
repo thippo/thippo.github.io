@@ -6,7 +6,7 @@ var invest_data = [
         ]
     ],
     [
-        ['顺丰控股 sz002352','https://finance.sina.com.cn/realstock/company/sz002352/nc.shtml','1'],
+        ['顺丰控股 sz002352','https://finance.sina.com.cn/realstock/company/sz002352/nc.shtml','0'],
         [
             ['2020.12.15','76.0500','-2200'],
         ]
@@ -25,6 +25,8 @@ var invest_data = [
             ['2020.12.15','69.5700','+10'],
             ['2020.12.15','69.4390','+10'],
             ['2020.12.14','69.7500','+10'],
+            ['2020.12.04','72.1130','+10'],
+            ['2020.12.02','72.1680','+10'],
         ]
     ],
     [
@@ -47,6 +49,12 @@ var invest_data = [
         ['电气转债 sh113008','http://money.finance.sina.com.cn/bond/quotes/sh113008.html','0'],
         [
             ['2020.12.15','108.7900','-70'],
+        ]
+    ],
+    [
+        ['小康转债 sh113016','http://money.finance.sina.com.cn/bond/quotes/sh113016.html','0'],
+        [
+            ['2020.12.03','143.0800','-50'],
         ]
     ],
     [
