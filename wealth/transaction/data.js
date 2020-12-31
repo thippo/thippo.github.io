@@ -179,7 +179,6 @@ var invest_data = [
             ['2019.11.25','91.6500','+100'],
         ]
     ],
-    ],
     [
         ['众兴转债 sz128026','http://money.finance.sina.com.cn/bond/quotes/sz128026.html','1'],
         [
