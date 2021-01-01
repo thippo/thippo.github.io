@@ -40,14 +40,21 @@
 			</div>
 					
 			</br>
+
+			<div class="alert alert-dark" role="alert">
+				持有证券<b>{{ total_securities }}</b>只</td>
+				&nbsp&nbsp&nbsp&nbsp
+				非持有证券收益<b>{{ total_return | floatformat(2)}}</b>元
+			</div>
+
 		
 			<div class="container" id="accordion">
-			
+
 				<div class="row">
 
 					<div class="card-columns">
 						<div class="card bg-light mb-3" v-for="x,ii in datas">
-							<div class="card-header" :id="'heading'+ii"><a :href="x[0][1]" target="_blank">&#9658</a><button type="button" class="btn btn-link" data-toggle="collapse" :data-target="'#collapse'+ii" aria-expanded="true" :aria-controls="'collapse'+ii">{{ x[0][0] }}</button>&nbsp&nbsp<span class="badge badge-secondary">{{ sum_count(x[1]) }}</span>&nbsp&nbsp<span v-if="x[0][2]=='0' && sum_return(x[1]) >= 0" class="badge badge-danger">{{ sum_return(x[1]) }}</span><span v-if="x[0][2]=='0' && sum_return(x[1]) == 0" class="badge badge-secondary">{{ sum_return(x[1]) }}</span><span v-if="x[0][2]=='0' && sum_return(x[1]) < 0" class="badge badge-success">{{ sum_return(x[1]) }}</span></div>
+							<div class="card-header" :id="'heading'+ii"><a :href="x[0][1]" target="_blank">&#9658</a><button type="button" class="btn btn-link" data-toggle="collapse" :data-target="'#collapse'+ii" aria-expanded="true" :aria-controls="'collapse'+ii">{{ x[0][0] }}</button>&nbsp&nbsp<span class="badge badge-secondary">{{ sum_count(x[1]) }}</span>&nbsp&nbsp<span v-if="x[0][2]=='0' && sum_return(x[1]) >= 0" class="badge badge-danger">{{ sum_return(x[1]) | floatformat(2) }}</span><span v-if="x[0][2]=='0' && sum_return(x[1]) == 0" class="badge badge-secondary">{{ sum_return(x[1]) }}</span><span v-if="x[0][2]=='0' && sum_return(x[1]) < 0" class="badge badge-success">{{ sum_return(x[1]) | floatformat(2) }}</span></div>
 							<div :id="'collapse'+ii" class="collapse" :aria-labelledby="'heading'+ii" data-parent="#accordion">
 								<div class="card-body">
 									<table class="table">
@@ -89,15 +96,42 @@
 						}
 						return myTotal
 					},
-
 					sum_return: function(myData){
 						var myTotal = 0;
 						for(var i = 0, len = myData.length; i < len; i++) {
-						    myTotal += parseInt(myData[i][10]);
+						    myTotal += parseFloat(myData[i][10]);
 						}
 						return myTotal
 					},
-				}
+				},
+				computed: {
+					total_securities: function(){
+						var tt_sercurities = 0;
+						for(var i = 0; i < this.datas.length; i++) {
+							if (this.datas[i][0][2] == '1'){
+								tt_sercurities += 1
+							}
+						}
+						return tt_sercurities
+					},
+					total_return: function(){
+						var tt_return = 0;
+						for(var i = 0; i < this.datas.length; i++) {
+							if (this.datas[i][0][2] == '0'){
+								for(var j = 0, len = this.datas[i][1].length; j < len; j++) {
+									tt_return += parseFloat(this.datas[i][1][j][10])
+								}	
+							}
+						}
+						return tt_return				
+					}
+				},
+				filters: {
+					floatformat: function (value, num) {
+						value = Number(value)
+						return value.toFixed(num)
+					}
+				},
 		})
 			app_vue.datas = invest_data
 		</script>
