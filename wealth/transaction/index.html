@@ -54,7 +54,6 @@
 										<tbody>
 											<tr v-for="y in x[1]">
 												<td>{{ y[0] }}</td>
-												<td>{{ y[1] }}</td>
 												<td>{{ y[2] }}</td>
 												<td>{{ y[3] }}</td>
 												<td>{{ y[10] }}</td>
@@ -85,7 +84,9 @@
 					sum_count: function(myData){
 						var myTotal = 0;
 						for(var i = 0, len = myData.length; i < len; i++) {
+						    if (myData[i][1] != "股息红利税补缴" && myData[i][1] != "股息入帐"){
 						    myTotal += parseInt(myData[i][3]);
+						    }
 						}
 						return myTotal
 					}
