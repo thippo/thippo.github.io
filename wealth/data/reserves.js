@@ -1,1 +1,1 @@
-reserves_capital_data = 15789.77
+reserves_capital_data = 0.0
