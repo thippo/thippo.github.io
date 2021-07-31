@@ -361,20 +361,6 @@
 					type: 'value'
 				}
 				],
-				dataZoom: [
-					{
-						type: 'inside',
-						start: 50,
-						end: 100
-					},
-					{
-						show: true,
-						type: 'slider',
-						y: '90%',
-						start: 50,
-						end: 100
-					}
-				],
 				series: [
 				{
 					name: '现金',
@@ -454,7 +440,21 @@
 						1349.37, 1336.11, 1417.25, 37.650000000000006, 19.85, 55.05, 65.05
 					]
 				}
-				]
+				],
+				dataZoom: [
+					{
+						type: 'inside',
+						start: 50,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						y: '90%',
+						start: 50,
+						end: 100
+					}
+				],
 			};
 			var fenpeitend = echarts.init(document.getElementById('fenpeitend'));
 			fenpeitend.setOption(optionfptend);
