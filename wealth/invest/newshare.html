@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../static/bootstrap4/css/bootstrap.min.css">
+		<script src="../static/jquery-3.2.1.min.js"></script>
+		<script src="../static/bootstrap4/popper.js"></script>
+		<script src="../static/bootstrap4/js/bootstrap.min.js"></script>
+		<script src="../static/vue.min.js"></script>
+		<script src="../static/echarts.min.js"></script>
+	</head>
+	
+	<body>
+
+		<div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+				<a class="navbar-brand" href="#">THIPPO</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="../weight/index.html">体重记录 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="anabalancesheet.html">投资分析 </a>
+						</li>
+						<li class="nav-item ">
+							<a class="nav-link" href="balancesheet.html">资产负债表 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="transaction/index.html">投资记录 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="tradetiming.html">择时分析 </a>
+						</li>
+						<li class="nav-item active">
+							<a class="nav-link" href="newshare.html">七天实践 </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			
+			<div class="progress" style="margin-top:10px;">
+				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+			</div>
+					
+
+			<div class="row">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">网上中签率(%)</th>
+							<th scope="col">个申上限(万股)</th>
+							<th scope="col">网发比</th>
+							<th scope="col">募集资金(亿)</th>
+							<th scope="col">市盈率</th>
+							<th scope="col">首日换手率</th>
+							<th scope="col">开盘日300涨跌幅(%)</th>
+							<th scope="col">发行价市盈率</th>
+							<th scope="col">净资产收益率</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input style="width:75px;height:25px;" @input="makelines(4,'网上中签率(%)','main4')" v-model="four"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(5,'个申上限(万股)','main5')" v-model="five"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(6,'网发比','main6')" v-model="six"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(7,'募集资金(亿)','main7')" v-model="seven"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(9,'市盈率','main9')" v-model="nine"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(11,'首日换手率','main11')" v-model="eleven"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(12,'开盘日300涨跌幅(%)','main12')" v-model="twelve"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(13,'发行价市盈率','main13')" v-model="thirteen"></th>
+							<td><input style="width:75px;height:25px;" @input="makelines(14,'净资产收益率','main14')" v-model="fourteen"></th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<div id="main4" style="width:100%;height:300px;"></div>
+				</div>
+				<div class="col">
+					<div id="main5" style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div id="main6" style="width:100%;height:300px;"></div>
+				</div>
+				<div class="col">
+					<div id="main7" style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div id="main9" style="width:100%;height:300px;"></div>
+				</div>
+				<div class="col">
+					<div id="main11" style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div id="main12" style="width:100%;height:300px;"></div>
+				</div>
+				<div class="col">
+					<div id="main13" style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div id="main14" style="width:100%;height:300px;"></div>
+				</div>
+				<div class="col">
+					<div id="main" style="width:100%;height:300px;"></div>
+				</div>
+			</div>
+
+			</br>
+			</br>
+
+		</div>
+		
+	
+		<script>
+		var app_vue = new Vue({
+				el: '#appvue',
+				data: {
+					rawdata: [
+						["安联锐视","301042","计算机设备","2021/8/5","0.01","1.7","1","7.209","41.91","39","78.5","46.69","-0.61","26.96911197","18.13","8.5701","1.554","0"],
+						["本川智能","300964","印制电路板","2021/8/5","0.01","1.9","1","6.207","32.12","36.88","69","50.05","-0.61","22.54509721","21.87","6.5136","1.4247","0"],
+						["双枪科技","001211","其他轻工制造","2021/8/5","0.01","1.8","1","4.752","26.4","22.99","31.68","1.24","-0.61","15.88256527","18.82","8.8344","1.6622","1"],
+						["厦钨新能","688778","其他化学制品","2021/8/5","0.03","1.6","0.341071713","0","24.5","25.27","125.12","74.98","-0.61","18.4501845","14.33","9.265","1.3279","0"],
+						["深水规院","301038","其他专业工程","2021/8/4","0.02","0.8","0.435151515","5.039","6.68","9.7","27","69.68","0.9","7.075521661","14.13","6.6806","0.9441","0"],
+						["复旦微电","688385","集成电路","2021/8/4","0.03","1.65","0.21","6.618","6.23","127.14","53.51","76.14","0.9","3.256494694","6.88","27.7933","1.9131","1"],
+						["倍杰特","300774","环保工程及服务","2021/8/4","0.02","0.75","0.389921722","6.398","4.57","13.65","20.1","70.25","0.9","11.25338587","13.39","3.0338","0.4061","1"],
+						["中环海陆","301040","金属制品","2021/8/3","0.01","0.7","0.4852","5.33","13.57","10.53","41.59","68.22","0.01","7.600537695","21.80","8.1883","1.7854","0"],
+						["金迪克","688670","生物制品","2021/8/2","0.03","0.55","0.344090909","16.965","55.18","30","88","68.14","2.55","23.49885018","63.91","3.6743","2.3482","1"],
+						["国邦医药","605507","化学原料药","2021/8/2","0.04","2.5","0.900023861","27.301","32.57","22.99","39.08","2.25","2.55","19.09927872","24.73","6.8942","1.7053","0"],
+					],
+					four: '',
+					five: '',
+					six: '',
+					seven: '',
+					nine: '',
+					eleven: '',
+					twelve: '',
+					thirteen: '',
+					fourteen: '',
+				},
+				mounted: function() {
+					this.showstatic(4,'网上中签率(%)','main4')
+					this.showstatic(5,'个申上限(万股)','main5')
+					this.showstatic(6,'网发比','main6')
+					this.showstatic(7,'募集资金(亿)','main7')
+					this.showstatic(9,'市盈率','main9')
+					this.showstatic(11,'首日换手率','main11')
+					this.showstatic(12,'开盘日300涨跌幅(%)','main12')
+					this.showstatic(13,'发行价市盈率','main13')
+					this.showstatic(14,'净资产收益率(%)','main14')
+				},
+				methods: {
+					staticdata: function(num){
+						var compute_return = []
+						var green_list = []
+						var yellow_list = []
+						var red_list = []
+						for (var i = 0; i < this.rawdata.length; i++) {
+							if (this.rawdata[i][17] == "0"){
+								green_list.push(this.rawdata[i][num])
+							} else if (this.rawdata[i][17] == "1"){
+								yellow_list.push(this.rawdata[i][num])
+							} else if (this.rawdata[i][17] == "2"){
+								red_list.push(this.rawdata[i][num])
+							}
+						}
+						var green_count = green_list.reduce(function (obj, name){obj[name] = obj[name] ? ++obj[name] : 1;return obj;}, {});
+						var yellow_count = yellow_list.reduce(function (obj, name){obj[name] = obj[name] ? ++obj[name] : 1;return obj;}, {});
+						var red_count = red_list.reduce(function (obj, name){obj[name] = obj[name] ? ++obj[name] : 1;return obj;}, {});
+						for (key in green_count){compute_return.push({symbolSize: green_count[key]*10, data:[[key, 0]], type:'scatter',color:"green"})}
+						for (key in yellow_count){compute_return.push({symbolSize: yellow_count[key]*10, data:[[key, 1]], type:'scatter',color:	"#FFD700"})}
+						for (key in red_count){compute_return.push({symbolSize: red_count[key]*10, data:[[key, 2]], type:'scatter',color:"red"})}
+						return compute_return
+					},
+					showstatic: function(num, textt, whatmain){
+						datanow = this.staticdata(num)
+						option = {
+							title: {
+								left: 'center',
+								text: textt,
+							},
+							xAxis: {},
+							yAxis: {},
+							series: datanow
+						};
+						var myChart = echarts.init(document.getElementById(whatmain));
+						myChart.setOption(option,true);
+					},
+					makelines: function(num, textt, whatmain){
+						if (num == 4){
+							eng=this.four
+						} else if (num == 5){
+							eng=this.five
+						} else if (num == 6){
+							eng=this.six
+						} else if (num == 7){
+							eng=this.seven
+						} else if (num == 9){
+							eng=this.nine
+						} else if (num == 11){
+							eng=this.eleven
+						} else if (num == 12){
+							eng=this.twelve
+						} else if (num == 13){
+							eng=this.thirteen
+						} else if (num == 14){
+							eng=this.fourteen
+						}
+						datanow = this.staticdata(num)
+						datanow.push({data:[],type:'scatter',markLine:{symbol:"none",data:[{silent:false,lineStyle:{type:"solid",color:"blue",},xAxis:eng}]}})
+						option = {
+							title: {
+								left: 'center',
+								text: textt,
+							},
+							xAxis: {},
+							yAxis: {},
+							series: datanow
+						};
+						var myChart = echarts.init(document.getElementById(whatmain));
+						myChart.setOption(option,true);
+					}
+				},
+			})
+
+	</script>
+
+		<script>
+			var year=new Date().getFullYear();
+			var month=new Date().getMonth()+1;
+			var date=new Date().getDate();
+			s1  =  "1991-2-1";
+			s2  =  year+'-'+month+'-'+date;
+			day = DateDiff(s1, s2)/36525;
+			if (day<0.2){
+				$("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+			} else if (0.2<=day && day<0.4){
+				$("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+			} else if (0.4<=day && day<0.60){
+				$("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+			} else {
+				$("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+			};
+			function DateDiff(sDate1, sDate2){  
+				var aDate, oDate1, oDate2, iDays;
+				aDate = sDate1.split("-");
+				oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				aDate = sDate2.split("-");
+				oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+				return iDays;
+			};
+		</script>
+
+	</body>
+	
+</html>
