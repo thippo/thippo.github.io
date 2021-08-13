@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+        <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="../static/bootstrap4/css/bootstrap.min.css">
+                <script src="../static/jquery-3.2.1.min.js"></script>
+                <script src="../static/bootstrap4/popper.js"></script>
+                <script src="../static/bootstrap4/js/bootstrap.min.js"></script>
+                <script src="../static/vue.min.js"></script>
+                <script src="../static/echarts.min.js"></script>
+        </head>
+        
+        <body>
+
+                <div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+                                <a class="navbar-brand" href="#">THIPPO</a>
+                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                        <ul class="navbar-nav mr-auto">
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="../weight/index.html">体重记录 </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="anabalancesheet.html">投资分析 </a>
+                                                </li>
+                                                <li class="nav-item ">
+                                                        <a class="nav-link" href="balancesheet.html">资产负债表 </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="transaction/index.html">投资记录 </a>
+                                                </li>
+                                                <li class="nav-item active">
+                                                        <a class="nav-link" href="tradetiming.html">择时分析 </a>
+                                                </li>
+                                        </ul>
+                                </div>
+                        </nav>
+                        
+                        <div class="progress" style="margin-top:10px;">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+                        </div>
+                                        
+                        </br>
+                        <div class="row">
+                        <div id="main" style="width:100%;height:500px;"></div>
+                        </div>
+                        
+                        </br>
+                        </br>
+
+                </div>
+                
+                
+                <script>
+                        var raw_data = [
+                                ['2021-7-22', 5151.75, 647601.06+0, 37846.43],
+                                ['2021-7-23', 5089.23, 647320.89+0, 37532.03],
+                                ['2021-7-26', 4925.3, 635028.16+0, 25243.42],
+                                ['2021-7-27', 4751.31, 615950.58-1499.99, 1731.97],
+                                ['2021-7-28', 4760.48, 632032.93-10331.99, 8974.11],
+                                ['2021-7-29', 4850.27, 654065.37-10331.99, 31043.95],
+                                ['2021-7-30', 4811.17, 658848.36-10331.99, 35809.36],
+                                ['2021-8-2', 4933.74, 676373.1-10331.99, 53340.35],
+                                ['2021-8-3', 4934.46, 669264.61-10331.99, 46215.74],
+                                ['2021-8-4', 4978.85, 693559.97-11461.07, 78844.97],
+                                ['2021-8-5', 4948.67, 686322.01-11435.46, 71638.41],
+                                ['2021-8-6', 4921.56, 682995.21-11435.46, 68326.14],
+                                ['2021-8-9', 4985.56, 674707.95-11435.46, 58322.2],
+                                ['2021-8-10', 5043.15, 673622.35-11435.46, 57234.58],
+                                ['2021-8-11', 5015.34, 675881.88-11435.46, 59487.72],
+                                ['2021-8-12', 4973.35, 675805.27-11435.46, 59407.4],
+                                ]
+                        
+                        function splitdata(rawdata){
+                                date_init = "2021-7-21"
+                                hs300_init = 5144.04
+                                all_init = 645340.11
+                                profit = 35687.5
+                                var date = []
+                                var hs300 = []
+                                var all = []
+                                for (i = 0; i < rawdata.length; i++) { 
+                                        date.push(rawdata[i][0])
+                                        hs300.push((((rawdata[i][1]-hs300_init)/hs300_init)*100).toFixed(2))
+                                        all.push((((rawdata[i][2]-all_init)/all_init)*100).toFixed(2))
+                                }
+                                return {date:date,hs300:hs300,all:all}
+                        }
+                        
+                        
+                        var new_data = splitdata(raw_data)
+                        
+                        option = {
+                                tooltip: {
+                                        trigger: 'axis'
+                                },
+                                legend: {
+                                        data: ['沪深300', '总盈利']
+                                },
+                                grid: {
+                                        left: '3%',
+                                        right: '4%',
+                                        bottom: '3%',
+                                        containLabel: true
+                                },
+                                xAxis: {
+                                        type: 'category',
+                                        boundaryGap: false,
+                                        data: new_data.date
+                                },
+                                yAxis: {
+                                        type: 'value'
+                                },
+                                series: [
+                                        {
+                                                name: '沪深300',
+                                                type: 'line',
+                                                smooth: true,
+                                                symbol: 'none',
+                                                color: 'red',
+                                                data: new_data.hs300
+                                        },
+                                        {
+                                                name: '总盈利',
+                                                type: 'line',
+                                                smooth: true,
+                                                symbol: 'none',
+                                                color: '#33CCFF',
+                                                data: new_data.all
+                                        },
+                                ],
+                                dataZoom: [
+                                        {
+                                                type: 'inside',
+                                                start: 50,
+                                                end: 100
+                                        },
+                                        {
+                                                show: true,
+                                                type: 'slider',
+                                                top: '90%',
+                                                start: 50,
+                                                end: 100
+                                        }
+                                ],
+                        };
+
+                        var myChart = echarts.init(document.getElementById('main'));
+                        myChart.setOption(option,true);
+
+
+        </script>
+
+                <script>
+                        var year=new Date().getFullYear();
+                        var month=new Date().getMonth()+1;
+                        var date=new Date().getDate();
+                        s1  =  "1991-2-1";
+                        s2  =  year+'-'+month+'-'+date;
+                        day = DateDiff(s1, s2)/36525;
+                        if (day<0.2){
+                                $("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+                        } else if (0.2<=day && day<0.4){
+                                $("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+                        } else if (0.4<=day && day<0.60){
+                                $("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+                        } else {
+                                $("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+                        };
+                        function DateDiff(sDate1, sDate2){  
+                                var aDate, oDate1, oDate2, iDays;
+                                aDate = sDate1.split("-");
+                                oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+                                aDate = sDate2.split("-");
+                                oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+                                iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+                                return iDays;
+                        };
+                </script>
+
+        </body>
+        
+</html>
