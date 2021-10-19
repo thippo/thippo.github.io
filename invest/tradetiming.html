@@ -116,6 +116,7 @@
                                 ['2021-10-14', 4913.61, 700175.24, 36816.36],
                                 ['2021-10-15', 4931.82, 713262.47, 49982.68],
                                 ['2021-10-18', 4874.78, 713156.61, 49867.12],
+                                ['2021-10-19', 4922.72, 713821.81, 50520.51],
                                 ]
                         
                         function cum_cal(data){
@@ -134,8 +135,8 @@
                                 var all_cum = []
                                 for (i = 1; i < rawdata.length; i++) { 
                                         date.push(rawdata[i][0])
-                                        hs300.push((((rawdata[i][1]-rawdata[i-1][1])/rawdata[i-1][1])*100).toFixed(4))
-                                        all.push((((rawdata[i][3]-rawdata[i-1][3])/rawdata[i-1][2])*100).toFixed(4))
+                                        hs300.push((((rawdata[i][1]-rawdata[i-1][1])/rawdata[i-1][1])*100))
+                                        all.push((((rawdata[i][3]-rawdata[i-1][3])/rawdata[i-1][2])*100))
                                 }
                                 for (j = 0; j < date.length; j++) { 
                                         hs300_cum.push(cum_cal(hs300.slice(0,j+1)))
