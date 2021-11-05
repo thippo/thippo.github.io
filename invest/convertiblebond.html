@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+        <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="../static/bootstrap4/css/bootstrap.min.css">
+                <script src="../static/jquery-3.2.1.min.js"></script>
+                <script src="../static/bootstrap4/popper.js"></script>
+                <script src="../static/bootstrap4/js/bootstrap.min.js"></script>
+                <script src="../static/vue.min.js"></script>
+                <script src="../static/echarts.min.js"></script>
+        </head>
+        
+        <body>
+
+                <div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+                                <a class="navbar-brand" href="#">THIPPO</a>
+                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                        <ul class="navbar-nav mr-auto">
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="../weight/index.html">体重记录 </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="../wealth/anabalancesheet.html">投资分析 </a>
+                                                </li>
+                                                <li class="nav-item ">
+                                                        <a class="nav-link" href="../wealth/balancesheet.html">资产负债表 </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="../wealth/transaction/index.html">投资记录 </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="tradetiming.html">择时分析 </a>
+                                                </li>
+                                                <li class="nav-item active">
+                                                        <a class="nav-link" href="convertiblebond.html">可转债YTM </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="newshare.html">七天实践 </a>
+                                                </li>
+                                        </ul>
+                                </div>
+                        </nav>
+                        
+                        <div class="progress" style="margin-top:10px;">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+                        </div>
+                                        
+                        </br>
+                        <div class="container">
+                                <table class="table table-hover">
+                                        <thead>
+                                                <tr>
+                                                        <th scope="col">债券名称</th>
+                                                        <th scope="col">代码</th>
+                                                        <th scope="col">到期日</th>
+                                                        <th scope="col">剩余天数</th>
+                                                        <th scope="col">赎回价</th>
+                                                        <th scope="col">现价</th>
+                                                        <th scope="col">持有到期年化收益率</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>城地转债</td><td>sh113596</td><td id="sh113596_maturity">2026-07-28</td><td id="sh113596_days">？？？</td><td id="sh113596_endprice">108.0</td><td id="sh113596_currentprice">？？？</td><td id="sh113596_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>亚药转债</td><td>sz128062</td><td id="sz128062_maturity">2025-04-02</td><td id="sz128062_days">？？？</td><td id="sz128062_endprice">115.0</td><td id="sz128062_currentprice">？？？</td><td id="sz128062_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>广汇转债</td><td>sh110072</td><td id="sh110072_maturity">2026-08-18</td><td id="sh110072_days">？？？</td><td id="sh110072_endprice">110.0</td><td id="sh110072_currentprice">？？？</td><td id="sh110072_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>天创转债</td><td>sh113589</td><td id="sh113589_maturity">2026-06-24</td><td id="sh113589_days">？？？</td><td id="sh113589_endprice">110.0</td><td id="sh113589_currentprice">？？？</td><td id="sh113589_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>花王转债</td><td>sh113595</td><td id="sh113595_maturity">2026-07-21</td><td id="sh113595_days">？？？</td><td id="sh113595_endprice">116.0</td><td id="sh113595_currentprice">？？？</td><td id="sh113595_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>文科转债</td><td>sz128127</td><td id="sz128127_maturity">2026-08-20</td><td id="sz128127_days">？？？</td><td id="sz128127_endprice">115.0</td><td id="sz128127_currentprice">？？？</td><td id="sz128127_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>国城转债</td><td>sz127019</td><td id="sz127019_maturity">2026-07-15</td><td id="sz127019_days">？？？</td><td id="sz127019_endprice">110.0</td><td id="sz127019_currentprice">？？？</td><td id="sz127019_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>岭南转债</td><td>sz128044</td><td id="sz128044_maturity">2024-08-14</td><td id="sz128044_days">？？？</td><td id="sz128044_endprice">107.0</td><td id="sz128044_currentprice">？？？</td><td id="sz128044_ytm">？？？</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>全筑转债</td><td>sh113578</td><td id="sh113578_maturity">2026-04-20</td><td id="sh113578_days">？？？</td><td id="sh113578_endprice">113.0</td><td id="sh113578_currentprice">？？？</td><td id="sh113578_ytm">？？？</td>
+                                                </tr>
+                                        </tbody>
+                                </table>
+                        </div>
+                        
+                        </br>
+                        </br>
+
+                </div>
+                
+                 <script type="text/javascript" src="http://hq.sinajs.cn/list=sh113596,sz128062,sh110072,sh113589,sh113595,sz128127,sz127019,sz128044,sh113578" charset="gb2312"></script>
+               
+                <script>
+                        function DateDiff(sDate1, sDate2) {
+                                var aDate = sDate1.split("-");
+                                var oDate1 = new Date(aDate[0], aDate[1]-1, aDate[2]);
+                                aDate = sDate2.split("-");
+                                var oDate2 = new Date(aDate[0], aDate[1]-1, aDate[2]);
+                                var iDays = parseInt(Math.abs(oDate2 - oDate1) / 1000 / 60 / 60 / 24);
+                                return iDays;
+                        }
+
+                        $(document).ready(function(){
+                                var code_list = ["sh113596","sz128062","sh110072","sh113589","sh113595","sz128127","sz127019","sz128044","sh113578"]
+                                var now = new Date();
+                                var today = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()
+                                for (i = 0; i < code_list.length; i++) {
+                                        var code = code_list[i]
+                                        var days = DateDiff(today,$("#"+code+"_maturity").text())
+                                        var currentprice = eval("hq_str_"+code).split(",")[3]
+                                        var ytm = (365*(($("#"+code+"_endprice").text()/currentprice)**(1/days)-1)*100).toFixed(2)
+                                        $("#"+code+"_days").text(days)
+                                        $("#"+code+"_currentprice").text(currentprice)
+                                        $("#"+code+"_ytm").text(ytm+"%")
+                                }
+
+                        });
+                </script>
+
+                <script>
+                        var year=new Date().getFullYear();
+                        var month=new Date().getMonth()+1;
+                        var date=new Date().getDate();
+                        s1  =  "1991-2-1";
+                        s2  =  year+'-'+month+'-'+date;
+                        day = DateDiff(s1, s2)/36525;
+                        if (day<0.2){
+                                $("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+                        } else if (0.2<=day && day<0.4){
+                                $("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+                        } else if (0.4<=day && day<0.60){
+                                $("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+                        } else {
+                                $("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+                        };
+                        function DateDiff(sDate1, sDate2){  
+                                var aDate, oDate1, oDate2, iDays;
+                                aDate = sDate1.split("-");
+                                oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+                                aDate = sDate2.split("-");
+                                oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+                                iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+                                return iDays;
+                        };
+                </script>
+
+        </body>
+        
+</html>
