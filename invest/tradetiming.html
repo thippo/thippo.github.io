@@ -213,6 +213,12 @@
                         
                         var new_data = splitdata(raw_data)
                         
+                        var cha_list = []  
+                        for (i=0;i<new_data.hs300.length;i++)
+                        {
+                            cha_list.push(new_data.all[i]-new_data.hs300[i])
+                        }
+                        
                         option = {
                                 tooltip: {
                                         trigger: 'axis'
@@ -250,6 +256,15 @@
                                                 symbol: 'none',
                                                 color: '#33CCFF',
                                                 data: new_data.all
+                                        },
+                                        {
+                                                name: '收益差',
+                                                type: 'bar',
+                                                color: 'rgba(0, 0, 0, 0.1)',
+                                                label: {
+                                                    show: false
+                                                },
+                                                data: cha_list
                                         },
                                 ],
                                 dataZoom: [
