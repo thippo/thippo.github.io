@@ -94,6 +94,19 @@
 				};
 			}
 
+			function splitExpenseData(rawData) {
+				var categoryData = [];
+				var values = []
+				for (var i = 0; i < rawData.length; i++) {
+					categoryData.push(rawData[i].splice(0, 1)[0]);
+					values.push(rawData[i][0])
+				}
+				return {
+					categoryData: categoryData,
+					values: values
+				};
+			}
+			
 			option = {
 				tooltip: {
 					trigger: 'axis',
@@ -161,6 +174,7 @@
 
 			// 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
 			var data1 = splitData(profit_data);
+			var data2 = splitExpenseData(expense_data);
 
 			option1 = {
 				tooltip: {
@@ -220,7 +234,16 @@
 						},
 
 					},
-
+					{
+						name: '月支出',
+						type: 'line',
+						data: data2.values,
+						smooth: true,
+						lineStyle: {
+							color: 'blue',
+							opacity: 0.5
+						}
+					},
 				]
 			};
 			var myChart1 = echarts.init(document.getElementById('profitmain'));
