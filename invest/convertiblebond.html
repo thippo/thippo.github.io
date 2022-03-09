@@ -100,7 +100,7 @@
 
                 </div>
                 
-                 <script type="text/javascript" src="http://hq.sinajs.cn/list=sh113596,sz128062,sh110072,sh113589,sh113595,sz128127,sz127019,sz128044,sh113578" charset="gb2312"></script>
+                <!--<script type="text/javascript" src="http://hq.sinajs.cn/list=sh113596,sz128062,sh110072,sh113589,sh113595,sz128127,sz127019,sz128044,sh113578" charset="gb2312"></script>-->
                
                 <script>
                         function DateDiff(sDate1, sDate2) {
@@ -119,11 +119,11 @@
                                 for (i = 0; i < code_list.length; i++) {
                                         var code = code_list[i]
                                         var days = DateDiff(today,$("#"+code+"_maturity").text())
-                                        var currentprice = eval("hq_str_"+code).split(",")[3]
-                                        var ytm = (365*(($("#"+code+"_endprice").text()/currentprice)**(1/days)-1)*100).toFixed(2)
+                                        //var currentprice = eval("hq_str_"+code).split(",")[3]
+                                        //var ytm = (365*(($("#"+code+"_endprice").text()/currentprice)**(1/days)-1)*100).toFixed(2)
                                         $("#"+code+"_days").text(days)
-                                        $("#"+code+"_currentprice").text(currentprice)
-                                        $("#"+code+"_ytm").text(ytm+"%")
+                                        //$("#"+code+"_currentprice").text(currentprice)
+                                        //$("#"+code+"_ytm").text(ytm+"%")
                                 }
 
                         });
