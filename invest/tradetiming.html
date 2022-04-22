@@ -4,10 +4,10 @@
         <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link rel="stylesheet" href="../static/bootstrap4/css/bootstrap.min.css">
+                <link rel="stylesheet" href="../static/bootstrap5/css/bootstrap.min.css">
                 <script src="../static/jquery-3.2.1.min.js"></script>
-                <script src="../static/bootstrap4/popper.js"></script>
-                <script src="../static/bootstrap4/js/bootstrap.min.js"></script>
+                <!--<script src="../static/bootstrap5/popper.js"></script>-->
+                <script src="../static/bootstrap5/js/bootstrap.min.js"></script>
                 <script src="../static/vue.min.js"></script>
                 <script src="../static/echarts.min.js"></script>
         </head>
@@ -17,16 +17,23 @@
                 <div class="container" id="appvue" style="background-color:#F5F5F5;">
 
                         <nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
-                                <a class="navbar-brand" href="#">THIPPO</a>
+                                <a class="navbar-brand" href="#"> THIPPO</a>
                                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                         <ul class="navbar-nav mr-auto">
                                                 <li class="nav-item"><a class="nav-link" href="../weight/index.html">体重记录 </a></li>
                                                 <li class="nav-item"><a class="nav-link" href="../wealth/anabalancesheet.html">投资分析 </a></li>
                                                 <li class="nav-item "><a class="nav-link" href="../wealth/balancesheet.html">资产负债表 </a></li>
                                                 <!--<li class="nav-item"><a class="nav-link" href="../wealth/transaction/index.html">投资记录 </a></li>-->
-                                                <li class="nav-item active"><a class="nav-link" href="tradetiming.html">择时分析 </a></li>
+                                                <li class="nav-item"><a class="nav-link active" href="tradetiming.html">择时分析 </a></li>
                                                 <li class="nav-item"><a class="nav-link" href="convertiblebond.html">可转债YTM </a></li>
                                                 <li class="nav-item"><a class="nav-link" href="newshare.html">七天实践 </a></li>
+                                                <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">工具箱</a>
+                                                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                                                                <li><a class="dropdown-item" href="../tools/kellycriterion.html">凯利公式</a></li>
+                                                                <li><a class="dropdown-item" href="#">-</a></li>
+                                                        </ul>
+                                                </li>
                                         </ul>
                                 </div>
                         </nav>
@@ -339,7 +346,7 @@
                         myChart.setOption(option,true);
 
 
-        </script>
+                </script>
 
                 <script>
                         var year=new Date().getFullYear();
