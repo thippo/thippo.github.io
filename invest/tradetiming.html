@@ -10,6 +10,7 @@
                 <script src="../static/bootstrap5/js/bootstrap.min.js"></script>
                 <script src="../static/vue.min.js"></script>
                 <script src="../static/echarts.min.js"></script>
+                <script src="../static/regression.min.js"></script>
         </head>
         
         <body>
@@ -45,6 +46,9 @@
                         </br>
                         <div class="row">
                         <div id="main" style="width:100%;height:500px;"></div>
+                        </div>
+                        <div class="row">
+                        <div id="beta_div" style="width:100%;height:500px;"></div>
                         </div>
                         
                         </br>
@@ -239,14 +243,11 @@
                                 ['2022-4-21', 3995.83, 768904.77, 50557.59, 0],
                                 ['2022-4-22', 4013.25, 768836.47, 50424.45, 0],
                                 ['2022-4-25', 3814.91, 765076.12, 46649.23, 0],
-                                ['2022-4-26', 3784.12, 773700.5, 44849.73, 10401.93],
-                                ['2022-4-27', 3895.54, 773123.4, 44248.83, 0],
-                                ['2022-4-28', 3921.11, 772637.38, 43737.97, 0],
-                                ['2022-4-29', 4016.24, 775961.29, 46885.12, 0],
-                                ['2022-5-5', 4010.21, 776936.5, 46151.71, 0],
-                                ['2022-5-6', 3908.82, 775654.36, 44794.25, 0],
                                 ]
-                        
+                </script>
+
+                <script>
+                      
                         function cum_cal(data){
                                 var sum = 1
                                 for (i = 0; i < data.length; i++) {
@@ -277,7 +278,6 @@
                                 return {date:date,hs300:hs300_cum,all:all_cum,my:my_cum}
                         }
                                   
-                        
                         var new_data = splitdata(raw_data)
                         
                         var cha_list = []  
@@ -353,7 +353,65 @@
                         var myChart = echarts.init(document.getElementById('main'));
                         myChart.setOption(option,true);
 
+                </script>
+                <script>
 
+                        function get_beta_data(rawdata){
+                                var hs300 = []
+                                var my = []
+                                var x_y = []
+                                for (i = 1; i < rawdata.length; i++) { 
+                                        hs300.push((((rawdata[i][1]-rawdata[i-1][1])/rawdata[i-1][1])))
+                                        my.push((((rawdata[i][2]-rawdata[i][4])-rawdata[i-1][2])/rawdata[i-1][2]))
+                                }
+                                for (j = 0; j < my.length; j++) {
+                                        x_y.push([hs300[j],my[j]])
+                                }
+                                return {x_y:x_y,min:Math.min(...hs300),max:Math.max(...hs300)}
+                        }
+
+                        var beta_data = get_beta_data(raw_data)
+
+                        var regress_result = regression.linear(beta_data.x_y)
+                        console.log(beta_data.min)
+                        console.log(regress_result.predict(beta_data.min))
+
+                        option_beta = {
+                                xAxis: {},
+                                yAxis: {},
+                                series: [
+                                        {
+                                                symbolSize: 5,
+                                                data: beta_data.x_y,
+                                                type: 'scatter',
+                                                markLine: {
+                                                        animation: true,
+                                                        label: {
+                                                                formatter: regress_result.string+'\n\nβ = '+regress_result.equation[0]+'\n\nr2 = '+regress_result.r2,
+                                                                align: 'top'
+                                                        },
+                                                        lineStyle: {
+                                                                type: 'solid'
+                                                        },
+                                                        data: [
+                                                                [
+                                                                        {
+                                                                                coord: [beta_data.min, regress_result.equation[0]*(beta_data.min)+regress_result.equation[1]],
+                                                                                symbol: 'none'
+                                                                        },
+                                                                        {
+                                                                                coord: [beta_data.max, regress_result.equation[0]*(beta_data.max)+regress_result.equation[1]],
+                                                                                symbol: 'none'
+                                                                        }
+                                                                ]
+                                                        ]
+                                                }
+                                        }
+                                ]
+                        }
+
+                        var myChart_beta = echarts.init(document.getElementById('beta_div'));
+                        myChart_beta.setOption(option_beta,true);
                 </script>
 
                 <script>
