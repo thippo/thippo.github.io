@@ -1,0 +1,49 @@
+#cldFrame{
+    //position: relative;
+    //margin: 10px auto;
+}
+#cldBody{
+    margin: 10px;
+    position: absolute;
+    //width: 420px;
+}
+#top{
+    position: relative;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+#topDate{
+    font-size: 25px;
+}
+.curDate{
+    //font-weight: bold;
+    text-decoration:underline
+}
+.contentDate{
+    color: red;
+    //font-weight: bold;
+}
+table{
+    background-color: #f7f7f7;
+}
+#week td{
+    font-size: 15px;
+}
+td{
+    height: 45px;
+    width: 45px;
+    text-align: center;
+    font-family: Simsun;
+    font-size: 20px;
+}
+#left, #right{
+    position: absolute;
+    width: 45px;
+    height: 45px;
+}
+#left{left: 0px;}
+#right{right: 0px;}
+#left:hover, #right:hover{
+    background-color: rgba(30, 30, 30, 0.2);
+}
