@@ -226,7 +226,7 @@
 						this.tbod[nn] = i
 						nn += 1;
 						if (this.ri == i){
-							this.daycolor[nn-1] = "background-color: yellow"
+							this.daycolor[nn-1] = "background-color: #FFEFDB"
 						}
 					}
 					for (i=nn; i<35; i++) {
@@ -304,6 +304,7 @@
 					this.nian = year
 					this.yue = month
 					this.ri = day
+					this.showCld(this.nian,this.yue,this.whatDay(this.nian,this.yue));
 					this.contentshow = eval("this."+this.diary_now)[year+"-"+month+"-"+day]
 				}
 			}
