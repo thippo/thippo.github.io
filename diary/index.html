@@ -22,6 +22,9 @@
 		<script src="diary.js"></script>
 		<script src="meandparents.js"></script>
 		<script src="thandggh.js"></script>
+		<script src="bw.js"></script>
+		<script src="zr.js"></script>
+		<script src="yihan.js"></script>
 		<link rel="stylesheet" href="calendar.css">
 	</head>
 	
@@ -121,6 +124,15 @@
 					<div class="form-check">
 						<input class="form-check-input" type="radio" value="thandggh_dict" v-model="diary_now" @change="switch_dairy()"><label class="form-check-label" for="flexCheckDefault">我与耿高惠</label>
 					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" value="bw_dict" v-model="diary_now" @change="switch_dairy()"><label class="form-check-label" for="flexCheckDefault">毕雯</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" value="zr_dict" v-model="diary_now" @change="switch_dairy()"><label class="form-check-label" for="flexCheckDefault">张冉</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" value="yihan_dict" v-model="diary_now" @change="switch_dairy()"><label class="form-check-label" for="flexCheckDefault">遗憾</label>
+					</div>
 					<br>
 					<br>
 				</div>
@@ -136,10 +148,10 @@
 						</ol>
 					</nav>
 
-<div class="progress border border-secondary" style="height: 10px;">
-<div v-for="item in [...new Array(1439).keys()]" :class="wholeday[item]" role="progressbar" style="width: 100%" :id="'time'+item"></div>
-</div>
-<br>
+					<div class="progress border border-secondary" style="height: 10px;">
+						<div v-for="item in [...new Array(1439).keys()]" :class="wholeday[item]" role="progressbar" style="width: 100%" :id="'time'+item"></div>
+					</div>
+					<br>
 
 					<div v-for="item in contentshow" class="card text-left">
 						<div class="card-body">
@@ -159,6 +171,9 @@
 				diary_dict: {},
 				meandparents_dict: {},
 				thandggh_dict: {},
+				bw_dict: {},
+				zr_dict: {},
+				yihan_dict: {},
 				diary_now: "diary_dict",
 				monthDay: [31,0,31,30,31,30,31,31,30,31,30,31],
 				topDate: "",
@@ -348,6 +363,9 @@
 		app_vue.diary_dict = diary_dict
 		app_vue.meandparents_dict = meandparents_dict
 		app_vue.thandggh_dict = thandggh_dict
+		app_vue.bw_dict = bw_dict
+		app_vue.zr_dict = zr_dict
+		app_vue.yihan_dict = yihan_dict
 		var curDate = new Date();
 		var curYear = curDate.getFullYear();
 		var curMonth = curDate.getMonth() + 1;
@@ -356,7 +374,6 @@
 		app_vue.ri = curDate.getDate()
 		app_vue.showCld(curYear,curMonth,app_vue.whatDay(curYear,curMonth));
 		app_vue.getdate(app_vue.ri)
-		//app_vue.contentshow = eval(app_vue.diary_now)[curYear+"-"+curMonth+"-"+curDate.getDate()]
 		</script>
 
 		<script>
