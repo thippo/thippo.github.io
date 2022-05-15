@@ -169,7 +169,7 @@
 			curDate.setDate(now_day-1)
 			var pre_month = curDate.getMonth()+1;
 			var pre_day = curDate.getDate()
-			curDate.setDate(now_day+2)
+			curDate.setDate(now_day+1)
 			var next_month = curDate.getMonth()+1;
 			var next_day = curDate.getDate()
 			$("#todaybirth").html("<font size='2px'>昨日寿星："+birthday_data[pre_month][pre_day]+"</font>　<strong>今日寿星："+birthday_data[now_month][now_day]+"</strong>　<font size='2px'>明日寿星："+birthday_data[next_month][next_day]+"</font>  ")
