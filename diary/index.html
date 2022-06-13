@@ -19,7 +19,8 @@
 		<script src="../static/bootstrap5/js/bootstrap.min.js"></script>
 		<script src="../static/vue.min.js"></script>
 		<script src="../static/echarts.min.js"></script>
-		<script src="diary.js"></script>
+		<script src="diary_20210328_20220327.js"></script>
+		<script src="diary_20220328_20230327.js"></script>
 		<script src="meandparents.js"></script>
 		<script src="thandggh.js"></script>
 		<script src="bw.js"></script>
@@ -360,7 +361,9 @@
 				}
 			}
 		})
-		app_vue.diary_dict = diary_dict
+		var lin_array = []
+		lin_array =$.extend(diary_20210328_20220327_dict, diary_20220328_20230327_dict)
+		app_vue.diary_dict = lin_array
 		app_vue.meandparents_dict = meandparents_dict
 		app_vue.thandggh_dict = thandggh_dict
 		app_vue.bw_dict = bw_dict
