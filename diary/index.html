@@ -333,6 +333,7 @@
 					var curYear = curDate.getFullYear();
 					var curMonth = curDate.getMonth() + 1;
 					this.showCld(curYear,curMonth,this.whatDay(curYear,curMonth));
+					this.getdate(this.ri)
 				},
 				getdate: function(day){
 					this.wholeday = Array(1439).fill("progress-bar bg-light")
