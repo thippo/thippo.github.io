@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+		<script>
+			var password="";
+			password=prompt('请输入密码 (本页面需输入密码才可进入):','');
+			if (password != ' '){
+				alert("密码不正确,无法进入本站!!");
+				window.location.href="index";
+			}
+		</script>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../static/bootstrap5/css/bootstrap.min.css">
+		<script src="../static/jquery-3.2.1.min.js"></script>
+		<!--<script src="../static/bootstrap5/popper.js"></script>-->
+		<script src="../static/bootstrap5/js/bootstrap.min.js"></script>
+		<script src="../static/vue.min.js"></script>
+		<script src="data.js"></script>
+	</head>
+	
+	<body>
+
+		<div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+				<a class="navbar-brand" href="#"> THIPPO</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item"><a class="nav-link" href="../weight/index.html">体重记录 </a></li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">财务</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="../wealth/anabalancesheet.html">投资分析</a></li>
+								<li><a class="dropdown-item" href="../wealth/balancesheet.html">资产负债表</a></li>
+							</ul>
+						</li>
+						<!--<li class="nav-item"><a class="nav-link" href="transaction/index.html">投资记录 </a></li>-->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">投资</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="../invest/tradetiming.html">择时分析</a></li>
+								<li><a class="dropdown-item" href="../invest/convertiblebond.html">可转债YTM</a></li>
+								<li><a class="dropdown-item" href="../invest/dailyk.html">日K线</a></li>
+								<li><a class="dropdown-item" href="../invest/newshare.html">七天实践</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">工具箱</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="../tools/kellycriterion.html">凯利公式</a></li>
+								<li><a class="dropdown-item" href="../tools/bitcoinaddress.html">比特币地址</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			
+			<div class="progress" style="margin-top:10px;">
+				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+			</div>
+
+
+			<div class="row" style="margin-top:10px;">
+				<div class="col-2">
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action" @click="click('2021')">2021年总结</a>
+						<a href="#" class="list-group-item list-group-item-action" @click="click('2020')">2020年总结</a>
+						<a href="#" class="list-group-item list-group-item-action" @click="click('2019')">2019年总结</a>
+					</div>
+				</div>
+
+				<div class="col-10">
+					<div class="row">
+					<img :src="nowsummary" alt=""/>
+				</div>
+				</div>
+			</div>
+
+		</div>
+		
+		<script>
+		var app_vue = new Vue({
+			el: '#appvue',
+			data: {
+				base64pics: {},
+				nowsummary: "",
+			},
+			methods: {
+				click: function(year){
+					this.nowsummary = this.base64pics[year]
+				}
+			}
+		})
+		app_vue.base64pics = pics
+		app_vue.nowsummary = pics["2021"]
+		</script>
+
+		<script>
+			var year=new Date().getFullYear();
+			var month=new Date().getMonth()+1;
+			var date=new Date().getDate();
+			s1  =  "1991-2-1";
+			s2  =  year+'-'+month+'-'+date;
+			day = DateDiff(s1, s2)/36525;
+			if (day<0.2){
+				$("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+			} else if (0.2<=day && day<0.4){
+				$("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+			} else if (0.4<=day && day<0.60){
+				$("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+			} else {
+				$("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+			};
+			function DateDiff(sDate1, sDate2){  
+				var aDate, oDate1, oDate2, iDays;
+				aDate = sDate1.split("-");
+				oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				aDate = sDate2.split("-");
+				oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+				return iDays;
+			};
+		</script>
+
+    </body>
+	
+</html>
