@@ -101,18 +101,14 @@
 									<tr><td v-for="item in [14, 15, 16, 17, 18, 19, 20]" @click="getdate(tbod[item])" :class="tbodcss[item]" :style="daycolor[item]">{{ tbod[item] }}</td></tr>
 									<tr><td v-for="item in [21, 22, 23, 24, 25, 26, 27]" @click="getdate(tbod[item])" :class="tbodcss[item]" :style="daycolor[item]">{{ tbod[item] }}</td></tr>
 									<tr><td v-for="item in [28, 29, 30, 31, 32, 33, 34]" @click="getdate(tbod[item])" :class="tbodcss[item]" :style="daycolor[item]">{{ tbod[item] }}</td></tr>
-									<!--<
-									tr><td @click="getdate(tbod[0])" :class="tbodcss[0]" :style="daycolor[0]">{{ tbod[0] }}</td><td @click="getdate(tbod[1])" :class="tbodcss[1]" :style="daycolor[1]">{{ tbod[1] }}</td><td @click="getdate(tbod[2])" :class="tbodcss[2]" :style="daycolor[2]">{{ tbod[2] }}</td><td @click="getdate(tbod[3])" :class="tbodcss[3]" :style="daycolor[3]">{{ tbod[3] }}</td><td @click="getdate(tbod[4])" :class="tbodcss[4]" :style="daycolor[4]">{{ tbod[4] }}</td><td @click="getdate(tbod[5])" :class="tbodcss[5]" :style="daycolor[5]">{{ tbod[5] }}</td><td @click="getdate(tbod[6])" :class="tbodcss[6]" :style="daycolor[6]">{{ tbod[6] }}</td></tr>
-									<tr><td @click="getdate(tbod[7])" :class="tbodcss[7]" :style="daycolor[7]">{{ tbod[7] }}</td><td @click="getdate(tbod[8])" :class="tbodcss[8]" :style="daycolor[8]">{{ tbod[8] }}</td><td @click="getdate(tbod[9])" :class="tbodcss[9]" :style="daycolor[9]">{{ tbod[9] }}</td><td @click="getdate(tbod[10])" :class="tbodcss[10]" :style="daycolor[10]">{{ tbod[10] }}</td><td @click="getdate(tbod[11])" :class="tbodcss[11]" :style="daycolor[11]">{{ tbod[11] }}</td><td @click="getdate(tbod[12])" :class="tbodcss[12]" :style="daycolor[12]">{{ tbod[12] }}</td><td @click="getdate(tbod[13])" :class="tbodcss[13]" :style="daycolor[13]">{{ tbod[13] }}</td></tr>
-									<tr><td @click="getdate(tbod[14])" :class="tbodcss[14]" :style="daycolor[14]">{{ tbod[14] }}</td><td @click="getdate(tbod[15])" :class="tbodcss[15]" :style="daycolor[15]">{{ tbod[15] }}</td><td @click="getdate(tbod[16])" :class="tbodcss[16]" :style="daycolor[16]">{{ tbod[16] }}</td><td @click="getdate(tbod[17])" :class="tbodcss[17]" :style="daycolor[17]">{{ tbod[17] }}</td><td @click="getdate(tbod[18])" :class="tbodcss[18]" :style="daycolor[18]">{{ tbod[18] }}</td><td @click="getdate(tbod[19])" :class="tbodcss[19]" :style="daycolor[19]">{{ tbod[19] }}</td><td @click="getdate(tbod[20])" :class="tbodcss[20]" :style="daycolor[20]">{{ tbod[20] }}</td></tr>
-									<tr><td @click="getdate(tbod[21])" :class="tbodcss[21]" :style="daycolor[21]">{{ tbod[21] }}</td><td @click="getdate(tbod[22])" :class="tbodcss[22]" :style="daycolor[22]">{{ tbod[22] }}</td><td @click="getdate(tbod[23])" :class="tbodcss[23]" :style="daycolor[23]">{{ tbod[23] }}</td><td @click="getdate(tbod[24])" :class="tbodcss[24]" :style="daycolor[24]">{{ tbod[24] }}</td><td @click="getdate(tbod[25])" :class="tbodcss[25]" :style="daycolor[25]">{{ tbod[25] }}</td><td @click="getdate(tbod[26])" :class="tbodcss[26]" :style="daycolor[26]">{{ tbod[26] }}</td><td @click="getdate(tbod[27])" :class="tbodcss[27]" :style="daycolor[27]">{{ tbod[27] }}</td></tr>
-									<tr><td @click="getdate(tbod[28])" :class="tbodcss[28]" :style="daycolor[28]">{{ tbod[28] }}</td><td @click="getdate(tbod[29])" :class="tbodcss[29]" :style="daycolor[29]">{{ tbod[29] }}</td><td @click="getdate(tbod[30])" :class="tbodcss[30]" :style="daycolor[30]">{{ tbod[30] }}</td><td @click="getdate(tbod[31])" :class="tbodcss[31]" :style="daycolor[31]">{{ tbod[31] }}</td><td @click="getdate(tbod[32])" :class="tbodcss[32]" :style="daycolor[32]">{{ tbod[32] }}</td><td @click="getdate(tbod[33])" :class="tbodcss[33]" :style="daycolor[33]">{{ tbod[33] }}</td><td @click="getdate(tbod[34])" :class="tbodcss[34]" :style="daycolor[34]">{{ tbod[34] }}</td></tr>
-								-->
+									<tr><td v-for="item in [35, 36, 37, 38, 39, 40, 41]" @click="getdate(tbod[item])" :class="tbodcss[item]" :style="daycolor[item]">{{ tbod[item] }}</td></tr>
 								<tbody>
 								</tbody>
 							</table>
 						</div>
 					</div>
+					<br>
+					<br>
 					<br>
 					<br>
 					<br>
@@ -189,9 +185,9 @@
 				diary_now: "diary_dict",
 				monthDay: [31,0,31,30,31,30,31,31,30,31,30,31],
 				topDate: "",
-				tbod: Array(35).fill(""),
-				tbodcss: Array(35).fill(""),
-				daycolor: Array(35).fill(""),
+				tbod: Array(42).fill(""),
+				tbodcss: Array(42).fill(""),
+				daycolor: Array(42).fill(""),
 				wholeday: Array(1439).fill("progress-bar bg-light"),
 				nian: "",
 				yue: "",
@@ -231,7 +227,7 @@
 				},
 				showCld: function(year, month, firstDay){
 
-					this.daycolor = Array(35).fill("")
+					this.daycolor = Array(42).fill("")
 
 					var nn = 0;
 					var tagClass = "";
@@ -279,7 +275,7 @@
 							this.daycolor[nn-1] = "background-color: #FFEFDB"
 						}
 					}
-					for (i=nn; i<35; i++) {
+					for (i=nn; i<42; i++) {
 						this.tbod[nn] = ""
 						this.tbodcss[nn] = ""
 						nn += 1;
