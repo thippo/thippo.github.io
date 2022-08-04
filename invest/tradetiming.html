@@ -322,6 +322,7 @@
                                 ['2022-8-1', 4188.68, 794498.06, 0],
                                 ['2022-8-2', 4107.02, 791224.95, 0],
                                 ['2022-8-3', 4066.98, 792566.96, 0],
+                                ['2022-8-4', 4101.54, 793433.53, 0],
                                 ]
                 </script>
 
@@ -437,7 +438,7 @@
                                 var x_y = []
                                 for (i = 1; i < rawdata.length; i++) { 
                                         hs300.push((((rawdata[i][1]-rawdata[i-1][1])/rawdata[i-1][1])))
-                                        my.push((((rawdata[i][2]-rawdata[i][4])-rawdata[i-1][2])/rawdata[i-1][2]))
+                                        my.push((((rawdata[i][2]-rawdata[i][3])-rawdata[i-1][2])/rawdata[i-1][2]))
                                 }
                                 for (j = 0; j < my.length; j++) {
                                         x_y.push([hs300[j],my[j]])
