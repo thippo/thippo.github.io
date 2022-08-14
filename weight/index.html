@@ -131,7 +131,7 @@
 					data: function(){
 						var lin = []
 						for (i=0;i<this.rawdata.length;i++){
-							if (this.diff_day(this.rawdata[i][0]) > 0){
+							if (this.diff_day(this.rawdata[i][0]) >= 0){
 								lin.push([this.rawdata[i][1], this.diff_day(this.rawdata[i][0])])
 							}
 						}
