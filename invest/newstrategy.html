@@ -32,6 +32,7 @@
 							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">投资</a>
 							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
 								<li><a class="dropdown-item" href="tradetiming.html">择时分析</a></li>
+								<li><a class="dropdown-item" href="newstrategy.html">新股策略</a></li>
 								<li><a class="dropdown-item" href="convertiblebond.html">可转债YTM</a></li>
 								<li><a class="dropdown-item" href="dailyk.html">日K线</a></li>
 								<li><a class="dropdown-item" href="newshare.html">七天实践</a></li>
@@ -62,11 +63,9 @@
   							<a v-for="(item,index) in stocks_list" href="#" class="list-group-item list-group-item-action" @click="getday(index)">{{ item[0] }}</a>
 						</div>
 					</div>
-					<div class="col-7">
+					<div class="col-6">
 
-
-						<div id="main_items" style="width:100%;height:500px;" v-show="!show_if"></div>
-
+						<div id="main_YTM" style="width:100%;height:500px;" v-show="!show_if"></div>
 
 						<table class="table table-hover" v-show="show_if">
 							<thead>
@@ -74,15 +73,15 @@
 									<th scope="col">股票代码</th>
 									<th scope="col">持有天数</th>
 									<th scope="col">盈亏</th>
-									<th scope="col">日均盈亏</th>
+									<th scope="col">年化收益率</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="item in stocks_list[now_day][1]">
 									<td>{{ item[0] }}</td>
-									<td>{{ item[1] }}</td>
 									<td>{{ item[2] }}</td>
-									<td>{{ avrg_profit(item[1], item[2]) }}</td>
+									<td>{{ item[3] }}</td>
+									<td>{{ YTM(item[1], item[2], item[3]) }}%</td>
 								</tr>
 								<tr v-show="stocks_list[now_day][1].length>=1">
 									<td>总和</td>
@@ -93,7 +92,11 @@
 								</tbody>
 							</table>
 					</div>
-					<div class="col-3">
+					<div class="col-4">
+
+						<div id="main_accurate" style="width:100%;height:280px;" v-show="!show_if"></div>
+						<div id="main_items" style="width:100%;height:500px;" v-show="!show_if"></div>
+
 						<table class="table table-hover" v-show="show_if">
 							<thead>
 								<tr>
@@ -125,8 +128,8 @@
 					[
 						"20220907",
 						[
-							["688439", null, null],
-							["301209", null, null],							
+							["688439", null, null, null],
+							["301209", null, null, null],							
 						],
 						[
 							"301115",
@@ -166,7 +169,7 @@
 					[
 						"20220817",
 						[
-							["301121", 8, -1972.08],
+							["301121", 11035, 8, -1972.08],
 						],
 						[
 							"301336",
@@ -183,7 +186,7 @@
 					[
 						"20220809",
 						[
-							["301195", 16, -650.02],
+							["301195", 7654, 16, -650.02],
 						],
 						[
 							"688373",
@@ -216,11 +219,11 @@
 					[
 						"20220718",
 						[
-							["688053", 45, 805.9],
-							["301175", 38, -4809.54],
-							["301239", 32, -2684.74],
-							["688237", 38, -69.3],
-							["001309", 16, 4201.2],
+							["688053", 11040, 45, 805.9],
+							["301175", 19320, 38, -4809.54],
+							["301239", 14409, 32, -2684.74],
+							["688237", 13084, 38, -69.3],
+							["001309", 10570, 16, 4201.2],
 						],
 						[
 							"688375",
@@ -236,12 +239,12 @@
 					[
 						"20220705",
 						[
-							["688120", 3, 4768.91],
-							["688297", 8, -1352.98],
-							["688349", 7, 1196.4],
-							["301160", 66, -742.34],
-							["301238", 29, -1322.73],
-							["301302", 8, -2202.62],
+							["688120", 51674, 3, 4768.91],
+							["688297", 10800, 8, -1352.98],
+							["688349", 8210, 7, 1196.4],
+							["301160", 9068, 66, -742.34],
+							["301238", 8032, 29, -1322.73],
+							["301302", 14800, 8, -2202.62],
 						],
 						[
 							"603235",
@@ -274,27 +277,105 @@
 						this.show_if = 0
 					}
 				},
-				avrg_profit: function(d, p){
-					return (p/d).toFixed(2)
+				YTM: function(b, d, p){
+					return ((p/b)/(d/365)).toFixed(2)
 				},
 				day_sum: function(d){
 					s = 0
 					for (i=0;i<d.length;i++){
-						s += d[i][2]
+						s += d[i][3]
 					}
 					return s.toFixed(2)
 				},
 				summary: function(){
-					days = []
+					total_trade = 0
+					correct_trade = 0
+					for (i=0;i<this.stocks_list.length;i++){
+						for (j=0;j<this.stocks_list[i][1].length;j++){
+							if (this.stocks_list[i][1][j][3] != null){
+								total_trade += 1
+									if (this.stocks_list[i][1][j][3] > 0){
+										correct_trade += 1
+									}
+							}
+						}
+					}
+					option_accurate = {
+						series: [
+							{
+								type: 'gauge',
+								progress: {
+									show: true,
+									width: 10
+								},
+								axisTick: {
+									show: false
+								},
+								detail: {
+									valueAnimation: true,
+									fontSize: 30,
+									offsetCenter: [0, '100%'],
+									formatter: '{value}%\n'+correct_trade+'/'+total_trade,
+								},
+								data: [
+									{
+										value: ((100*correct_trade)/total_trade).toFixed(2)
+									}
+								]
+							}
+						]
+					};
+					var myChart_accurate = echarts.init(document.getElementById('main_accurate'));
+					myChart_accurate.setOption(option_accurate,true);
+
+					YTM_data = []
+					for (i=0;i<this.stocks_list.length;i++){
+						for (j=0;j<this.stocks_list[i][1].length;j++){
+							YTM_data.push([this.stocks_list[i][1][j][2], this.YTM(this.stocks_list[i][1][j][1], this.stocks_list[i][1][j][2], this.stocks_list[i][1][j][3])])
+						}
+					}
+					option_YTM = {
+						xAxis: {},
+						yAxis: {},
+						series: [
+							{
+								type: 'scatter',
+								symbolSize: 10,
+								data: YTM_data,
+								itemStyle: {
+									normal: {
+										color:function(params){
+											var index_color = params.value[1];
+											if(index_color > 0){
+												return '#c23531';
+											}else{
+												return '#009933';
+											}
+										}, 
+										textStyle: {
+											color:"#61a0a8"
+										}
+									}
+								},
+							}
+						]
+					};
+					var myChart_YTM = echarts.init(document.getElementById('main_YTM'));
+					myChart_YTM.setOption(option_YTM,true);
+
+					days = ['Sum']
 					day_sum = []
+					total_profit = 0
 					for (i=0;i<this.stocks_list.length;i++){
 						s = 0
 						days.push(this.stocks_list[i][0])
 						for (j=0;j<this.stocks_list[i][1].length;j++){
-							s += this.stocks_list[i][1][j][2]
+							s += this.stocks_list[i][1][j][3]
 						}
+						total_profit += s
 						day_sum.push(s.toFixed(2))
 					}
+					day_sum.unshift(total_profit.toFixed(2))
 					option_items = {
 						xAxis: [
 							{
@@ -330,7 +411,7 @@
 											if(index_color > 0){
 												return '#c23531';
 											}else{
-												return '#3CB371';
+												return '#009933';
 											}
 										}, 
 										textStyle: {
@@ -339,7 +420,7 @@
 									}
 								}
 							},
-						]
+						],
 					};
 					var myChart_items = echarts.init(document.getElementById('main_items'));
 					myChart_items.setOption(option_items,true);
