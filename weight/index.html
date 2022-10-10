@@ -125,7 +125,7 @@
 						var new_date = new Date()
 						var today = new Date(new_date.getFullYear()+"-"+(new_date.getMonth()+1)+"-"+new_date.getDate())
 						var target_data = new Date(data)
-						return (target_data - today) / (1000 * 3600 * 24)
+						return Math.ceil((target_data - today) / (1000 * 3600 * 24))
 					}
 				},
 				computed: {
