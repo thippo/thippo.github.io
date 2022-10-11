@@ -66,6 +66,7 @@
 					<div class="col-6">
 
 						<div id="main_YTM" style="width:100%;height:500px;" v-show="!show_if"></div>
+						<div id="main_accurate" style="width:100%;height:280px;" v-show="!show_if"></div>
 
 						<table class="table table-hover" v-show="show_if">
 							<thead>
@@ -94,7 +95,6 @@
 					</div>
 					<div class="col-4">
 
-						<div id="main_accurate" style="width:100%;height:280px;" v-show="!show_if"></div>
 						<div id="main_items" style="width:100%;height:500px;" v-show="!show_if"></div>
 
 						<table class="table table-hover" v-show="show_if">
@@ -125,6 +125,13 @@
 				now_day: 0,
 				show_if: 0,
 				stocks_list: [
+					[
+						"20221011",
+						[
+							["301327", null, null, null],
+						],
+						[],
+					],
 					[
 						"20220915",
 						[
