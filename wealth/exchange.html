@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../static/bootstrap5/css/bootstrap.min.css">
+		<script src="../static/jquery-3.2.1.min.js"></script>
+		<!--<script src="../static/bootstrap5/popper.js"></script>-->
+		<script src="../static/bootstrap5/js/bootstrap.min.js"></script>
+		<script src="../static/vue.min.js"></script>
+		<script src="../static/echarts.min.js"></script>
+	</head>
+	
+	<body>
+
+		<div class="container" id="appvue" style="background-color:#F5F5F5;">
+
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded">
+				<a class="navbar-brand" href="#"> THIPPO</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item"><a class="nav-link" href="../weight/index.html">体重记录 </a></li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">财务</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="anabalancesheet.html">投资分析</a></li>
+								<li><a class="dropdown-item" href="balancesheet.html">资产负债表</a></li>
+								<li><a class="dropdown-item" href="exchange.html">外汇</a></li>
+							</ul>
+						</li>
+						<!--<li class="nav-item"><a class="nav-link" href="transaction/index.html">投资记录 </a></li>-->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">投资</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="../invest/tradetiming.html">择时分析</a></li>
+								<li><a class="dropdown-item" href="../invest/newstrategy.html">新股策略</a></li>
+								<li><a class="dropdown-item" href="../invest/convertiblebond.html">可转债YTM</a></li>
+								<li><a class="dropdown-item" href="../invest/newshare.html">七天实践</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">工具箱</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+								<li><a class="dropdown-item" href="../tools/kellycriterion.html">凯利公式</a></li>
+								<li><a class="dropdown-item" href="../tools/bitcoinaddress.html">比特币地址</a></li>
+								<li><a class="dropdown-item" href="../tools/dailyk.html">日K线</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+				
+			<div class="progress" style="margin-top:10px;">
+				<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;" id="lifebar"></div>
+			</div>
+					
+		<script>
+			var password="";
+			password=prompt('请输入密码 (本页面需输入密码才可进入):','');
+			if (password != ' '){
+				alert("密码不正确,无法进入本站!!");
+				window.location.href="index";
+			}
+		</script>
+		
+			<div class="row">
+				<div class="col-3">
+					<br>
+					<br>
+					<div class="card border-dark">
+						<div class="card-header" id="money_dollar">美元</div>
+						<div class="card-body text-dark">
+							<p class="card-text" id="cost_dollar"></p>
+							<p class="card-text" id="now_dollar"></p>
+							<p class="card-text" id="exchange_dollar"></p>
+							<p class="card-text" id="nowcost_dollar"></p>
+							<p class="card-text" id="profitloss_dollar"></p>
+						</div>
+					</div>
+				</div>
+				<div class="col-9">
+					<div id="main_dollar" style="width:100%;height:500px;"></div>
+				</div>
+			</div>
+			</br>
+			<div class="row">
+				<div class="col-3">
+					<br>
+					<br>
+					<div class="card border-dark">
+						<div class="card-header" id="money_yen">日元</div>
+						<div class="card-body text-dark">
+							<p class="card-text" id="cost_yen"></p>
+							<p class="card-text" id="now_yen"></p>
+							<p class="card-text" id="exchange_yen"></p>
+							<p class="card-text" id="nowcost_yen"></p>
+							<p class="card-text" id="profitloss_yen"></p>
+						</div>
+					</div>
+				</div>
+				<div class="col-9">
+					<div id="main_yen" style="width:100%;height:500px;"></div>
+				</div>
+			</div>
+			</br>
+			</br>
+			</br>
+			</br>
+
+		</div>
+				
+		<script>
+			data_dollar_log = '\
+2021-04-15 3932.94 600美元\n\
+2020-08-07 17330 2330欧元\n\
+2020-02-03 29810.043513 4237.21美元'
+			data_dollar_date = [
+								'202101',
+								'202102',
+								'202103',
+								'202104',
+								'202105',
+								'202106',
+								'202107',
+								'202108',
+								'202109',
+								'202110',
+								'202111',
+								'202112',
+								'202201',
+								'202202',
+								'202203',
+								'202204',
+								'202205',
+								'202206',
+								'202207',
+								'202208',
+								'202209',
+								'202210',
+								'202211',
+								'202212',
+								'202301',
+								'202302',
+								'202303',
+								'202304',
+								'202305',
+								'202306',
+								'202307',
+								'202308',
+								'202309',
+								]
+			data_dollar_cost = [
+								47140.043513,
+								47140.043513,
+								47140.043513,
+								47140.043513,
+								47140.043513,
+								47140.043513,
+								47140.043513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								51072.983513,
+								]
+			data_dollar_now = [
+								6963.25+2503.63,
+								7365.73+2503.72,
+								6621.61+2503.81,
+								6667.95+2503.91,
+								6401.20+2503.98,
+								6859.07+2504.03,
+								6152.06+2504.08,
+								6719.00+2504.14,
+								6141.68+2504.19,
+								6640.56+2504.24,
+								7041.11+2504.29,
+								5808.86+2504.35,
+								6103.41+2504.4,
+								5825.14+2504.45,
+								5376.80+2504.5,
+								5020.60+2504.55,
+								5020.65+2504.61,
+								5050.41+2504.66,
+								5082.37+2504.71,
+								5022.08+2504.76,
+								5000.26+2504.82,
+								5024.53+2504.87,
+								5113.80+2504.92,
+								]
+			data_dollar_exchange = [
+									6.4709,
+									6.4713,
+									6.5713,
+									6.4672,
+									6.3682,
+									6.4601,
+									6.4602,
+									6.4679,
+									6.4854,
+									6.3907,
+									6.3794,
+									6.3757,
+									6.3746,
+									6.3222,
+									6.3482,
+									6.6177,
+									6.6607,
+									6.7114,
+									6.7437,
+									6.8906,
+									7.0998,
+									7.1768,
+									7.1769,
+									]
+			data_dollar_base = []
+			data_dollar_up = []
+			data_dollar_down = []
+			for (i=0;i<data_dollar_now.length;i++){
+				if (data_dollar_exchange[i]>=1){
+					data_dollar_base.push(data_dollar_now[i])
+					data_dollar_up.push(data_dollar_now[i]*(data_dollar_exchange[i]-1))
+					data_dollar_down.push('-')
+				}else{
+					data_dollar_base.push(data_dollar_now[i]-data_dollar_now[i]*(1-data_dollar_exchange[i]))
+					data_dollar_up.push('-')					
+					data_dollar_down.push(data_dollar_now[i]*(1-data_dollar_exchange[i]))
+				}
+			}
+
+			document.getElementById("cost_dollar").innerText += "人民币成本："+data_dollar_cost[data_dollar_cost.length-1];
+			document.getElementById("now_dollar").innerText += "美元现值："+data_dollar_now[data_dollar_now.length-1];
+			document.getElementById("exchange_dollar").innerText += "美元汇率中间价："+data_dollar_exchange[data_dollar_exchange.length-1];
+			document.getElementById("nowcost_dollar").innerText += "人民币现值："+data_dollar_now[data_dollar_now.length-1]*data_dollar_exchange[data_dollar_exchange.length-1];
+			profit_loss = data_dollar_now[data_dollar_now.length-1]*data_dollar_exchange[data_dollar_exchange.length-1]-data_dollar_cost[data_dollar_cost.length-1]
+			document.getElementById("profitloss_dollar").innerText += "盈亏："+profit_loss;
+			document.getElementById("money_dollar").setAttribute("title", data_dollar_log)
+
+			option_dollar = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: {
+					type: 'category',
+					data: data_dollar_date,
+				},
+				yAxis: {
+					type: 'value'
+				},
+				series: [
+					{
+						type: 'line',
+						step: 'end',
+						showSymbol: false,
+						lineStyle: {
+							color: '#000000',
+							width: 2,
+							type: 'dashed'
+						},
+						data: data_dollar_cost
+					},
+					{
+						type: 'line',
+						smooth: true,
+						symbol: false,
+						lineStyle: {
+							color: '#000080',
+							width: 2,
+						},
+						data: data_dollar_now
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						silent: true,
+						itemStyle: {
+							borderColor: 'transparent',
+							color: 'transparent'
+						},
+						emphasis: {
+							itemStyle: {
+								borderColor: 'transparent',
+								color: 'transparent'
+							}
+						},
+						data: data_dollar_base
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_dollar_up
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_dollar_down
+					}
+				],
+				dataZoom: [
+					{
+						start: 0,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						start: 50,
+						end: 100
+					}
+				],
+			};
+			var myChart_dollar = echarts.init(document.getElementById('main_dollar'));
+			myChart_dollar.setOption(option_dollar,true);
+
+
+		</script>
+
+		<script>
+			data_yen_log = '\
+2021-7-9 -49249.595 -773864\n\
+2019-12-26 5962.695 93000\n\
+2019-11-28 2668.73 41369\n\
+2019-10-30 2168.73 33269\n\
+2019-09-26 3425.79 51555\n\
+2019-08-29 3046.73 44879\n\
+2019-07-26 3890.52 61192\n\
+2019-06-28 4626.44 72100\n\
+2019-05-29 3111.3 49000\n\
+2019-04-29 3847.08 63540\n\
+2019-03-28 3465.76 56629\n\
+2019-02-28 1487.21 24557\n\
+2019-02-11 2012 32511\n\
+2019-01-26 3000 48509\n\
+2018-12-26 3000 47962\n\
+2018-11-28 3000 48912\n\
+2018-10-30 3000 48344\n\
+2018-09-29 3000.5 49432'
+			data_yen_date = [
+								'202101',
+								'202102',
+								'202103',
+								'202104',
+								'202105',
+								'202106',
+								'202107',
+								'202108',
+								'202109',
+								'202110',
+								'202111',
+								'202112',
+								'202201',
+								'202202',
+								'202203',
+								'202204',
+								'202205',
+								'202206',
+								'202207',
+								'202208',
+								'202209',
+								'202210',
+								'202211',
+								'202212',
+								'202301',
+								'202302',
+								'202303',
+								'202304',
+								'202305',
+								'202306',
+								'202307',
+								'202308',
+								'202309',
+								]
+			data_yen_cost = [
+								10*54713.035,
+								10*54713.035,
+								10*54713.035,
+								10*54713.035,
+								10*54713.035,
+								10*54713.035,
+								10*54713.035,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								10*5463.44,
+								]
+			data_yen_now = [
+								773864.00+93009.00,
+								773864.00+93009.00,
+								773864.00+93009.00,
+								773864.00+93009.00,
+								773864.00+93009.00,
+								773864.00+93009.00,
+								773864.00+93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								93009.00,
+								]
+			data_yen_exchange = [
+									10*0.062021,
+									10*0.060831,
+									10*0.059554,
+									10*0.059382,
+									10*0.057939,
+									10*0.058428,
+									10*0.059013,
+									10*0.058822,
+									10*0.057929,
+									10*0.056251,
+									10*0.056046,
+									10*0.055415,
+									10*0.055247,
+									10*0.054663,
+									10*0.051965,
+									10*0.050616,
+									10*0.052102,
+									10*0.049136,
+									10*0.050154,
+									10*0.049800,
+									10*0.049276,
+									10*0.048750,
+									10*0.051723,
+									]
+			data_yen_base = []
+			data_yen_up = []
+			data_yen_down = []
+			for (i=0;i<data_yen_now.length;i++){
+				if (data_yen_exchange[i]<=1){
+					data_yen_base.push(data_yen_cost[i])
+					data_yen_up.push(data_yen_cost[i]/data_yen_exchange[i]-data_yen_cost[i])
+					data_yen_down.push('-')
+				}else{
+					data_yen_base.push(data_yen_cost[i]-(data_yen_now[i]-data_yen_cost[i]/data_yen_exchange[i]))
+					data_yen_up.push('-')					
+					data_yen_down.push(data_yen_now[i]-data_yen_cost[i]/data_yen_exchange[i])
+				}
+			}
+
+			document.getElementById("cost_yen").innerText += "人民币成本："+data_yen_cost[data_yen_cost.length-1];
+			document.getElementById("now_yen").innerText += "日元现值："+data_yen_now[data_yen_now.length-1];
+			document.getElementById("exchange_yen").innerText += "日元汇率中间价："+data_yen_exchange[data_yen_exchange.length-1];
+			document.getElementById("nowcost_yen").innerText += "人民币现值："+(data_yen_now[data_yen_now.length-1]*data_yen_exchange[data_yen_exchange.length-1])/10;
+			profit_loss = (data_yen_now[data_yen_now.length-1]*data_yen_exchange[data_yen_exchange.length-1] - data_yen_cost[data_yen_now.length-1])/10;
+			document.getElementById("profitloss_yen").innerText += "盈亏："+profit_loss;
+			document.getElementById("money_yen").setAttribute("title", data_yen_log)
+
+			option_yen = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: {
+					type: 'category',
+					data: data_yen_date,
+				},
+				yAxis: {
+					type: 'value'
+				},
+				series: [
+					{
+						type: 'line',
+						step: 'end',
+						showSymbol: false,
+						lineStyle: {
+							color: '#000000',
+							width: 2,
+							type: 'dashed'
+						},
+						data: data_yen_cost
+					},
+					{
+						type: 'line',
+						smooth: true,
+						symbol: false,
+						lineStyle: {
+							color: '#000080',
+							width: 2,
+						},
+						data: data_yen_now
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						silent: true,
+						itemStyle: {
+							borderColor: 'transparent',
+							color: 'transparent'
+						},
+						emphasis: {
+							itemStyle: {
+								borderColor: 'transparent',
+								color: 'transparent'
+							}
+						},
+						data: data_yen_base
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_yen_up
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_yen_down
+					}
+				],
+				dataZoom: [
+					{
+						start: 0,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						start: 50,
+						end: 100
+					}
+				],
+			};
+			var myChart_yen = echarts.init(document.getElementById('main_yen'));
+			myChart_yen.setOption(option_yen,true);
+
+
+		</script>
+
+		<script>
+			var year=new Date().getFullYear();
+			var month=new Date().getMonth()+1;
+			var date=new Date().getDate();
+			s1  =  "1991-2-1";
+			s2  =  year+'-'+month+'-'+date;
+			day = DateDiff(s1, s2)/36525;
+			if (day<0.2){
+				$("#lifebar").attr({class:"progress-bar bg-success",style:"width:"+100*day+"%;"});
+			} else if (0.2<=day && day<0.4){
+				$("#lifebar").attr({class:"progress-bar bg-info",style:"width:"+100*day+"%;"});
+			} else if (0.4<=day && day<0.60){
+				$("#lifebar").attr({class:"progress-bar",style:"width:"+100*day+"%;"});
+			} else {
+				$("#lifebar").attr({class:"progress-bar bg-warning",style:"width:"+100*day+"%;"});
+			};
+			function DateDiff(sDate1, sDate2){  
+				var aDate, oDate1, oDate2, iDays;
+				aDate = sDate1.split("-");
+				oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				aDate = sDate2.split("-");
+				oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+				iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);
+				return iDays;
+			};
+		</script>
+
+    </body>
+	
+</html>
