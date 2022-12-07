@@ -479,7 +479,7 @@
 				}
 			}
 
-			document.getElementById("cost_yen").innerText += "人民币成本："+data_yen_cost[data_yen_cost.length-1];
+			document.getElementById("cost_yen").innerText += "人民币成本："+data_yen_cost[data_yen_cost.length-1]/10;
 			document.getElementById("now_yen").innerText += "日元现值："+data_yen_now[data_yen_now.length-1];
 			document.getElementById("exchange_yen").innerText += "日元汇率中间价："+data_yen_exchange[data_yen_exchange.length-1];
 			document.getElementById("nowcost_yen").innerText += "人民币现值："+(data_yen_now[data_yen_now.length-1]*data_yen_exchange[data_yen_exchange.length-1])/10;
