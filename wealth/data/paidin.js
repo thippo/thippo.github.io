@@ -1,1 +1,1 @@
-paidin_capital_data = 442809.43
+paidin_capital_data = 446518.82
