@@ -103,6 +103,26 @@
 				</div>
 			</div>
 			</br>
+			<div class="row">
+				<div class="col-3">
+					<br>
+					<br>
+					<div class="card border-dark">
+						<div class="card-header" id="money_sgd">新加坡元</div>
+						<div class="card-body text-dark">
+							<p class="card-text" id="cost_sgd"></p>
+							<p class="card-text" id="now_sgd"></p>
+							<p class="card-text" id="exchange_sgd"></p>
+							<p class="card-text" id="nowcost_sgd"></p>
+							<p class="card-text" id="profitloss_sgd"></p>
+						</div>
+					</div>
+				</div>
+				<div class="col-9">
+					<div id="main_sgd" style="width:100%;height:500px;"></div>
+				</div>
+			</div>
+			</br>
 			</br>
 			</br>
 			</br>
@@ -673,6 +693,132 @@
 
 
 		</script>
+
+		<script>
+			data_sgd_log = '\
+2024-03-17 8107.5 1500新加坡元 电汇'
+			data_sgd_date = [
+								'202403',
+								]
+			data_sgd_cost = [
+								8107.5,
+								]
+			data_sgd_now = [
+								1700,
+								]
+			data_sgd_exchange = [
+									5.333,
+									]
+			data_sgd_base = []
+			data_sgd_up = []
+			data_sgd_down = []
+			for (i=0;i<data_sgd_now.length;i++){
+				if (data_sgd_exchange[i]>=1){
+					data_sgd_base.push(data_sgd_now[i])
+					data_sgd_up.push(data_sgd_now[i]*(data_sgd_exchange[i]-1))
+					data_sgd_down.push('-')
+				}else{
+					data_sgd_base.push(data_sgd_now[i]-data_sgd_now[i]*(1-data_sgd_exchange[i]))
+					data_sgd_up.push('-')					
+					data_sgd_down.push(data_sgd_now[i]*(1-data_sgd_exchange[i]))
+				}
+			}
+
+			document.getElementById("cost_sgd").innerText += "人民币成本："+data_sgd_cost[data_sgd_cost.length-1];
+			document.getElementById("now_sgd").innerText += "新加坡元现值："+data_sgd_now[data_sgd_now.length-1];
+			document.getElementById("exchange_sgd").innerText += "新加坡元汇率中间价："+data_sgd_exchange[data_sgd_exchange.length-1];
+			document.getElementById("nowcost_sgd").innerText += "人民币现值："+data_sgd_now[data_sgd_now.length-1]*data_sgd_exchange[data_sgd_exchange.length-1];
+			profit_loss = data_sgd_now[data_sgd_now.length-1]*data_sgd_exchange[data_sgd_exchange.length-1]-data_sgd_cost[data_sgd_cost.length-1]
+			document.getElementById("profitloss_sgd").innerText += "盈亏："+profit_loss;
+			document.getElementById("money_sgd").setAttribute("title", data_sgd_log)
+
+			option_sgd = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: {
+					type: 'category',
+					data: data_sgd_date,
+				},
+				yAxis: {
+					type: 'value'
+				},
+				series: [
+					{
+						type: 'line',
+						step: 'end',
+						showSymbol: false,
+						lineStyle: {
+							color: '#000000',
+							width: 2,
+							type: 'dashed'
+						},
+						data: data_sgd_cost
+					},
+					{
+						type: 'line',
+						smooth: true,
+						symbol: false,
+						lineStyle: {
+							color: '#000080',
+							width: 2,
+						},
+						data: data_sgd_now
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						silent: true,
+						itemStyle: {
+							borderColor: 'transparent',
+							color: 'transparent'
+						},
+						emphasis: {
+							itemStyle: {
+								borderColor: 'transparent',
+								color: 'transparent'
+							}
+						},
+						data: data_sgd_base
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_sgd_up
+					},
+					{
+						type: 'bar',
+						stack: 'Total',
+						color: 'rgba(0, 0, 0, 0.1)',
+						data: data_sgd_down
+					}
+				],
+				dataZoom: [
+					{
+						start: 0,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						start: 50,
+						end: 100
+					}
+				],
+			};
+			var myChart_sgd = echarts.init(document.getElementById('main_sgd'));
+			myChart_sgd.setOption(option_sgd,true);
+
+
+		</script>
+
 
 		<script>
 			var year=new Date().getFullYear();
