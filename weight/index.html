@@ -65,11 +65,13 @@
 			<div class="alert alert-success fade show" role="alert" style="margin-top:10px;" id="todaybirth"></div>
 
 			<script src="data.js"></script>
+			<script src="gghdata.js"></script>
 
 			<div class="container">
 				<div class="row">
 					<div class="col-10">
 						<div id="main" style="width:100%;height:500px;"></div>
+						<div id="gghmain" style="width:100%;height:500px;"></div>
 					</div>
 					<div class="col-2">
 						<h4 v-for="item in data" v-html="item"></h4>
@@ -241,6 +243,41 @@
 			};
 			var myChart = echarts.init(document.getElementById('main'));
 			myChart.setOption(option,true);
+
+			gghoption = {
+				xAxis: {
+					type: 'category',
+					data: gghdate,
+				},
+				yAxis: {
+					type: 'value',
+					min: 55,
+				},
+				series: [
+					{
+						data: gghweight,
+						type: 'line',
+						smooth: true
+					}
+				],
+				dataZoom: [
+					{
+						type: 'inside',
+						start: 0,
+						end: 100
+					},
+					{
+						show: true,
+						type: 'slider',
+						y: '90%',
+						start: 0,
+						end: 100
+					}
+				],
+
+			};
+			var gghChart = echarts.init(document.getElementById('gghmain'));
+			gghChart.setOption(gghoption,true);
 		</script>
 
     </body>
