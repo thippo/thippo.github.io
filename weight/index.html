@@ -69,11 +69,14 @@
 
 			<div class="container">
 				<div class="row">
-					<div class="col-10">
+					<div class="col-9">
 						<div id="main" style="width:100%;height:500px;"></div>
 						<div id="gghmain" style="width:100%;height:500px;"></div>
 					</div>
-					<div class="col-2">
+					<div class="col-3">
+						<div class="alert alert-success fade show" role="alert" style="margin-top:10px;" id="clock"></div>
+
+						<br>
 						<h4 v-for="item in data" v-html="item"></h4>
 					</div>
 				</div>
@@ -121,6 +124,24 @@
 			var next_month = curDate.getMonth()+1;
 			var next_day = curDate.getDate()
 			$("#todaybirth").html("<font size='2px'>昨日寿星："+birthday_data[pre_month][pre_day]+"</font>　<strong>今日寿星："+birthday_data[now_month][now_day]+"</strong>　<font size='2px'>明日寿星："+birthday_data[next_month][next_day]+"</font>  ")
+		</script>
+
+		<script>
+			function updateclock(){
+				birthday = new Date('2024-05-24T11:41:00')
+				now =new Date();
+				diff_second = (now-birthday)
+				tian = Math.floor(diff_second/(1000*60*60*24))
+				shi = Math.floor((diff_second-tian*(1000*60*60*24))/(1000*60*60))
+				fen = Math.floor((diff_second - tian*(1000*60*60*24) - shi*(1000*60*60))/(1000*60))
+				miao = Math.floor((diff_second - tian*(1000*60*60*24) - shi*(1000*60*60) - fen*(1000*60))/(1000))
+				clockDisplay=tian+"天"+shi+"时"+fen+"分"+miao+"秒";
+				//document.getElementById("clock").innerHTML = clockDisplay;
+				$("#clock").html("<strong>"+tian+"</strong> 天 <strong>"+shi+"</strong> 小时 <strong>"+fen+"</strong> 分 <strong>"+miao+"</strong> 秒")
+
+			}
+			updateclock()
+			setInterval(updateclock,1000);
 		</script>
 
 		<script src="../eventday/data.js"></script>
