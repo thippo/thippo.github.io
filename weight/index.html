@@ -266,6 +266,12 @@
 			myChart.setOption(option,true);
 
 			gghoption = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross'
+					}
+				},
 				xAxis: {
 					type: 'category',
 					data: gghdate,
