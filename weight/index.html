@@ -126,19 +126,19 @@
 			$("#todaybirth").html("<font size='2px'>昨日寿星："+birthday_data[pre_month][pre_day]+"</font>　<strong>今日寿星："+birthday_data[now_month][now_day]+"</strong>　<font size='2px'>明日寿星："+birthday_data[next_month][next_day]+"</font>  ")
 		</script>
 
+		<script src="datediff.min.js"></script>
 		<script>
 			function updateclock(){
 				birthday = new Date('2024-05-24T11:41:00')
-				now =new Date();
+				now =new Date()
+				difff = datediff(birthday, now)
 				diff_second = (now-birthday)
 				tian = Math.floor(diff_second/(1000*60*60*24))
 				shi = Math.floor((diff_second-tian*(1000*60*60*24))/(1000*60*60))
 				fen = Math.floor((diff_second - tian*(1000*60*60*24) - shi*(1000*60*60))/(1000*60))
 				miao = Math.floor((diff_second - tian*(1000*60*60*24) - shi*(1000*60*60) - fen*(1000*60))/(1000))
-				clockDisplay=tian+"天"+shi+"时"+fen+"分"+miao+"秒";
-				//document.getElementById("clock").innerHTML = clockDisplay;
-				$("#clock").html("<strong>"+tian+"</strong> 天 <strong>"+shi+"</strong> 小时 <strong>"+fen+"</strong> 分 <strong>"+miao+"</strong> 秒")
-
+				tiann = tian + 1
+				$("#clock").html("<strong>"+difff.years+"</strong> 年 <strong>"+difff.months+"</strong> 月 <strong>"+difff.days+"</strong> 天 <strong>"+difff.hours+"</strong> 小时 <strong>"+difff.minutes+"</strong> 分 <strong>"+difff.seconds+"</strong> 秒 <br><strong>"+tian+"</strong> 天 <strong>"+shi+"</strong> 小时 <strong>"+fen+"</strong> 分 <strong>"+miao+"</strong> 秒 (第<strong>"+tiann+"</strong>天)")
 			}
 			updateclock()
 			setInterval(updateclock,1000);
