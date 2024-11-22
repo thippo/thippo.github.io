@@ -84,26 +84,62 @@
 				</div>
 
 				<div class="col-10">
-					<div class="row">
-					<img :src="nowsummary" alt=""/>
-				</div>
+					<div class="container" style="background-color:white">
+						<p class="fs-2 text-center fw-bold">{{ year }}：{{ data[year]['title'] }}</p>
+						<p class="fs-5 fw-bold">{{ year }}年的事</p>
+						<p v-for="(item, index) in data[year]['things']" class="fs-6">&nbsp;&nbsp;&nbsp;&nbsp;{{ index+1 }}、{{ item }}</p>
+						<p class="fs-5 fw-bold">{{ year }}年读的书</p>
+						<p class="fs-6">全年读了{{ data[year]['booktotal'][0] }}本书，{{ data[year]['booktotal'][1] }}本推荐：</p>
+						<p v-for="(item, index) in data[year]['books']" class="fs-6 fw-light">&nbsp;&nbsp;&nbsp;&nbsp;{{ index+1 }}、{{ item }}</p>
+						<p class="fs-5 fw-bold">{{ year }}年看的电影电视剧</p>
+						<p class="fs-6">全年看了{{ data[year]['movietotal'][0] }}部（电影{{ data[year]['movietotal'][0]-data[year]['movietotal'][1] }}部，电视剧{{ data[year]['movietotal'][1] }}部），值得推荐有（排名不分先后）：</p>
+						<p v-for="(item, index) in data[year]['movies']" class="fs-6 fw-light">&nbsp;&nbsp;&nbsp;&nbsp;{{ index+1 }}、{{ item }}</p>
+						<p class="fs-5 fw-bold">{{ year }}年的财务和投资</p>
+						<div class="card">
+							<div class="container">
+								<div class="row">
+									<div class="col-6">
+										<ul class="list-group list-group-flush">
+											<li class="list-group-item">总资产：{{ data[year]['money'][0] }}元</li>
+											<li class="list-group-item">总负债：{{ data[year]['money'][1] }}元</li>
+											<li class="list-group-item">个人资产：{{ data[year]['money'][2] }}元</li>
+											<li class="list-group-item">总工资收入：{{ data[year]['money'][3] }}元</li>
+											<li class="list-group-item">总支出：{{ data[year]['money'][4] }}元</li>
+											<li class="list-group-item">总投资盈亏：{{ data[year]['money'][5] }}元</li>
+											<li class="list-group-item">个人资产年增长：{{ data[year]['money'][6] }}元</li>
+										</ul>
+										<br>
+										<p class="fs-6">{{ data[year]['invest'] }}</p>
+									</div>
+									<div class="col-6">
+										<img :src="year+'.png'" class="rounded mx-auto d-block" style="max-width: 100%;">
+									</div>
+								</div>
+							</div>
+						</div>
+						<br>
+					</div>
+					<br>
 				</div>
 			</div>
 
 		</div>
 		
+		<script src="./data.js"></script>
 		<script>
 		var app_vue = new Vue({
 			el: '#appvue',
 			data: {
-				nowsummary: "2023.png",
+				data: {},
+				year: "2023",
 			},
 			methods: {
 				click: function(year){
-					this.nowsummary = year+".png"
+					this.year = year
 				}
 			}
 		})
+		app_vue.data = summarydata
 		</script>
 
 		<script>
