@@ -75,6 +75,7 @@
 			<div class="row" style="margin-top:10px;">
 				<div class="col-2">
 					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action" @click="click('2024')">2024年总结</a>
 						<a href="#" class="list-group-item list-group-item-action" @click="click('2023')">2023年总结</a>
 						<a href="#" class="list-group-item list-group-item-action" @click="click('2022')">2022年总结</a>
 						<a href="#" class="list-group-item list-group-item-action" @click="click('2021')">2021年总结</a>
@@ -131,7 +132,7 @@
 			el: '#appvue',
 			data: {
 				data: {},
-				year: "2023",
+				year: "2024",
 			},
 			methods: {
 				click: function(year){
