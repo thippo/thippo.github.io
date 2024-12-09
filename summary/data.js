@@ -9,7 +9,7 @@ summarydata = {
                                 "美签Check，拿了一年B1/B2签",
                                 "带我妈去了趟韩国，见了文在寅",
                                 "开车带着老婆儿子去了趟天津极地海洋馆",
-                                "给我爸妈换了个手机，Huawei Pure 70",
+                                "给我爸妈换了个手机，Huawei Pura 70",
                                 ],
                         booktotal: [3, 0],
                         books: [
