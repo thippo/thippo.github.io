@@ -90,13 +90,6 @@
 			</br>
 			</br>
 			</br>
-			<div class="row">
-				<div id="annualprofit" style="width:100%;height:500px;"></div>
-			</div>
-			</br>
-			</br>
-			</br>
-			</br>
 
 		</div>
 		
@@ -319,8 +312,8 @@
 							}
 						},
 						data:[
-							{value: 75570.52 , name:'负债'},
-							{value: 1001161.93 , name:'所有者权益'}
+							{value: 161340.50 , name:'负债'},
+							{value: 1085168.37 , name:'所有者权益'}
 						]
 					}
 				]
@@ -363,6 +356,7 @@
 							'2024-10-31',
 							'2024-11-30',
 							'2024-12-31',
+							'2025-1-31',
 					]
 				}
 				],
@@ -378,7 +372,8 @@
 					stack: '总量',
 					areaStyle: {},
 					data: [
-						676688.5700000002, 654304.9800000001, 649389.5100000001, 677681.36, 694241.31, 699588.64, 696100.5000000001, 714863.92, 719910.4, 720619.2800000001, 
+						676688.5700000002, 654304.9800000001, 649389.5100000001, 677681.36, 694241.31, 699588.64, 696100.5000000001, 714863.92, 719910.4, 720619.2800000001,
+						884277.65, 
 						]
 				},
 				{
@@ -388,6 +383,7 @@
 					areaStyle: {},
 					data: [
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 
+						0, 
 					]
 				},
 				{
@@ -397,6 +393,7 @@
 					areaStyle: {},
 					data: [
 						259985.25, 260464.56, 261131.32, 261809.35, 262206.05, 262343.91000000003, 262611.31, 262953.76, 263548.4, 264238.17000000004, 
+						264551.22, 
 					]
 				},
 				{
@@ -406,6 +403,7 @@
 					areaStyle: {},
 					data: [
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+						0, 
 					]
 				},
 				{
@@ -415,6 +413,7 @@
 					areaStyle: {},
 					data: [
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+						0, 
 					]
 				},
 				{
@@ -424,6 +423,7 @@
 					areaStyle: {},
 					data: [
 						53000, 82215, 82755, 82483.5, 84195, 85320, 89220, 95265, 92040, 91875, 
+						97680, 
 					]
 				},
 				{
@@ -433,6 +433,7 @@
 					areaStyle: {},
 					data: [
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+						0 
 					]
 				}
 				],
@@ -490,87 +491,6 @@
 			};
 			var zijinfenpei = echarts.init(document.getElementById('zijinfenpei'));
 			zijinfenpei.setOption(optionzjfp);
-
-
-
-			optionannualprofit = {
-				tooltip: {
-					trigger: 'axis',
-					axisPointer: {
-						type: 'shadow'
-					}
-				},
-				legend: {},
-				grid: {
-					left: '3%',
-					right: '4%',
-					bottom: '3%',
-					containLabel: true
-				},
-				xAxis: [
-					{
-						type: 'category',
-						data: ['2017', '2018', '2019', '2020', '2021', '2022', '2023']
-					}
-				],
-				yAxis: [
-					{
-						type: 'value'
-					}
-				],
-				series: [
-					{
-						name: '工资收入',
-						type: 'bar',
-						stack: 'Ad',
-						label: {
-							show: false
-						},
-						emphasis: {
-							focus: 'series'
-						},
-						data: [34363.08, 43420.03, 213298.19, 180040.81, 148369.93, 164884.68, 183374.75]
-					},
-					{
-						name: '证券收益',
-						type: 'bar',
-						stack: 'Ad',
-						label: {
-							show: false
-						},
-						emphasis: {
-							focus: 'series'
-						},
-						data: [575.73, 416.2, 1350, 116663.06, 77666.8, 14401.55, -23049.08]
-					},
-					{
-						name: '支出',
-						type: 'bar',
-						stack: 'Ad',
-						label: {
-							show: false
-						},
-						emphasis: {
-							focus: 'series'
-						},
-						data: [0, -14026.58, -73220.52, -165262.2, -301962.23, -90806.78, -113679.72]
-					},
-					{
-						name: '总和',
-						type: 'bar',
-						label: {
-							show: false
-						},
-						emphasis: {
-							focus: 'series'
-						},
-						data: [0, 29809.65, 141427.67, 131441.67, -75925.5, 88479.45, 46645.95]
-					},
-				]
-			};
-			var annualprofit = echarts.init(document.getElementById('annualprofit'));
-			annualprofit.setOption(optionannualprofit);
-			
 
 		</script>
 
