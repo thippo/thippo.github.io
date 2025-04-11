@@ -3,8 +3,11 @@ summarydata = {
                 title: "爸爸",
                 things: [
                         "用e-residency注册了个自营交易咨询公司",
+                        "买了个域名evolidea.com",
+                        "绑定了个免费的阿里企业邮箱",
                         "先进个人二等奖",
                         "我爸给我买了个台铃电动车",
+                        "安迪安妮被送人了",
                         ],
                 booktotal: [3, 0],
                 books: [
