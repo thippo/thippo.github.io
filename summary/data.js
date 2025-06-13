@@ -1,6 +1,6 @@
 summarydata = {
         "2025":{
-                title: "爸爸",
+                title: "",
                 things: [
                         "用e-residency注册了个自营交易咨询公司",
                         "买了个域名evolidea.com",
@@ -10,6 +10,7 @@ summarydata = {
                         "我爸给我买了个台铃电动车",
                         "安迪安妮被送人了",
                         "爸妈跟刘岩包丽萍自驾西藏一个月",
+                        "家庭摇号106分买了人生第一辆车，比亚迪元plus超越25年智驾版，京ACW7231",
                         ],
                 booktotal: [3, 0],
                 books: [
