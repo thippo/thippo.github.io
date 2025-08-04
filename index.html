@@ -11,13 +11,13 @@
     <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
   </head>
 
+<body>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1X588HRD0"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-X1X588HRD0');
 </script>
 
@@ -166,7 +166,7 @@ publishable-key="pk_live_51Rq6NoJC62Lf87oWamzLGH4dwlFX5vVD056vgNsusCQ7vngEnqWwha
       <div class="row">
         <div class="col-2"></div>
         <div class="col-7"><div id="worldMap" style="width: 100%; height: 600px;"></div></div>
-        <div class="col-1"><ul id="countryNames" style="list-style-type: none; padding: 0;"></ul></div>
+        <div class="col-1"><ul id="countryNames" style="list-style-type: none; padding: 0; text-align: left;"></ul></div>
         <div class="col-2"></div>
       </div>
     </div>
@@ -186,8 +186,6 @@ publishable-key="pk_live_51Rq6NoJC62Lf87oWamzLGH4dwlFX5vVD056vgNsusCQ7vngEnqWwha
       </div>
     </div>
   </div>
-
-
 
 </main>
 
@@ -333,7 +331,7 @@ publishable-key="pk_live_51Rq6NoJC62Lf87oWamzLGH4dwlFX5vVD056vgNsusCQ7vngEnqWwha
             const totalDays = Math.floor(totalHours / 24);
             const years = Math.floor(totalDays / 365);
             const remainingDaysAfterYears = totalDays % 365;
-            const months = Math.floor(remainingDaysAfterYears / 30); // 简化处理，假设每月30天
+            const months = Math.floor(remainingDaysAfterYears / 30);
             const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
             const hours = Math.floor(totalHours % 24);
             const minutes = Math.floor(totalMinutes % 60);
