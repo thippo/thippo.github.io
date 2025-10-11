@@ -9,7 +9,6 @@
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
         <script src="assets/js/echarts.min.js"></script>
-        <script src="assets/js/world.js"></script>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
     </head>
 
@@ -51,28 +50,27 @@
         <!-- Fixed navbar ↑ -->
 
         <!-- Page content ↓ -->
-            <br>
-            <br>
+            
             <div class="container col-xxl-8 px-2">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                     <div class="col-10 col-sm-8 col-lg-5">
-                        &nbsp&nbsp&nbsp<img src="assets/img/jinhua.png" class="d-block mx-lg-auto img-fluid" width="320" height="220" loading="lazy">
+                        &nbsp&nbsp&nbsp<img src="assets/img/net.png" class="d-block mx-lg-auto img-fluid" width="200" height="100" loading="lazy">
                     </div>
                     <div class="col-lg-7">
-                        <p class="lead">"From so simple a beginning endless forms most beautiful and most wonderful have been, and are being, evolved."</p>
-                        <p class="lead">—— Charles Darwin, <cite>On the Origin of Species (1859)</cite></p>
+                        <p class="lead">A 13F is a quarterly report that institutional investment managers with over $100 million in U.S. equities must file with the SEC. It publicly discloses their holdings, offering a snapshot of smart-money positioning.</p>
+                        <p class="lead">Mine the 13F swarm for hidden links—turn crowd filings into collective return.</p>
                     </div>
                 </div>
             </div>
 
             <div class="container col-xxl-8 px-2">
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p><hr>
-                <p style="margin: 2em 0;">2025-08-25&nbsp&nbsp&nbsp<a href="#" style="text-decoration: none; color: inherit; font-size: 1.4em; word-break: break-all;">sdfsdf</a></p>
+                <div class="row">
+                    <div class="container col-8">
+                        <div id="main11" style="width: 100%; height: 600px; border: 1px solid rgba(245, 245, 245);"></div>
+                    </div>
+                    <div class="container col-4">
+                    </div>
+                </div>
             </div>
 
 
@@ -183,6 +181,80 @@
             </div>
         </footer>
         <!-- Footer content ↑ -->
+
+
+<!-- 改成这样 -->
+    <script src="./npmdepgraph.min10.js"></script>
+    <script>
+        myChart = echarts.init(document.getElementById('main11'));
+
+        /* ====== 1. 数据 ====== */
+        const nodes = [
+            {id: 'A', name: '张三', value: 10, category: 0},
+            {id: 'B', name: '李四', value: 8, category: 0},
+            {id: 'C', name: '王五', value: 6, category: 1},
+            {id: 'D', name: '赵六', value: 4, category: 1},
+            {id: 'E', name: '钱七', value: 3, category: 2}
+        ];
+        const links = [
+            {source: 'A', target: 'B', name: '朋友'},
+            {source: 'B', target: 'C', name: '同事'},
+            {source: 'C', target: 'D', name: '同乡'},
+            {source: 'A', target: 'E', name: '亲戚'},
+            {source: 'D', target: 'E', name: '同学'}
+        ];
+
+    myChart.setOption(
+      (option = {
+        animationDurationUpdate: 1500,
+        animationEasingUpdate: 'quinticInOut',
+        series: [
+          {
+            type: 'graph',
+            layout: 'force',
+            // progressiveThreshold: 700,
+            data: data_node.nodes.map(function (node) {
+              return {
+                //x: node.x,
+                //y: node.y,
+                id: node.id,
+                name: node.label,
+                symbolSize: node.size,
+                itemStyle: {
+                  color: node.color
+                }
+              };
+            }),
+            edges: data_node.edges.map(function (edge) {
+              return {
+                source: edge.sourceID,
+                target: edge.targetID
+              };
+            }),
+            emphasis: {
+              focus: 'adjacency',
+              label: {
+                position: 'right',
+                show: true
+              }
+            },
+            roam: true,
+            roamTrigger: 'global',
+            lineStyle: {
+              width: 0.5,
+              curveness: 0.3,
+              opacity: 0.7
+            }
+          }
+        ],
+      }),
+      true
+    );
+
+
+        /* ====== 4. 自适应 ====== */
+        window.addEventListener('resize', () => myChart.resize());
+    </script>
 
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
 
