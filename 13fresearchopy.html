@@ -7,9 +7,10 @@
         <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
-        <script src="assets/js/echarts.min.js"></script>
-        <script src="assets/js/world.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
     </head>
     <body style="background-color: rgba(255, 255, 255);">
         <!-- Google tag (gtag.js) ↓ -->
@@ -49,23 +50,37 @@
             <div class="container col-xxl-8 px-2">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                     <div class="col-10 col-sm-8 col-lg-5">
-                        &nbsp&nbsp&nbsp<img src="assets/img/darwin.png" class="d-block mx-lg-auto img-fluid" width="320" height="220" loading="lazy">
+                        &nbsp&nbsp&nbsp<img src="assets/img/net.png" class="d-block mx-lg-auto img-fluid" width="200" height="100" loading="lazy">
                     </div>
                     <div class="col-lg-7">
-                        <p class="lead">"There is grandeur in this view of life, with its several powers, having been originally breathed into a few forms or into one; and that, whilst this planet has gone cycling on according to the fixed law of gravity, from so simple a beginning endless forms most beautiful and most wonderful have been, and are being, evolved."</p>
-                        <p class="lead">—— Charles Darwin, <cite>On the Origin of Species (1859)</cite></p>
+                        <p class="lead">A 13F is a quarterly report that institutional investment managers with over $100 million in U.S. equities must file with the SEC. It publicly discloses their holdings, offering a snapshot of smart-money positioning.</p>
+                        <p class="lead">All data is sourced from SEC public filings: https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets</p>
                     </div>
                 </div>
             </div>
             <div class="container col-xxl-8 px-2">
-                <div class="row row-cols-1 row-cols-md-2 g-4">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="13fresearch.html" target="_blank" style="text-decoration: none; color: inherit; word-break: break-all;"><b>SEC Form 13F Research</b></a></h5>
-                                <p class="card-text">Crowd wisdom of the market, revealed: aggregating 13F filings distills thousands of institutional decisions into one backward-looking table, exposing where the smartest money clusters and hinting at the next consensus winner before the crowd catches on.</p>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="container col-12">
+<table id="myTable" class="display">
+    <thead>
+        <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Row 1 Data 1</td>
+            <td>Row 1 Data 2</td>
+        </tr>
+        <tr>
+            <td>Row 2 Data 1</td>
+            <td>Row 2 Data 2</td>
+        </tr>
+    </tbody>
+</table>
+                    </div>
+                    <div class="container col-0">
                     </div>
                 </div>
             </div>
@@ -170,6 +185,13 @@
             </div>
         </footer>
         <!-- Footer content ↑ -->
+<!-- 改成这样 -->
+  <script src="13F.js"></script>
+    <script>
+$(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+    </script>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
     </body>
 </html>

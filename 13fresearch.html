@@ -8,8 +8,11 @@
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
         <script src="assets/js/echarts.min.js"></script>
-        <script src="assets/js/world.js"></script>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+        <link rel="stylesheet" href="assets/dist/kingtable/kingtable.css">
+        <script src="assets/dist/kingtable/kingtable.js"></script>
+        <script src="assets/dist/kingtable/kingtable.xlsx.js"></script>
+        <script src="assets/dist/kingtable/aaa.js"></script>
     </head>
     <body style="background-color: rgba(255, 255, 255);">
         <!-- Google tag (gtag.js) ↓ -->
@@ -49,23 +52,20 @@
             <div class="container col-xxl-8 px-2">
                 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                     <div class="col-10 col-sm-8 col-lg-5">
-                        &nbsp&nbsp&nbsp<img src="assets/img/darwin.png" class="d-block mx-lg-auto img-fluid" width="320" height="220" loading="lazy">
+                        &nbsp&nbsp&nbsp<img src="assets/img/net.png" class="d-block mx-lg-auto img-fluid" width="200" height="100" loading="lazy">
                     </div>
                     <div class="col-lg-7">
-                        <p class="lead">"There is grandeur in this view of life, with its several powers, having been originally breathed into a few forms or into one; and that, whilst this planet has gone cycling on according to the fixed law of gravity, from so simple a beginning endless forms most beautiful and most wonderful have been, and are being, evolved."</p>
-                        <p class="lead">—— Charles Darwin, <cite>On the Origin of Species (1859)</cite></p>
+                        <p class="lead">A 13F is a quarterly report that institutional investment managers with over $100 million in U.S. equities must file with the SEC. It publicly discloses their holdings, offering a snapshot of smart-money positioning.</p>
+                        <p class="lead">All data is sourced from SEC public filings: https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets</p>
                     </div>
                 </div>
             </div>
             <div class="container col-xxl-8 px-2">
-                <div class="row row-cols-1 row-cols-md-2 g-4">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="13fresearch.html" target="_blank" style="text-decoration: none; color: inherit; word-break: break-all;"><b>SEC Form 13F Research</b></a></h5>
-                                <p class="card-text">Crowd wisdom of the market, revealed: aggregating 13F filings distills thousands of institutional decisions into one backward-looking table, exposing where the smartest money clusters and hinting at the next consensus winner before the crowd catches on.</p>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="container col-12">
+                        <div id="holderstable">loading...</div>
+                    </div>
+                    <div class="container col-0">
                     </div>
                 </div>
             </div>
@@ -170,6 +170,34 @@
             </div>
         </footer>
         <!-- Footer content ↑ -->
+<!-- 改成这样 -->
+  <script src="13F.js"></script>
+    <script>
+    (function () {
+      var table = window.table = new KingTable({
+        id: "colors-table",
+        data: data_13F , 
+        caption: "2025 June July August 13F",
+        element: document.getElementById("holderstable"),
+        columns: 
+            [
+                { name: "issuer", displayName:"Name of issuer", type: "text", sortable: false },
+                { name: "CUSIP", headers:"CUSIP", type: "text", sortable: false },
+                { name: "holders", header:"Number of holders", type: "number", sortable: true, allowSearch: false },
+                { name: "cholders", header:"Number of increase holders", type: "number", sortable: true, allowSearch: false },
+                { name: "shares", header:"Number of sharesr", type: "number", sortable: true, allowSearch: false },
+                { name: "cshares", header:"Number of increase shares", type: "number", sortable: true, allowSearch: false },
+            ],
+          //holders: "holders",
+          //cholders: "Number of increase holders",
+          //shares: "Number of shares",
+          //cshares: "Number of increase shares",
+        sortBy: 'holders',  // 默认按哪个字段排序
+        sortOrder: 'asc',    // 'asc' 或 'desc'
+      });
+      table.render();
+    })();
+    </script>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
     </body>
 </html>
