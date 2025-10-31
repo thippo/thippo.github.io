@@ -8,10 +8,10 @@
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
         <script src="assets/js/vue.global.js"></script>
-        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+        <script src="assets/js/jquery.js"></script>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
-        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+        <link rel="stylesheet" href="assets/css/dataTables.dataTables.min.css">
+        <script src="assets/js/dataTables.min.js"></script>
     </head>
     <body style="background-color: rgba(255, 255, 255);">
         <!-- Google tag (gtag.js) ↓ -->
@@ -139,6 +139,7 @@
                         <ul class="nav flex-column">
                             <li class="nav-item mb-2"><a href="https://www.gov.uk/" target=blank class="nav-link p-0 text-body-secondary">GOV·UK</a></li>
                             <li class="nav-item mb-2"><a href="https://www.aliyun.com/" target=blank class="nav-link p-0 text-body-secondary">Aliyun</a></li>
+                            <li class="nav-item mb-2"><a href="https://datatables.net/" target=blank class="nav-link p-0 text-body-secondary">DataTable</a></li>
                         </ul>
                     </div>
                     <div class="col-6 col-md-2 mb-3">
@@ -168,9 +169,11 @@
                     <div class="col-6 col-md-2 mb-3">
                         <ul class="nav flex-column">
                             <li class="nav-item mb-2"><a href="https://getbootstrap.com/" target=blank class="nav-link p-0 text-body-secondary">Bootstrap</a></li>
+                            <li class="nav-item mb-2"><a href="https://www.sec.gov/" target=blank class="nav-link p-0 text-body-secondary">SEC</a></li>
                         </ul>
                     </div>
                 </div>
+
                 <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
                     <span class="mb-3 mb-md-0 text-body-secondary"><img src="assets/img/logo2.png" alt="Logo" width="25" height="25" >&nbsp &copy; 2025 Evolidea Limited</span>
                     <ul class="list-unstyled d-flex">
@@ -178,6 +181,7 @@
                         <li class="ms-3"><a class="text-body-secondary" href="#" aria-label="Instagram"><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#instagram"/></svg></a></li>
                     </ul>
                 </div>
+
             </div>
         </footer>
         <!-- Footer content ↑ -->
@@ -202,7 +206,12 @@
         </script>
         <script>
             $(document).ready( function () {
-                $('#myTable').DataTable();
+                $('#myTable').DataTable({
+                    order: [[2, 'desc']],
+                    columnDefs: [
+                        { searchable: false, targets: [2, 3, 4, 5] } // 禁用第1列和第3列的搜索
+                    ]
+                });
             } );
         </script>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
