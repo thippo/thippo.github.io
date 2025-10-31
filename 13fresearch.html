@@ -7,12 +7,11 @@
         <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
-        <script src="assets/js/echarts.min.js"></script>
+        <script src="assets/js/vue.global.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-        <link rel="stylesheet" href="assets/dist/kingtable/kingtable.css">
-        <script src="assets/dist/kingtable/kingtable.js"></script>
-        <script src="assets/dist/kingtable/kingtable.xlsx.js"></script>
-        <script src="assets/dist/kingtable/aaa.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
     </head>
     <body style="background-color: rgba(255, 255, 255);">
         <!-- Google tag (gtag.js) ↓ -->
@@ -62,8 +61,20 @@
             </div>
             <div class="container col-xxl-8 px-2">
                 <div class="row">
-                    <div class="container col-12">
-                        <div id="holderstable">loading...</div>
+                    <div class="container col-12" id="vueapp">
+                        <table id="myTable" class="display">
+                            <thead>
+                                <tr>
+                                    <th>Name of issuer</th><th>CUSIP</th><th>Number of holders</th>
+                                    <th>Number of new holders added</th><th>Number of shares</th><th>Number of new shares added</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(row,idx) in tableData" :key="idx">
+                                    <td v-for="cell in row" :key="cell">{{ cell }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="container col-0">
                     </div>
@@ -170,34 +181,30 @@
             </div>
         </footer>
         <!-- Footer content ↑ -->
-<!-- 改成这样 -->
-  <script src="13F.js"></script>
-    <script>
-    (function () {
-      var table = window.table = new KingTable({
-        id: "colors-table",
-        data: data_13F , 
-        caption: "2025 June July August 13F",
-        element: document.getElementById("holderstable"),
-        columns: 
-            [
-                { name: "issuer", displayName:"Name of issuer", type: "text", sortable: false },
-                { name: "CUSIP", headers:"CUSIP", type: "text", sortable: false },
-                { name: "holders", header:"Number of holders", type: "number", sortable: true, allowSearch: false },
-                { name: "cholders", header:"Number of increase holders", type: "number", sortable: true, allowSearch: false },
-                { name: "shares", header:"Number of sharesr", type: "number", sortable: true, allowSearch: false },
-                { name: "cshares", header:"Number of increase shares", type: "number", sortable: true, allowSearch: false },
-            ],
-          //holders: "holders",
-          //cholders: "Number of increase holders",
-          //shares: "Number of shares",
-          //cshares: "Number of increase shares",
-        sortBy: 'holders',  // 默认按哪个字段排序
-        sortOrder: 'asc',    // 'asc' 或 'desc'
-      });
-      table.render();
-    })();
-    </script>
+
+        <script src="13F.js"></script>
+        <script>
+            const { createApp } = Vue;
+            createApp({
+                data() {
+                    return {
+                        tableData: []
+                    };
+                },
+                mounted() {
+                    if (Array.isArray(window.data_13F)) {
+                        this.tableData = window.data_13F;
+                    } else {
+                        console.warn('未获取到 data_13F，使用空数组');
+                    }
+                }
+            }).mount('#vueapp');
+        </script>
+        <script>
+            $(document).ready( function () {
+                $('#myTable').DataTable();
+            } );
+        </script>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
     </body>
 </html>
