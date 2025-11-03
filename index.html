@@ -400,23 +400,22 @@
                 ]
             };
             myChart.setOption(option);
-const countryNames = document.getElementById('countryNames');
-let count = 0;
-const maxItems = 15;
-
-option.series[0].data.forEach(item => {
-    if (count < maxItems) {
-        const listItem = document.createElement('li');
-        listItem.textContent = item.name;
-        countryNames.appendChild(listItem);
-        count++;
-    } else if (count === maxItems) {
-        const listItem = document.createElement('li');
-        listItem.textContent = '...';
-        countryNames.appendChild(listItem);
-        count++;
-    }
-});
+            const countryNames = document.getElementById('countryNames');
+            let count = 0;
+            const maxItems = 15;
+            option.series[0].data.forEach(item => {
+                if (count < maxItems) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = item.name;
+                    countryNames.appendChild(listItem);
+                    count++;
+                } else if (count === maxItems) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = '...';
+                    countryNames.appendChild(listItem);
+                    count++;
+                }
+            });
         </script>
 
         <script>
