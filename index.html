@@ -208,11 +208,12 @@
                 <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
                     <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
                         <h2 class="display-7 fw-bold lh-1 text-body-emphasis">About the Founder</h2>
-                        <p class="lead">Mr. Tang holds a Master of Science degree and a Master of Finance degree. He is a staunch advocate of evolutionary theory and is committed to applying evolutionary ideas to the field of financial investment. In addition to his investment expertise, Mr. Tang is also an engineer with a strong background in data analysis and artificial intelligence. He believes that the integration of multidisciplinary skills can better achieve his goals in this area.</p>
+                        <p class="lead">Mr. Tang holds a Master of Science degree and a Master of Finance degree. He is a staunch advocate of evolutionary theory and is committed to applying evolutionary ideas to the field of financial investment. In addition to his investment expertise, Mr. Tang is also an engineer with a strong background in data analysis and artificial intelligence. He believes that the integration of multidisciplinary skills can better achieve his goals in this area. He Tang became a CFA charterholder in 2025.</p>
                         <p class="lead">If you support our views and ideas, please support us.</p>
                     </div>
                     <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden">
                         <img src="assets/img/me.png" alt="" height="100%" width="100%">
+                        <p class="lead" style="text-align:right;">He Tang, CFA</p>
                     </div>
                 </div>
             </div>
@@ -360,22 +361,62 @@
                         },
                         selectedMode: false,
                         data: [
-                            {name: 'China', value: 0.78},
-                            {name: 'United States', value: 0.2},
-                            {name: 'Japan', value: 0.01},
-                            {name: 'Singapore', value: 0.005},
-                            {name: 'Estonia', value: 0.005}
+                            {name: 'China', value: 0.5},
+                            {name: 'United States', value: 0.5},
+                            {name: 'Japan', value: 0.5},
+                            {name: 'Singapore', value: 0.5},
+                            {name: 'United Kingdom', value: 0.5},
+                            {name: 'Germany', value: 0.5},
+                            {name: 'France', value: 0.5},
+                            {name: 'Canada', value: 0.5},
+                            {name: 'Korea', value: 0.5},
+                            {name: 'Australia', value: 0.5},
+                            {name: 'Italy', value: 0.5},
+                            {name: 'Brazil', value: 0.5},
+                            {name: 'Spain', value: 0.5},
+                            {name: 'Mexico', value: 0.5},
+                            {name: 'Argentina', value: 0.5},
+                            {name: 'Austria', value: 0.5},
+                            {name: 'Belgium', value: 0.5},
+                            {name: 'Denmark', value: 0.5},
+                            {name: 'Ireland', value: 0.5},
+                            {name: 'Malaysia', value: 0.5},
+                            {name: 'Netherlands', value: 0.5},
+                            {name: 'New Zealand', value: 0.5},
+                            {name: 'Norway', value: 0.5},
+                            {name: 'Portugal', value: 0.5},
+                            {name: 'Saudi Arabia', value: 0.5},
+                            {name: 'Sweden', value: 0.5},
+                            {name: 'Switzerland', value: 0.5},
+                            {name: 'Vietnam', value: 0.5},
+                            {name: 'Croatia', value: 0.5},
+                            {name: 'Estonia', value: 0.5},
+                            {name: 'Finland', value: 0.5},
+                            {name: 'Greece', value: 0.5},
+                            {name: 'South Africa', value: 0.5},
+                            {name: 'India', value: 0.5},
                         ]
                     }
                 ]
             };
             myChart.setOption(option);
-            const countryNames = document.getElementById('countryNames');
-            option.series[0].data.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.textContent = item.name;
-                countryNames.appendChild(listItem);
-            });
+const countryNames = document.getElementById('countryNames');
+let count = 0;
+const maxItems = 15;
+
+option.series[0].data.forEach(item => {
+    if (count < maxItems) {
+        const listItem = document.createElement('li');
+        listItem.textContent = item.name;
+        countryNames.appendChild(listItem);
+        count++;
+    } else if (count === maxItems) {
+        const listItem = document.createElement('li');
+        listItem.textContent = '...';
+        countryNames.appendChild(listItem);
+        count++;
+    }
+});
         </script>
 
         <script>
