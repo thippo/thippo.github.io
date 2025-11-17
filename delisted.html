@@ -100,7 +100,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(row, idx) in tableData" :key="idx" :style="{ backgroundColor: row[8] === '+' ? '#D6FFBD' : row[8] === '-' ? '#FFD0C9' : '' }">
+                                <tr v-for="(row, idx) in tableData" :key="idx" :style="{ backgroundColor: row[8] === '+' ? '#F0FFF0' : row[8] === '-' ? '#FFE4E1' : '' }">
                                     <td v-for="(cell, cellIdx) in row.slice(0, 8)" :key="cellIdx"><b>{{ cell }}</b></td>
                                 </tr>
                             </tbody>
