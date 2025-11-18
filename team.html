@@ -7,10 +7,8 @@
         <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
         <link rel="icon" href="assets/img/logo1.png">
-        <script src="assets/js/vue.global.js"></script>
-        <script src="assets/js/jquery.js"></script>
-        <link rel="stylesheet" href="assets/css/dataTables.dataTables.min.css">
-        <script src="assets/js/dataTables.min.js"></script>
+        <script src="assets/js/echarts.min.js"></script>
+        <script src="assets/js/world.js"></script>
     </head>
     <body style="background-color: rgba(255, 255, 255);">
         <!-- Google tag (gtag.js) ↓ -->
@@ -22,33 +20,6 @@
             gtag('config', 'G-X1X588HRD0');
         </script>
         <!-- Google tag (gtag.js) ↑ -->
-        <style>
-            #loadingOverlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(255, 255, 255, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            }
-            .spinner-border {
-                width: 3rem;
-                height: 3rem;
-                border: 0.25em solid currentColor;
-                border-right-color: transparent;
-                border-radius: 50%;
-                animation: spinner-border 0.75s linear infinite;
-            }
-            @keyframes spinner-border {
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-        </style>
         <!-- Fixed navbar ↓ -->
         <header>
             <style>
@@ -73,45 +44,58 @@
             </nav>
         </header>
         <!-- Fixed navbar ↑ -->
-
-        <div id="loadingOverlay">
-            <div class="spinner-border" role="status">
-            </div>
-        </div>
-
         <!-- Page content ↓ -->
+            <br>
             <div class="container col-xxl-8 px-2">
-                <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="row align-items-center g-5 py-5">
                     <div class="col-10 col-sm-8 col-lg-5">
-                        &nbsp&nbsp&nbsp<img src="assets/img/net.png" class="d-block mx-lg-auto img-fluid" width="200" height="100" loading="lazy">
+                        &nbsp&nbsp&nbsp<img src="assets/team/hetang.jpg" class="d-block mx-lg-auto img-fluid rounded-5" width="280" height="280" loading="lazy" style="border:1px solid black">
                     </div>
                     <div class="col-lg-7">
-                        <p class="lead">A 13F is a quarterly report that institutional investment managers with over $100 million in U.S. equities must file with the SEC. It publicly discloses their holdings, offering a snapshot of smart-money positioning.</p>
-                        <p class="lead">All data is sourced from SEC public filings: https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets</p>
+                        <p class="lead">Our team is evolutionary synergy in action: diverse “genetic codes” merged through idea cross-pollination, selecting the fittest solutions and discarding the rest, forming an adaptive organism whose collective intelligence evolves faster than market forces.</p>
+                        <p class="lead mb-0">He Tang, CFA</p>
+                        <p class="lead mb-1">Founder & Chairman</p>
+                        <p class="lead">
+                            <a href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                                <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>
+                            </svg>
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
+            <br>
+
+            <br>
             <div class="container col-xxl-8 px-2">
                 <div class="row">
-                    <b>2025 June July August</b>
-                    <div class="container col-12" id="vueapp">
-                        <table id="myTable" class="display">
-                            <thead>
-                                <tr>
-                                    <th>Name of issuer</th><th>CUSIP</th><th>Number of holders</th>
-                                    <th>Number of new holders added</th><th>Number of shares</th><th>Number of new shares added</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(row,idx) in tableData" :key="idx">
-                                    <td v-for="cell in row" :key="cell">{{ cell }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="container col-0">
+                    <div class="col-12"><h1 class="display-10 fw-bold" style="color:black">Collaborator</h1></div>
+                </div>
+                <br>
+                <p class="card-text mb-0">Our research is driven by unpaid collaborators who contribute in their spare time. If you feel a strong resonance with us, send your CV to tanghe@evolidea.com</p>
+                <p>When the fit is perfect, we’ll create the role for you.</p>
+                <br>
+                <!-- 
+                <div class="row row-cols-1 row-cols-md-4 g-0">
+                    <div class="col">
+                        <div class="card border-0 text-center">
+                            <img src="assets/team/hetang.jpg" class="card-img-top rounded-circle mx-auto d-block" style="border:1px solid black; width: 170px; height: auto;">
+                            <div class="card-body">
+                                <h5 class="card-title">He Tang, CFA</h5>
+                                <p class="card-text mb-1">Chief Executive Officer</p>
+                                <p class="card-text">
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                                            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>
+                                        </svg>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                -->
             </div>
             <br>
             <br>
@@ -220,47 +204,6 @@
         </footer>
         <!-- Footer content ↑ -->
 
-        <script>
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                     var loadingOverlay = document.getElementById('loadingOverlay');
-                     if (loadingOverlay) {
-                        loadingOverlay.style.display = 'none';
-                    }
-                }, 100);
-            });
-        </script>
-
-        <script src="13F.js"></script>
-        <script>
-            const { createApp } = Vue;
-            createApp({
-                data() {
-                    return {
-                        tableData: [],
-                        showItem: true,
-                    };
-                },
-                mounted() {
-                    if (Array.isArray(window.data_13F)) {
-                        this.tableData = window.data_13F;
-                        this.showItem = false;
-                    } else {
-                        console.warn('未获取到 data_13F，使用空数组');
-                    }
-                }
-            }).mount('#vueapp');
-        </script>
-        <script>
-            $(document).ready( function () {
-                $('#myTable').DataTable({
-                    order: [[2, 'desc']],
-                    columnDefs: [
-                        { searchable: false, targets: [2, 3, 4, 5] }
-                    ]
-                });
-            } );
-        </script>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c25ae95a-37da-4dec-bee2-e385dbf98767"></script>
     </body>
 </html>
