@@ -328,30 +328,28 @@
             return monthDiv;
         }
 
-function createDayElement(year, month, day, isOtherMonth) {
-  const dayDiv = document.createElement('div');
-  dayDiv.className = 'day';
-  dayDiv.textContent = day;
-  if (isOtherMonth) {
-    dayDiv.classList.add('other-month');
-    return dayDiv;
-  }
-  if (isToday(year, month, day)) {
-    dayDiv.classList.add('today');
-  } else if (isDatePast(year, month, day)) {
-    dayDiv.classList.add('past');
-  }
-
-  // 找到对应描述
-  const hit = specialList.find(
-    item => item.y === year && item.m === month + 1 && item.d === day
-  );
-  if (hit) {
-    dayDiv.classList.add('special');
-    dayDiv.dataset.desc = hit.c;   // 关键：把内容存进来
-  }
-  return dayDiv;
-}
+        function createDayElement(year, month, day, isOtherMonth) {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.textContent = day;
+            if (isOtherMonth) {
+                dayDiv.classList.add('other-month');
+                return dayDiv;
+            }
+            if (isToday(year, month, day)) {
+                dayDiv.classList.add('today');
+            } else if (isDatePast(year, month, day)) {
+                dayDiv.classList.add('past');
+            }   
+            const hit = specialList.find(
+              item => item.y === year && item.m === month + 1 && item.d === day
+            );
+            if (hit) {
+                dayDiv.classList.add('special');
+                dayDiv.dataset.desc = hit.c;
+            }
+            return dayDiv;
+        }
 
         function generateCalendar() {
             const container = document.getElementById('calendarContainer');
