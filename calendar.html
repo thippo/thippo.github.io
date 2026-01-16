@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年度日历</title>
+    <style>
+        /* =====  通用重置  ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* =====  页面骨架  ===== */
+        body {
+            font: 500 16px/1 "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            min-height: 100vh;
+            padding: 30px;
+            color: #2c3e50;
+        }
+
+        /* =====  顶部控制区  ===== */
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .year-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .year-button,
+        .year-selector {
+            padding: 10px 18px;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, .5);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .3);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: .3s;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .year-button:hover,
+        .year-selector:hover {
+            background: rgba(255, 255, 255, .5);
+        }
+
+        /* -----  当前年份 / 激活态  ----- */
+        .year-button.current-year,
+        .year-button.active {
+            background: linear-gradient(135deg, #37c266 0%, #32bd50 100%);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .year-button.active {                                    /* 非当年激活按钮用蓝色 */
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        /* 下拉框单独调大一点字号 */
+        .year-selector { font-size: 18px; padding: 12px 24px; }
+
+        /* =====  说明文字  ===== */
+        .instructions {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            color: #34495e;
+            background: rgba(255, 255, 255, .3);
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* =====  12 个月卡片容器  ===== */
+        .calendar-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* =====  单月卡片  ===== */
+        .month-card {
+            background: rgba(255, 255, 255, .25);
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, .15);
+            backdrop-filter: blur(10px);
+            transition: .3s;
+        }
+
+        .month-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, .2);
+        }
+
+        .month-header {
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+        }
+
+        /* =====  星期表头  ===== */
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .weekday {
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            color: #3498db;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+        }
+
+        /* =====  日期格子  ===== */
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 15px;
+            font-weight: 500;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, .5);
+            border: 1px solid rgba(255, 255, 255, .5);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .day:hover {
+            background: rgba(255, 255, 255, .8);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+        }
+
+        /* -----  非当月日期  ----- */
+        .day.other-month { color: #95a5a6; background: rgba(236, 240, 241, .4); }
+
+        /* -----  过去 / 今天  ----- */
+        .day.past { background: rgba(189, 195, 199, .5); color: #7f8c8d; }
+
+        .day.today {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, .3);
+        }
+
+        /* -----  特殊标记  ----- */
+        .day.special { color: #000; }
+
+        .day.special::before {
+            content: "";
+            position: absolute;
+            inset: 2px;
+            border: 2px solid #f59446;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .day.past.special::before { border-width: 1px; }
+
+        /* -----  悬浮提示  ----- */
+        .day.special:hover::after {
+            content: attr(data-desc);
+            position: absolute;
+            left: 50%;
+            bottom: 110%;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            font-size: 13px;
+            white-space: nowrap;
+            color: #fff;
+            background: rgba(0, 0, 0, .75);
+            border-radius: 6px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .day.special:hover::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 100%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, .75);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .day.past.special {
+            color: #7f8c8d;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="controls">
+        <div class="controls" id="yearButtons"></div>
+    </div>
+
+    <div class="calendar-container" id="calendarContainer"></div>
+
+	<script src="eventday/data.js"></script>
+
+    <script>
+        const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', 
+                          '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        const weekdayNames = ['一', '二', '三', '四', '五', '六', '日'];
+
+        const specialList = eventday_data.map(([dateStr, c]) => {
+            const [y, m, d] = dateStr.split('-').map(Number);   // 拆成数字
+            return { y, m, d, c };
+        });
+
+        let specialDates = new Set();
+        let currentYear = new Date().getFullYear();
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function getDaysInMonth(year, month) {
+            const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (month === 1 && isLeapYear(year)) {
+                return 29;
+            }
+            return daysInMonth[month];
+        }
+
+        function getFirstDayOfMonth(year, month) {
+            return new Date(year, month, 1).getDay();
+        }
+
+        function isDatePast(year, month, day) {
+            const today = new Date();
+            const checkDate = new Date(year, month, day);
+            return checkDate < today;
+        }
+
+        function isToday(year, month, day) {
+            const today = new Date();
+            return today.getFullYear() === year && 
+                   today.getMonth() === month && 
+                   today.getDate() === day;
+        }
+
+        function formatDateKey(year, month, day) {
+            return `${year}-${month}-${day}`;
+        }
+
+        function createMonthCalendar(year, month) {
+            const monthDiv = document.createElement('div');
+            monthDiv.className = 'month-card';
+            
+            const header = document.createElement('div');
+            header.className = 'month-header';
+            header.textContent = `${monthNames[month]} ${year}`;
+            monthDiv.appendChild(header);
+
+            const weekdaysDiv = document.createElement('div');
+            weekdaysDiv.className = 'weekdays';
+            weekdayNames.forEach(day => {
+                const weekday = document.createElement('div');
+                weekday.className = 'weekday';
+                weekday.textContent = day;
+                weekdaysDiv.appendChild(weekday);
+            });
+            monthDiv.appendChild(weekdaysDiv);
+
+            const daysDiv = document.createElement('div');
+            daysDiv.className = 'days';
+
+            const firstDay = getFirstDayOfMonth(year, month);
+            const daysInMonth = getDaysInMonth(year, month);
+
+            // 上个月的日期
+            const prevMonth = month === 0 ? 11 : month - 1;
+            const prevYear    = month === 0 ? year - 1 : year;
+            const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
+
+            for (let i = 1; i < firstDay; i++) {
+                const day = daysInPrevMonth - firstDay + i + 1;   // 正确对应日期
+                const dayDiv = createDayElement(prevYear, prevMonth, day, true);
+                daysDiv.appendChild(dayDiv);
+            }
+
+            // 当前月的日期
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = createDayElement(year, month, day, false);
+                daysDiv.appendChild(dayDiv);
+            }
+
+            // 下个月的日期
+            const remainingDays = 42 - (firstDay + daysInMonth);
+            for (let day = 1; day <= remainingDays; day++) {
+                const dayDiv = createDayElement(year, month + 1, day, true);
+                daysDiv.appendChild(dayDiv);
+            }
+
+            monthDiv.appendChild(daysDiv);
+            return monthDiv;
+        }
+
+function createDayElement(year, month, day, isOtherMonth) {
+  const dayDiv = document.createElement('div');
+  dayDiv.className = 'day';
+  dayDiv.textContent = day;
+  if (isOtherMonth) {
+    dayDiv.classList.add('other-month');
+    return dayDiv;
+  }
+  if (isToday(year, month, day)) {
+    dayDiv.classList.add('today');
+  } else if (isDatePast(year, month, day)) {
+    dayDiv.classList.add('past');
+  }
+
+  // 找到对应描述
+  const hit = specialList.find(
+    item => item.y === year && item.m === month + 1 && item.d === day
+  );
+  if (hit) {
+    dayDiv.classList.add('special');
+    dayDiv.dataset.desc = hit.c;   // 关键：把内容存进来
+  }
+  return dayDiv;
+}
+
+        function generateCalendar() {
+            const container = document.getElementById('calendarContainer');
+            container.innerHTML = '';
+
+            for (let month = 0; month < 12; month++) {
+                const monthCalendar = createMonthCalendar(currentYear, month);
+                container.appendChild(monthCalendar);
+            }
+        }
+
+        function generateYearButtons() {
+            const container = document.getElementById('yearButtons');
+            container.innerHTML = '';
+            const thisyear = new Date().getFullYear();
+            const startYear = thisyear - 5;
+            const endYear   = thisyear + 10;
+        
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'year-buttons';
+        
+            for (let year = startYear; year <= endYear; year++) {
+                const btn = document.createElement('button');
+                btn.className = 'year-button';
+                if (year === thisyear) {
+                    btn.classList.add('current-year');
+                }
+                btn.textContent = `${year}年`;
+                btn.addEventListener('click', () => {
+                    currentYear = year;
+                    generateCalendar();
+                    document.querySelectorAll('.year-button').forEach(b => {
+                        b.classList.remove('current-year', 'active');
+                        if (parseInt(b.textContent) === new Date().getFullYear()) {
+                            b.classList.add('current-year');
+                        }
+                    });
+                    btn.classList.add('active');
+                });
+                buttonGroup.appendChild(btn);
+            }
+            container.appendChild(buttonGroup);
+        }
+
+        // 初始化
+        generateYearButtons();
+        generateCalendar();
+    </script>
+</body>
+</html>
