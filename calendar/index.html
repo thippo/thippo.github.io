@@ -113,22 +113,26 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, .1);
         }
 
-        /* =====  星期表头  ===== */
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-bottom: 10px;
-        }
+/* =====  星期表头  ===== */
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;                 /* 与 .days 保持一致 */
+    margin-bottom: 10px;
+}
 
-        .weekday {
-            padding: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: center;
-            color: #3498db;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-        }
+.weekday {
+    aspect-ratio: 1;          /* 跟 .day 一样宽 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #3498db;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+    /* 去掉横向 padding，让宽度完全由 grid 轨道决定 */
+    padding: 0;
+}
 
         /* =====  日期格子  ===== */
         .days {
@@ -227,7 +231,7 @@
 
     <div class="calendar-container" id="calendarContainer"></div>
 
-	<script src="eventday/data.js"></script>
+	<script src="data.js"></script>
 
     <script>
         const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', 
