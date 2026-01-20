@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百年时光轴</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #d9e4f7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .timeline-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline-header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .current-time {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .main-time {
+            font-size: 2rem;
+            color: #34495e;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .progress-container {
+            margin: 30px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .modules-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .module {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .module:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .module h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .module-content {
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h1>人生百年</h1>
+                <div class="main-time" id="currentTime">1991-02-01 15:05:00</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-info">
+                    <span></span>
+                    <span id="elapsedTime">已过去：0秒</span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modules-container">
+
+<div class="module" id="eventdayModule" style="cursor:pointer;" title="点击查看详情">
+    <h3>📅 即将来到的事件</h3>
+    <div class="stats-grid" id="eventList">
+        <!-- JS 动态插入 -->
+    </div>
+</div>
+
+<div class="module" id="birthdayModule" style="cursor:pointer;" title="点击查看详情">
+    <h3>🎂 生日提醒</h3>
+    <div class="module-content" id="birthdayBox">
+        <!-- JS 动态生成 -->
+    </div>
+</div>
+
+            <div class="module">
+                <h3>⏰ 时间里程碑</h3>
+                <div class="module-content">
+                    <div id="milestones">
+                        <p>🎉 第1天 - 1991年2月2日</p>
+                        <p>📅 第1年 - 1992年2月1日</p>
+                        <p>🌟 第10年 - 2001年2月1日</p>
+                        <p>🎯 第25年 - 2016年2月1日</p>
+                        <p>🏆 第50年 - 2041年2月1日</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module">
+                <h3>🌈 时间感悟</h3>
+                <div class="module-content">
+                    <p id="timeQuote">时间如流水，每一秒都是珍贵的瞬间。</p>
+                    <p style="margin-top: 10px; font-style: italic; color: #95a5a6;">"百年时光，转瞬即逝，珍惜当下，活在当下。"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="eventday/data.js"></script>
+<script src="birthday/data.js"></script>
+
+<script>
+/* =========================
+   百年时光轴主逻辑
+   ========================= */
+const startTime = new Date('1991-02-01T15:05:00');
+const endTime   = new Date('2091-02-01T15:05:00');
+
+const quotes = [
+  "时间如流水，每一秒都是珍贵的瞬间。",
+  "百年光阴，见证时代的变迁。",
+  "每一秒都在书写历史，每一刻都值得铭记。",
+  "时光荏苒，岁月如歌。",
+  "百年时光轴，记录永恒的记忆。",
+  "时间是最公平的，每个人每天都拥有86400秒。",
+  "百年一瞬，珍惜当下。"
+];
+
+/* -------- 主刷新 -------- */
+function updateMainDisplay() {
+  const now = new Date();
+
+  /* 1. 大表盘 */
+  const timeString = now.toLocaleString('zh-CN', {
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit',
+    hour12:false
+  }).replace(/\//g,'-');
+  document.getElementById('currentTime').textContent = timeString;
+
+  /* 2. 进度条 */
+  const total = endTime - startTime;
+  const elapsed = now - startTime;
+  const percent = Math.min(Math.max(elapsed / total, 0), 1);
+  document.getElementById('progressFill').style.width = (percent * 100) + '%';
+
+  /* 3. 已走时长 */
+  let y = now.getFullYear()  - startTime.getFullYear();
+  let m = now.getMonth()     - startTime.getMonth();
+  let d = now.getDate()      - startTime.getDate();
+  let h = now.getHours()     - startTime.getHours();
+  let min=now.getMinutes()   - startTime.getMinutes();
+  let s =now.getSeconds()    - startTime.getSeconds();
+
+  if(s <0){s+=60;min--;}
+  if(min<0){min+=60;h--;}
+  if(h<0){h+=24;d--;}
+  if(d<0){
+    const prev = new Date(now.getFullYear(), now.getMonth(), 0);
+    d += prev.getDate();
+    m--;
+  }
+  if(m<0){m+=12;y--;}
+
+  document.getElementById('elapsedTime').textContent =
+    `已过去：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
+
+  /* 4. 里程碑 */
+  const mileDays = [1,365,3650,9125,18250];
+  const mileText = ['第1天','第1年','第10年','第25年','第50年'];
+  const mileDate = mileDays.map(n=>new Date(startTime.getTime()+n*864e5).toLocaleDateString('zh-CN'));
+  const passedDays = Math.floor(elapsed/864e5);
+  const mileHtml = mileDays.map((n,i)=>{
+    const icon = passedDays>=n ? '✅' : '📅';
+    return `<p>${icon} ${mileText[i]} - ${mileDate[i]}</p>`;
+  }).join('');
+  document.getElementById('milestones').innerHTML = mileHtml;
+
+  /* 5. 随机感悟（每分钟换一次） */
+  if(now.getSeconds()===0){
+    document.getElementById('timeQuote').textContent =
+      quotes[Math.floor(Math.random()*quotes.length)];
+  }
+}
+
+/* =========================
+   事件倒计时
+   ========================= */
+
+function renderEvents() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const box = document.getElementById('eventList');
+  box.innerHTML = '';
+
+  eventday_data
+    .map(([ds,txt])=>{
+      const t = new Date(ds+'T00:00:00');
+      const daysLeft = Math.ceil((t - today)/86400000);
+      return {date:ds,text:txt,days:daysLeft};
+    })
+    .filter(e=>e.days>=0)
+    .sort((a,b)=>a.days-b.days)
+    .slice(0,6)
+    .forEach(e=>{
+      const div = document.createElement('div');
+      div.className = 'stat-item';
+      div.innerHTML = `
+        <div class="stat-value">${e.days}</div>
+        <div class="stat-label">${e.text}</div>`;
+      box.appendChild(div);
+    });
+}
+
+
+/* ---------- 生日提醒（适配现有 birthday_data） ---------- */
+function zero(n){return n<10?'0'+n:n;}
+
+function getBirthdayList(){
+  const today=new Date();
+  const y=today.getFullYear();
+  const m=zero(today.getMonth()+1);
+  const d=zero(today.getDate());
+  const mmdd=m+'-'+d;
+
+  const yesterday=new Date(today);
+  yesterday.setDate(yesterday.getDate()-1);
+  const yy=zero(yesterday.getMonth()+1);
+  const dd=zero(yesterday.getDate());
+  const yMd=yy+'-'+dd;
+
+  const tomorrow=new Date(today);
+  tomorrow.setDate(tomorrow.getDate()+1);
+  const ty=zero(tomorrow.getMonth()+1);
+  const td=zero(tomorrow.getDate());
+  const tMd=ty+'-'+td;
+
+  /* 从 birthday_data 里拿名单 */
+  const pick=md=>{
+    const [M,D]=md.split('-').map(Number);
+    return birthday_data[M] && birthday_data[M][D] ? birthday_data[M][D] : [];
+  };
+
+  const yList   = pick(yMd);
+  const todayList= pick(mmdd);
+  const tList   = pick(tMd);
+
+  /* 渲染 */
+  const box=document.getElementById('birthdayBox');
+box.innerHTML=`
+  <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
+    <span style="white-space:pre">昨日：</span><span>${yList.length?yList.join('、'):'——'}</span>
+  </div>
+  <div style="display:flex;font-family:monospace;font-size:1.1rem;line-height:1.6;color:#e67e22;font-weight:bold;margin:4px 0;">
+    <span style="white-space:pre">今日：</span><span>${todayList.length?todayList.join('、'):'——'}</span>
+  </div>
+  <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
+    <span style="white-space:pre">明日：</span><span>${tList.length?tList.join('、'):'——'}</span>
+  </div>
+`;
+}
+
+/* ===== 点击跳转 ===== */
+document.getElementById('eventdayModule').addEventListener('click', () => {
+    // 把下面地址换成你想打开的实际网址
+    window.open('calendar.html', '_blank');
+});
+document.getElementById('birthdayModule').addEventListener('click', () => {
+    // 把下面地址换成你想打开的实际网址
+    window.open('birthday.html', '_blank');
+});
+
+/* =========================
+   启动定时器
+   ========================= */
+updateMainDisplay();   // 先刷一次
+renderEvents();
+getBirthdayList();
+
+setInterval(updateMainDisplay, 1000);   // 主时间 1 秒
+</script>
+</body>
+</html>

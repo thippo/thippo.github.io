@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>生日清单·三栏</title>
+<style>
+/* ---------- 基础 ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: .8vw;
+  color: #333;
+  font-size: 14px;          /* 全局基准字号缩小 */
+}
+.container {
+  max-width: 1600px;        /* 稍缩窄，内容更集中 */
+  margin: 0 auto;
+  background: rgba(255, 255, 255, .15);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;      /* 圆角小一点 */
+  border: 1px solid rgba(255, 255, 255, .3);
+  padding: 1.5vw;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .08);
+}
+
+/* ---------- 头部 ---------- */
+.header { text-align: center; margin-bottom: 1.5vw; }
+.title { font-size: clamp(1.6rem, 4vw, 2.4rem); color: #fff; font-weight: 700; }
+.current-date { font-size: clamp(.9rem, 2vw, 1.1rem); color: rgba(255, 255, 255, .9); margin-top: .6vw; }
+
+/* ---------- 三栏布局 ---------- */
+.three-col {
+  display: flex;
+  gap: 1vw;                 /* 栏间距收紧 */
+}
+.col {
+  flex: 1 1 33.33%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vw;               /* 月份块上下间距 */
+}
+/* 响应式断点微调 */
+@media (max-width: 899px) and (min-width: 600px) {
+  .three-col { flex-wrap: wrap; }
+  .col { flex: 1 1 48%; }
+}
+@media (max-width: 599px) {
+  .three-col { flex-direction: column; }
+  .col { flex: 1 1 100%; }
+}
+
+/* ---------- 月份块 ---------- */
+.month-block {
+  background: rgba(255, 255, 255, .7);
+  border-radius: 12px;      /* 圆角更小 */
+  padding: 2vw;             /* 内边距减少 */
+  border: 1px solid rgba(255, 255, 255, .4);
+}
+.month-block.today {
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 0 0 2px #ff9a9e; /* 描边变细 */
+}
+.month-title {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+  color: #4a4a8c;
+  margin-bottom: 1.2vw;
+  border-left: 4px solid #ff9a9e; /* 左边条更细 */
+  padding-left: 1.2vw;
+}
+.month-block.today .month-title { color: #ff9a9e; }
+
+/* ---------- 人员卡片 ---------- */
+.person-card {
+  background: rgba(255, 255, 255, .9);
+  border-radius: 8px;       /* 圆角更小 */
+  padding: .6vw 1vw;        /* 上下减少 */
+  margin-bottom: 1vw;       /* 卡片间距收紧 */
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  transition: transform .25s;
+}
+.person-card:hover { transform: translateY(-2px); }
+.avatar {
+  width: 36px; height: 36px; /* 头像缩小 */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  font-size: 1.2rem; color: #fff;
+}
+.info { flex: 1; }
+.name { font-size: clamp(.95rem, 2.5vw, 1.1rem); font-weight: 600; color: #333; }
+.date { font-size: clamp(.8rem, 2vw, .9rem); color: #666; margin-top: 2px; }
+.tag {
+  font-size: clamp(.7rem, 1.8vw, .8rem);
+  background: rgba(118, 75, 162, .15);
+  color: #764ba2;
+  padding: 3px 8px;         /* 标签更小 */
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* ---------- 空状态 ---------- */
+.empty {
+  text-align: center; color: rgba(0, 0, 0, .4);
+  font-size: clamp(.8rem, 2vw, .9rem);
+  padding: 2vw 0;
+}
+
+/* ---------- 滚动提示 ---------- */
+.scroll-indicator {
+  position: fixed; top: 16px; right: 16px;
+  background: rgba(255, 255, 255, .2);
+  backdrop-filter: blur(10px);
+  color: #fff; padding: 8px 16px; border-radius: 20px;
+  font-size: clamp(.8rem, 1.8vw, .9rem);
+  display: none; animation: slideIn .5s ease;
+  border: 1px solid rgba(255, 255, 255, .3);
+}
+@keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1 class="title">🎂 生日清单</h1>
+    <div class="current-date" id="currentDate"></div>
+  </div>
+
+  <div class="scroll-indicator" id="scrollIndicator">已定位到本月 📅</div>
+
+  <!-- 三栏列表 -->
+  <div class="three-col" id="threeCol"></div>
+</div>
+
+<script src="birthday/data.js"></script>
+
+<script>
+const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+/* ===============  工具  =============== */
+const getCurrent = () => {
+  const d = new Date();
+  return { y: d.getFullYear(), m: d.getMonth()+1, d: d.getDate(), date: d };
+};
+
+/* ===============  生成单个月份  =============== */
+function buildMonth(m) {
+  const cur = getCurrent();
+  const block = document.createElement('div');
+  block.className = 'month-block';
+  if (m === cur.m) block.classList.add('today');
+
+  let html = `<div class="month-title">${monthNames[m-1]}</div>`;
+
+  let hasAny = false;
+  const dayKeys = Object.keys(birthday_data[m] || {}).sort((a,b)=>a-b);
+  dayKeys.forEach(d=>{
+    birthday_data[m][d].forEach(name=>{
+      hasAny = true;
+      const match = name.match(/(.+)\((.+)\)/);
+      const displayName = match ? match[1] : name;
+      const tag        = match ? match[2] : '';
+      html += `
+        <div class="person-card">
+          <div class="avatar">🎉</div>
+          <div class="info">
+            <div class="name">${displayName}</div>
+            <div class="date">${m} 月 ${d} 日</div>
+          </div>
+          ${tag?`<div class="tag">${tag}</div>`:''}
+        </div>`;
+    });
+  });
+
+  if (!hasAny) html += '<div class="empty">本月暂无生日</div>';
+  block.innerHTML = html;
+  return block;
+}
+
+/* ===============  三栏分配  =============== */
+function buildThreeCol() {
+  const root = document.getElementById('threeCol');
+  const col1 = document.createElement('div'); col1.className = 'col';
+  const col2 = document.createElement('div'); col2.className = 'col';
+  const col3 = document.createElement('div'); col3.className = 'col';
+  root.append(col1, col2, col3);
+
+  let todayBlock = null;
+  for (let m = 1; m <= 12; m++) {
+    const block = buildMonth(m);
+    if (m === getCurrent().m) todayBlock = block;
+    // 按顺序轮询：1→左，2→中，3→右，4→左……
+    [col1, col2, col3][(m - 1) % 3].appendChild(block);
+  }
+
+  /* 定位到今天 */
+  if (todayBlock) {
+    setTimeout(()=>{
+      todayBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const ind = document.getElementById('scrollIndicator');
+      ind.style.display='block';
+      setTimeout(()=>ind.style.display='none',2000);
+    },300);
+  }
+}
+
+/* ===============  头部日期  =============== */
+function updateHeaderDate() {
+  const opt = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+  document.getElementById('currentDate').textContent = getCurrent().date.toLocaleDateString('zh-CN', opt);
+}
+
+/* ===============  入口  =============== */
+document.addEventListener('DOMContentLoaded', () => {
+  updateHeaderDate();
+  buildThreeCol();
+});
+</script>
+</body>
+</html>
