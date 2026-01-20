@@ -168,6 +168,9 @@
                     <span></span>
                 </div>
             </div>
+
+            
+
         </div>
 
         <div class="modules-container">
@@ -258,11 +261,6 @@ function updateMainDisplay() {
   document.getElementById('elapsedTime').textContent =
     `已过去：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
 
-  /* 5. 随机感悟（每分钟换一次） */
-  if(now.getSeconds()===0){
-    document.getElementById('timeQuote').textContent =
-      quotes[Math.floor(Math.random()*quotes.length)];
-  }
 }
 
 /* =========================
