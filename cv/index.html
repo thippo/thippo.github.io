@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历 - CV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f5f7fa 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #afbbf3 0%, rgb(135, 191, 247) 100%);
+            color: #2c3e50;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 400;
+            color: #2c3e50;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #6c757d;
+            font-weight: 300;
+        }
+
+        .controls {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: 2px solid #dee2e6;
+            background: white;
+            color: #495057;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .lang-btn.active {
+            background: #6c757d;
+            color: white;
+            border-color: #6c757d;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2);
+        }
+
+        .pdf-container {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            background: #ffffff;
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6c757d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fallback-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .fallback-message a {
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #6c757d;
+        }
+
+        .fallback-message a:hover {
+            color: #495057;
+            border-bottom-style: solid;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                padding: 15px 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .pdf-container {
+                height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="page-title">个人简历</h1>
+            <p id="page-subtitle">Professional Resume / CV</p>
+        </div>
+
+        <div class="controls">
+            <div class="language-switcher">
+                <button class="lang-btn active" onclick="switchLanguage('zh')">中文</button>
+                <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+            </div>
+        </div>
+
+        <div class="pdf-container">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p id="loading-text">正在加载简历...</p>
+            </div>
+            
+            <object id="pdf-object" data="cv_zh.pdf#toolbar=0&navpanes=0&scrollbar=1" type="application/pdf" width="100%" height="100%">
+                <iframe id="pdf-iframe" src="cv_zh.pdf#toolbar=0&navpanes=0&scrollbar=1" width="100%" height="100%" style="border: none;">
+                    <div class="fallback-message">
+                        <p id="fallback-text">您的浏览器不支持PDF查看器。</p>
+                        <a href="cv_zh.pdf" target="_blank" id="fallback-link">点击这里查看PDF文件</a>
+                    </div>
+                </iframe>
+            </object>
+        </div>
+    </div>
+
+    <script>
+        // 语言配置
+        const translations = {
+            zh: {
+                pageTitle: '个人简历',
+                pageSubtitle: 'Professional Resume / CV',
+                loadingText: '正在加载简历...',
+                fallbackText: '您的浏览器不支持PDF查看器。',
+                fallbackLink: '点击这里查看PDF文件',
+                chineseCV: 'cv_zh.pdf',
+                englishCV: 'cv_en.pdf'
+            },
+            en: {
+                pageTitle: 'Curriculum Vitae',
+                pageSubtitle: 'Professional Resume / CV',
+                loadingText: 'Loading resume...',
+                fallbackText: 'Your browser does not support PDF viewer.',
+                fallbackLink: 'Click here to view PDF file',
+                chineseCV: 'cv_zh.pdf',
+                englishCV: 'cv_en.pdf'
+            }
+        };
+
+        let currentLanguage = 'zh';
+        let currentPDF = 'cv_zh.pdf';
+
+        // 切换语言函数
+        function switchLanguage(lang) {
+            if (lang === currentLanguage) return;
+
+            currentLanguage = lang;
+            currentPDF = lang === 'zh' ? 'cv_zh.pdf' : 'cv_en.pdf';
+
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新页面文本
+            updatePageText();
+
+            // 更新PDF显示
+            updatePDFViewer();
+
+            // 更新页面语言属性
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+        }
+
+        // 更新页面文本
+        function updatePageText() {
+            const t = translations[currentLanguage];
+            
+            // 安全地更新每个元素，添加null检查
+            const elementsToUpdate = {
+                'page-title': t.pageTitle,
+                'page-subtitle': t.pageSubtitle,
+                'loading-text': t.loadingText,
+                'fallback-text': t.fallbackText
+            };
+
+            // 更新文本内容
+            Object.keys(elementsToUpdate).forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = elementsToUpdate[id];
+                }
+            });
+
+            // 更新备用链接文本
+            const fallbackLink = document.getElementById('fallback-link');
+            if (fallbackLink) {
+                fallbackLink.textContent = t.fallbackLink;
+                fallbackLink.href = currentPDF;
+            }
+        }
+
+        // 更新PDF查看器
+        function updatePDFViewer() {
+            const loading = document.getElementById('loading');
+            const pdfObject = document.getElementById('pdf-object');
+            const pdfIframe = document.getElementById('pdf-iframe');
+            const fallbackLink = document.getElementById('fallback-link');
+
+            if (loading) loading.style.display = 'block';
+
+            const pdfUrl = currentPDF + '#toolbar=0&navpanes=0&scrollbar=1';
+            
+            if (pdfObject) pdfObject.data = pdfUrl;
+            if (pdfIframe) pdfIframe.src = pdfUrl;
+            if (fallbackLink) fallbackLink.href = currentPDF;
+
+            setTimeout(() => {
+                if (loading) loading.style.display = 'none';
+            }, 1000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置初始状态
+            updatePageText();
+            
+            // 检查PDF是否成功加载
+            const pdfObject = document.getElementById('pdf-object');
+            const loading = document.getElementById('loading');
+
+            if (pdfObject) {
+                pdfObject.onload = function() {
+                    setTimeout(() => {
+                        if (loading) loading.style.display = 'none';
+                    }, 500);
+                };
+
+                pdfObject.onerror = function() {
+                    if (loading) loading.style.display = 'none';
+                    console.log('PDF加载失败，使用备用方案');
+                };
+            }
+        });
+
+        // 错误处理函数
+        function handleError(error, context) {
+            console.error(`Error in ${context}:`, error);
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.innerHTML = `
+                    <div style="color: #6c757d; text-align: center;">
+                        <p>加载失败，请刷新页面重试</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            刷新页面
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            handleError(e.error, 'Global error handler');
+        });
+    </script>
+</body>
+</html>

@@ -138,15 +138,21 @@
             margin-top: 5px;
         }
 
-        <!-- 条形图专属样式 -->
-.bar-chart { font-size: 0.95rem; color: #5a6c7d; }
-.bar-row { display: flex; align-items: center; margin: 8px 0; }
-.bar-label { width: 44px; text-align: right; margin-right: 8px; }
-.bar-track { flex: 1; height: 22px; background: #ecf0f1; border-radius: 4px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 4px; transition: width .4s; }
-.asset-bar { background: linear-gradient(90deg, #3498db, #2ecc71); }
-.liab-bar { background: linear-gradient(90deg, #e67e22, #f1c40f); }
-.bar-num { width: 80px; text-align: right; font-weight: bold; margin-left: 8px; }
+/* ===== 简历微卡片 ===== */
+.resume-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+margin-top:12px;
+}
+.resume-grid .stat-item{
+background:#f8f9fa;
+padding:12px 4px;
+border-radius:8px;
+text-align:center;
+}
+.resume-grid .stat-value{font-size:1.15rem;font-weight:600;color:#2c3e50;}
+.resume-grid .stat-label{font-size:.8rem;color:#7f8c8d;margin-top:4px;}
 
     </style>
 </head>
@@ -207,6 +213,31 @@
     </div>
 </div>
 
+<!-- 年度总结 文字云 -->
+<div class="module" id="summaryModule" style="cursor:pointer;" title="点击查看详情">
+    <h3>📔 年度总结</h3>
+    <div id="summaryCloud" style="line-height:1.8; text-align:center; padding:10px 0;"></div>
+</div>
+
+<!-- 个人简历 -->
+<div class="module" id="resumeModule" style="cursor:pointer;" title="点击查看详情">
+  <h3>📋 个人简历</h3>
+  <div class="module-content resume-grid">
+    <div class="stat-item">
+      <div class="stat-value">7+</div>
+      <div class="stat-label">年经验</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">CFA</div>
+      <div class="stat-label">持证人</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">跨领域</div>
+      <div class="stat-label">生物·计算·金融</div>
+    </div>
+  </div>
+</div>
+
         </div>
     </div>
 
@@ -214,6 +245,7 @@
 <script src="birthday/data.js"></script>
 <script src="wealth/data.js"></script>
 <script src="wealthggh/data.js"></script>
+<script src="summary/data.js"></script>
 
 <script>
 /* =========================
@@ -262,6 +294,7 @@ function updateMainDisplay() {
     `已过去：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
 
 }
+
 
 /* =========================
    事件倒计时
@@ -388,22 +421,50 @@ function getWealthggh(){
     `;
 }
 
+/* ========== 年度总结 文字云（仅最新3年） ========== */
+function renderSummaryCloud(){
+    if(typeof summarydata === 'undefined') return;
+    const cloudBox = document.getElementById('summaryCloud');
+    cloudBox.innerHTML = '';
+    /* 降序后取前3 */
+    Object.keys(summarydata)
+          .sort((a,b)=>b-a)
+          .slice(0,12)
+          .forEach(yr=>{
+              const title = summarydata[yr].title || '';
+              if(!title) return;
+              const span = document.createElement('span');
+              span.textContent = title;
+              const fs = 14 + Math.random()*14;
+              const hue = 200 + Math.random()*160;
+              span.style.cssText = `
+                  font-size : ${fs.toFixed(0)}px;
+                  color     : hsl(${hue},70%,50%);
+                  margin    : 0 6px;
+              `;
+              cloudBox.appendChild(span);
+          });
+}
+
+
 /* ===== 点击跳转 ===== */
 document.getElementById('eventdayModule').addEventListener('click', () => {
-    // 把下面地址换成你想打开的实际网址
     window.open('calendar/index.html', '_blank');
 });
 document.getElementById('birthdayModule').addEventListener('click', () => {
-    // 把下面地址换成你想打开的实际网址
     window.open('birthday/index.html', '_blank');
 });
 document.getElementById('wealthModule').addEventListener('click', () => {
-    // 把下面地址换成你想打开的实际网址
     window.open('wealth/index.html', '_blank');
 });
 document.getElementById('wealthgghModule').addEventListener('click', () => {
-    // 把下面地址换成你想打开的实际网址
     window.open('wealthggh/index.html', '_blank');
+});
+document.getElementById('summaryModule').addEventListener('click',()=>{
+    window.open('summary/index.html','_blank');
+});
+document.getElementById('resumeModule').addEventListener('click',()=>{
+window.open('cv/index.html','_blank');
 });
 
 /* =========================
@@ -414,6 +475,7 @@ renderEvents();
 getBirthdayList();
 getWealth();
 getWealthggh();
+renderSummaryCloud();
 
 setInterval(updateMainDisplay, 1000);   // 主时间 1 秒
 </script>
