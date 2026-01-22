@@ -154,6 +154,7 @@ text-align:center;
 .resume-grid .stat-value{font-size:1.15rem;font-weight:600;color:#2c3e50;}
 .resume-grid .stat-label{font-size:.8rem;color:#7f8c8d;margin-top:4px;}
 
+
     </style>
 </head>
 <body>
@@ -175,8 +176,8 @@ text-align:center;
                 </div>
             </div>
 
-            
 
+      
         </div>
 
         <div class="modules-container">
@@ -469,6 +470,8 @@ function renderPortfolio(){
   document.getElementById('returnText').textContent = returnRate;
 }
 
+
+
 /* ===== 点击跳转 ===== */
 document.getElementById('eventdayModule').addEventListener('click', () => {
     window.open('calendar/index.html', '_blank');
@@ -496,7 +499,7 @@ document.getElementById('portfolioModule').addEventListener('click', () => {
 /* =========================
    启动定时器
    ========================= */
-updateMainDisplay();   // 先刷一次
+updateMainDisplay();
 renderEvents();
 getBirthdayList();
 getWealth();
@@ -504,7 +507,7 @@ getWealthggh();
 renderSummaryCloud();
 renderPortfolio();
 
-setInterval(updateMainDisplay, 1000);   // 主时间 1 秒
+setInterval(updateMainDisplay, 1000);
 </script>
 
 </body>
