@@ -87,6 +87,12 @@
             color: #2d3748;
             position: sticky;
             top: 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        th:hover {
+            background-color: rgba(203, 213, 224, 0.5);
         }
 
         tr:hover {
@@ -131,6 +137,12 @@
 
         .negative {
             color: #f05252;
+        }
+
+        .sort-indicator {
+            font-size: 0.8rem;
+            margin-left: 5px;
+            opacity: 0.7;
         }
 
         @media (max-width: 768px) {
@@ -194,7 +206,7 @@
                     <tr>
                         <th>股票代码</th>
                         <th>公司名称</th>
-                        <th>占比</th>
+                        <th id="allocationHeader">占比 <span class="sort-indicator" id="sortIndicator">▼</span></th>
                     </tr>
                 </thead>
                 <tbody id="portfolioTableBody">
@@ -202,28 +214,39 @@
                 </tbody>
             </table>
             <div class="table-footer">
-                <span class="period">投资周期: 2024/05/14 - 2026/01/20</span> |
-                <span class="return">年化收益率: <span class="positive">+13.80%</span></span>
+                <span class="period" id="periodFooter"></span> |
+                <span class="return" id="returnFooter"></span>
             </div>
         </div>
     </div>
 
+    <script src="data.js"></script>
+
     <script>
-        // 投资组合数据
-        const portfolioData = [
-            { ticker: 'C', name: 'CITIGROUP INC', allocation: 2.42 },
-            { ticker: 'CME', name: 'CME GROUP INC CLASS CLASS A', allocation: 20.98 },
-            { ticker: 'GOOGL', name: 'ALPHABET INC CLASS A', allocation: 3.44 },
-            { ticker: 'HSAI', name: 'HESAI GROUP FUNSPONSORED ADR 1 ADR REPS 1 ORD SHS', allocation: 3.0 },
-            { ticker: 'NVDA', name: 'NVIDIA CORP', allocation: 19.19 },
-            { ticker: 'VIK', name: 'VIKING HLDGS LTD F', allocation: 2.2 },
-            { ticker: 'BIL', name: 'ST STERT SPDR BLMBG 1 3 MN T BL ETF', allocation: 48.03 },
-            { ticker: 'CASH', name: 'Cash & Money Market', allocation: 0.74 }
-        ];
+
+        // 设置页脚变量
+        document.getElementById('periodFooter').textContent = `投资周期: ${period}`;
+        const returnElement = document.getElementById('returnFooter');
+        returnElement.innerHTML = `年化收益率: <span class="${returnRate.startsWith('+') ? 'positive' : 'negative'}">${returnRate}</span>`;
+
+        let sortOrder = 'desc'; // 默认降序
+
+        // 排序函数
+        function sortByAllocation() {
+            portfolioData.sort((a, b) => {
+                if (sortOrder === 'desc') {
+                    return b.allocation - a.allocation;
+                } else {
+                    return a.allocation - b.allocation;
+                }
+            });
+        }
 
         // 填充表格
         function populateTable() {
             const tableBody = document.getElementById('portfolioTableBody');
+            tableBody.innerHTML = ''; // 清空现有内容
+            
             portfolioData.forEach(stock => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -235,8 +258,23 @@
             });
         }
 
+        // 更新排序指示器
+        function updateSortIndicator() {
+            const indicator = document.getElementById('sortIndicator');
+            indicator.textContent = sortOrder === 'desc' ? '▼' : '▲';
+        }
+
+        // 处理排序点击事件
+        document.getElementById('allocationHeader').addEventListener('click', function() {
+            sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+            sortByAllocation();
+            populateTable();
+            updateSortIndicator();
+        });
+
         // 页面加载完成后执行
         window.addEventListener('DOMContentLoaded', () => {
+            sortByAllocation(); // 初始按占比降序排序
             populateTable();
         });
     </script>

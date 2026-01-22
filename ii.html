@@ -238,6 +238,21 @@ text-align:center;
   </div>
 </div>
 
+<!-- 投资组合模块 -->
+<div class="module" id="portfolioModule" style="cursor:pointer;" title="点击查看详情">
+  <h3>📈 投资组合</h3>
+  <div class="module-content" style="display:flex;justify-content:center;gap:65px;font-size:1.2rem;">
+    <div style="text-align:center;">
+      <strong>统计周期</strong>
+      <div id="periodText" style="color:#3498db;font-weight:bold;line-height:1.2;"></div>
+    </div>
+    <div style="text-align:center;">
+      <strong>区间收益</strong>
+      <div id="returnText" style="color:#2ecc71;font-weight:bold;line-height:1.2;font-size:1.3rem;"></div>
+    </div>
+  </div>
+</div>
+
         </div>
     </div>
 
@@ -246,6 +261,7 @@ text-align:center;
 <script src="wealth/data.js"></script>
 <script src="wealthggh/data.js"></script>
 <script src="summary/data.js"></script>
+<script src="portfolio/data.js"></script>
 
 <script>
 /* =========================
@@ -446,6 +462,12 @@ function renderSummaryCloud(){
           });
 }
 
+/* ===== 投资组合渲染 ===== */
+function renderPortfolio(){
+  const [start, end] = period.split(' - ');
+  document.getElementById('periodText').innerHTML = `${start}<br>${end}`;
+  document.getElementById('returnText').textContent = returnRate;
+}
 
 /* ===== 点击跳转 ===== */
 document.getElementById('eventdayModule').addEventListener('click', () => {
@@ -466,6 +488,10 @@ document.getElementById('summaryModule').addEventListener('click',()=>{
 document.getElementById('resumeModule').addEventListener('click',()=>{
 window.open('cv/index.html','_blank');
 });
+document.getElementById('portfolioModule').addEventListener('click', () => {
+  window.open('portfolio/index.html', '_blank');
+});
+
 
 /* =========================
    启动定时器
@@ -476,6 +502,7 @@ getBirthdayList();
 getWealth();
 getWealthggh();
 renderSummaryCloud();
+renderPortfolio();
 
 setInterval(updateMainDisplay, 1000);   // 主时间 1 秒
 </script>
