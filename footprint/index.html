@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>稳定多层级地图系统 - 景点标记</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css " />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+        }
+
+        #map-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 地图源选择器 */
+        .map-source-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            min-width: 180px;
+        }
+
+        .map-source-selector h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .source-option {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .source-option:hover {
+            background: #f0f0f0;
+        }
+
+        .source-option.active {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+        }
+
+        .source-option input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        /* 层级导航面板 */
+        .hierarchy-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            max-width: 350px;
+            max-height: 60vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .hierarchy-panel h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .breadcrumb-item.active {
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .breadcrumb-separator {
+            color: #bbb;
+        }
+
+        /* 树形结构样式 */
+        .tree-list {
+            list-style: none;
+        }
+
+        .tree-item {
+            margin: 5px 0;
+        }
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .tree-header:hover {
+            background: #f5f5f5;
+            transform: translateX(5px);
+        }
+
+        .tree-header.active {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .tree-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .icon-country {
+            background: #ff7043;
+            color: white;
+        }
+
+        .icon-city {
+            background: #ab47bc;
+            color: white;
+        }
+
+        .icon-spot {
+            background: #42a5f5;
+            color: white;
+        }
+
+        .tree-content {
+            flex: 1;
+        }
+
+        .tree-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .tree-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .expand-icon {
+            margin-left: auto;
+            transition: transform 0.3s;
+            color: #999;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+
+        /* 统计栏 */
+        .stats-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        /* 加载和错误处理 */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+
+        .loading-indicator.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-notification {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            background: #ff5252;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .error-notification.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .tile-error-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .tile-error-overlay.show {
+            display: block;
+        }
+
+        /* 自定义标记样式 */
+        .custom-div-icon {
+            background: none;
+            border: none;
+        }
+
+        .marker-pin {
+            width: 40px;
+            height: 40px;
+            border-radius: 50% 50% 50% 0;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -20px 0 0 -20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .marker-pin:hover {
+            transform: rotate(-45deg) scale(1.1);
+        }
+
+        .marker-pin.country {
+            background: #ff7043;
+        }
+
+        .marker-pin.city {
+            background: #ab47bc;
+            width: 35px;
+            height: 35px;
+            margin: -17.5px 0 0 -17.5px;
+        }
+
+        .marker-pin.spot {
+            background: #42a5f5;
+            width: 30px;
+            height: 30px;
+            margin: -15px 0 0 -15px;
+        }
+
+        .marker-icon {
+            transform: rotate(45deg);
+            color: white;
+            font-size: 16px;
+        }
+
+        .marker-pin.city .marker-icon {
+            font-size: 14px;
+        }
+
+        .marker-pin.spot .marker-icon {
+            font-size: 12px;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin: 5px 0;
+        }
+
+        .btn-zoom-in {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-zoom-out {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hierarchy-panel {
+                max-width: 250px;
+                max-height: 50vh;
+                top: 10px;
+                left: 10px;
+            }
+
+            .map-source-selector {
+                max-width: 150px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .controls {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .stats-bar {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                justify-content: space-around;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container">
+        <div id="map"></div>
+        
+        <!-- 加载指示器 -->
+        <div id="loading-indicator" class="loading-indicator">
+            <div class="spinner"></div>
+            <p style="color: #666;">正在加载地图...</p>
+        </div>
+
+        <!-- 错误提示 -->
+        <div id="error-notification" class="error-notification">
+            地图加载失败，请切换地图源或检查网络连接
+        </div>
+
+        <!-- 瓦片错误提示 -->
+        <div id="tile-error-overlay" class="tile-error-overlay">
+            ⚠️ 部分地图区域加载失败
+        </div>
+
+        <!-- 地图源选择器 -->
+        <div class="map-source-selector">
+            <h3>🗺️ 地图源</h3>
+            <div class="source-option active">
+                <input type="radio" id="source1" name="mapSource" value="cartodb" checked>
+                <label for="source1">CartoDB (推荐)</label>
+            </div>
+            <div class="source-option">
+                <input type="radio" id="source2" name="mapSource" value="osm">
+                <label for="source2">OpenStreetMap</label>
+            </div>
+            <div class="source-option">
+                <input type="radio" id="source3" name="mapSource" value="stamen">
+                <label for="source3">Stamen (备用)</label>
+            </div>
+            <div class="source-option">
+                <input type="radio" id="source4" name="mapSource" value="esri">
+                <label for="esri">ESRI (备用)</label>
+            </div>
+            <button class="refresh-btn" onclick="refreshMap()">🔄 刷新地图</button>
+        </div>
+
+        <!-- 层级导航面板 -->
+        <div class="hierarchy-panel">
+            <h2>🌍 地理位置</h2>
+            <div class="breadcrumb" id="breadcrumb">
+                <span class="breadcrumb-item active" onclick="showLevel('world')">世界</span>
+            </div>
+            <ul class="tree-list" id="tree-list"></ul>
+        </div>
+
+
+        <!-- 统计栏 -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="stat-countries">0</div>
+                <div class="stat-label">国家</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="stat-cities">0</div>
+                <div class="stat-label">城市</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="stat-spots">0</div>
+                <div class="stat-label">景点</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="stat-zoom">3</div>
+                <div class="stat-label">缩放</div>
+            </div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="controls">
+            <button class="btn btn-zoom-in" onclick="zoomIn()">
+                <span>➕</span> 放大
+            </button>
+            <button class="btn btn-zoom-in" onclick="zoomToLevel(10)" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+                <span>🏙️</span> 城市级
+            </button>
+            <button class="btn btn-zoom-in" onclick="zoomToLevel(16)" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                <span>📍</span> 景点级
+            </button>
+            <button class="btn btn-zoom-out" onclick="zoomOut()">
+                <span>➖</span> 缩小
+            </button>
+            <button class="btn btn-reset" onclick="resetView()">
+                <span>🌍</span> 全球视图
+            </button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js "></script>
+    <script>
+        // 层级化地理位置数据（包含详细景点信息）
+        const geoData = [
+            {
+                id: "cn",
+                name: "中国",
+                type: "country",
+                lat: 35.8617,
+                lng: 104.1954,
+                zoom: 4,
+                children: [
+                    {
+                        id: "cn-bj",
+                        name: "北京",
+                        type: "city",
+                        lat: 39.9042,
+                        lng: 116.4074,
+                        zoom: 10,
+                        children: [
+                            {
+                                id: "cn-bj-gc",
+                                name: "故宫",
+                                type: "spot",
+                                lat: 39.9163,
+                                lng: 116.3972,
+                                date: "2024-01-15",
+                                description: "中国明清两代的皇家宫殿，旧称紫禁城，是世界上现存规模最大、保存最为完整的木质结构古建筑之一。",
+                                icon: "🏯"
+                            },
+                            {
+                                id: "cn-bj-tt",
+                                name: "天坛",
+                                type: "spot",
+                                lat: 39.8822,
+                                lng: 116.4066,
+                                date: "2024-01-16",
+                                description: "明清两代皇帝祭天、祈谷的场所，主要建筑有祈年殿、皇穹宇、圜丘。",
+                                icon: "🛕"
+                            },
+                            {
+                                id: "cn-bj-ccd",
+                                name: "长城（八达岭）",
+                                type: "spot",
+                                lat: 40.3599,
+                                lng: 116.0200,
+                                date: "2024-01-17",
+                                description: "万里长城的重要组成部分，是明长城的一个隘口，景色壮观，是世界文化遗产。",
+                                icon: "🧱"
+                            },
+                            {
+                                id: "cn-bj-yhy",
+                                name: "颐和园",
+                                type: "spot",
+                                lat: 39.9999,
+                                lng: 116.2755,
+                                date: "2024-01-18",
+                                description: "清朝皇家园林，以昆明湖、万寿山为基址，汲取江南园林设计手法而建。",
+                                icon: "🏞️"
+                            }
+                        ]
+                    },
+                    {
+                        id: "cn-sh",
+                        name: "上海",
+                        type: "city",
+                        lat: 31.2304,
+                        lng: 121.4737,
+                        zoom: 10,
+                        children: [
+                            {
+                                id: "cn-sh-waitan",
+                                name: "外滩",
+                                type: "spot",
+                                lat: 31.2397,
+                                lng: 121.4998,
+                                date: "2024-03-10",
+                                description: "上海的标志性景点，拥有52座风格迥异的古典复兴大楼，被誉为万国建筑博览群。",
+                                icon: "🏢"
+                            },
+                            {
+                                id: "cn-sh-dst",
+                                name: "东方明珠",
+                                type: "spot",
+                                lat: 31.2397,
+                                lng: 121.4998,
+                                date: "2024-03-11",
+                                description: "上海标志性文化景观之一，位于浦东新区陆家嘴，塔高约468米。",
+                                icon: "🗼"
+                            },
+                            {
+                                id: "cn-sh-dz",
+                                name: "豫园",
+                                type: "spot",
+                                lat: 31.2270,
+                                lng: 121.4920,
+                                date: "2024-03-12",
+                                description: "明代私人花园，距今已有四百余年历史，是上海老城厢的发源地。",
+                                icon: "🏮"
+                            }
+                        ]
+                    },
+                    {
+                        id: "cn-xa",
+                        name: "西安",
+                        type: "city",
+                        lat: 34.3416,
+                        lng: 108.9398,
+                        zoom: 10,
+                        children: [
+                            {
+                                id: "cn-xa-bmy",
+                                name: "兵马俑",
+                                type: "spot",
+                                lat: 34.3841,
+                                lng: 109.2785,
+                                date: "2024-05-20",
+                                description: "秦始皇陵兵马俑坑，被誉为世界第八大奇迹，是中国古代辉煌文明的一张金字名片。",
+                                icon: "⚔️"
+                            },
+                            {
+                                id: "cn-xa-dyt",
+                                name: "大雁塔",
+                                type: "spot",
+                                lat: 34.2209,
+                                lng: 108.9636,
+                                date: "2024-05-21",
+                                description: "唐代玄奘为保存由天竺经丝绸之路带回长安的经卷佛像主持修建的佛塔。",
+                                icon: "🕌"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "jp",
+                name: "日本",
+                type: "country",
+                lat: 36.2048,
+                lng: 138.2529,
+                zoom: 5,
+                children: [
+                    {
+                        id: "jp-tokyo",
+                        name: "东京",
+                        type: "city",
+                        lat: 35.6762,
+                        lng: 139.6503,
+                        zoom: 11,
+                        children: [
+                            {
+                                id: "jp-tokyo-tower",
+                                name: "东京塔",
+                                type: "spot",
+                                lat: 35.6586,
+                                lng: 139.7454,
+                                date: "2024-04-05",
+                                description: "东京的象征，高333米，红白相间的塔身设计灵感来自埃菲尔铁塔。",
+                                icon: "🗼"
+                            },
+                            {
+                                id: "jp-tokyo-sensoji",
+                                name: "浅草寺",
+                                type: "spot",
+                                lat: 35.7148,
+                                lng: 139.7967,
+                                date: "2024-04-06",
+                                description: "东京最古老的寺庙，著名的雷门和仲见世商店街是游客必到之处。",
+                                icon: "⛩️"
+                            },
+                            {
+                                id: "jp-tokyo-shibuya",
+                                name: "涩谷十字路口",
+                                type: "spot",
+                                lat: 35.6595,
+                                lng: 139.7004,
+                                date: "2024-04-07",
+                                description: "世界上最繁忙的人行横道，每分钟约有3000人同时穿越，是东京现代化的象征。",
+                                icon: "🚶"
+                            }
+                        ]
+                    },
+                    {
+                        id: "jp-kyoto",
+                        name: "京都",
+                        type: "city",
+                        lat: 35.0116,
+                        lng: 135.7681,
+                        zoom: 11,
+                        children: [
+                            {
+                                id: "jp-kyoto-fushimi",
+                                name: "伏见稻荷大社",
+                                type: "spot",
+                                lat: 34.9671,
+                                lng: 135.7727,
+                                date: "2024-04-10",
+                                description: "以千本鸟居闻名，是京都最具代表性的神社之一，供奉稻荷神。",
+                                icon: "⛩️"
+                            },
+                            {
+                                id: "jp-kyoto-kinkakuji",
+                                name: "金阁寺",
+                                type: "spot",
+                                lat: 35.0394,
+                                lng: 135.7292,
+                                date: "2024-04-11",
+                                description: "正式名称为鹿苑寺，核心建筑舍利殿外墙以金箔装饰，是京都的象征。",
+                                icon: "🛕"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "fr",
+                name: "法国",
+                type: "country",
+                lat: 46.2276,
+                lng: 2.2137,
+                zoom: 5,
+                children: [
+                    {
+                        id: "fr-paris",
+                        name: "巴黎",
+                        type: "city",
+                        lat: 48.8566,
+                        lng: 2.3522,
+                        zoom: 12,
+                        children: [
+                            {
+                                id: "fr-paris-eiffel",
+                                name: "埃菲尔铁塔",
+                                type: "spot",
+                                lat: 48.8584,
+                                lng: 2.2945,
+                                date: "2024-06-15",
+                                description: "巴黎的象征，高324米，是世界著名建筑，也是法国文化象征之一。",
+                                icon: "🗼"
+                            },
+                            {
+                                id: "fr-paris-louvre",
+                                name: "卢浮宫",
+                                type: "spot",
+                                lat: 48.8606,
+                                lng: 2.3376,
+                                date: "2024-06-16",
+                                description: "世界四大博物馆之首，原是法国的王宫，居住过50位法国国王和王后。",
+                                icon: "🏛️"
+                            },
+                            {
+                                id: "fr-paris-nd",
+                                name: "巴黎圣母院",
+                                type: "spot",
+                                lat: 48.8530,
+                                lng: 2.3499,
+                                date: "2024-06-17",
+                                description: "哥特式建筑的代表作，位于塞纳河畔的西岱岛上，是巴黎最古老的天主教堂。",
+                                icon: "⛪"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "us",
+                name: "美国",
+                type: "country",
+                lat: 37.0902,
+                lng: -95.7129,
+                zoom: 4,
+                children: [
+                    {
+                        id: "us-nyc",
+                        name: "纽约",
+                        type: "city",
+                        lat: 40.7128,
+                        lng: -74.0060,
+                        zoom: 12,
+                        children: [
+                            {
+                                id: "us-nyc-liberty",
+                                name: "自由女神像",
+                                type: "spot",
+                                lat: 40.6892,
+                                lng: -74.0445,
+                                date: "2024-07-20",
+                                description: "法国送给美国的礼物，象征着自由和民主，是美国的标志性建筑。",
+                                icon: "🗽"
+                            },
+                            {
+                                id: "us-nyc-times",
+                                name: "时代广场",
+                                type: "spot",
+                                lat: 40.7580,
+                                lng: -73.9855,
+                                date: "2024-07-21",
+                                description: "被称为世界的十字路口，是纽约最繁华的街区，以巨大的广告牌闻名。",
+                                icon: "🌃"
+                            },
+                            {
+                                id: "us-nyc-central",
+                                name: "中央公园",
+                                type: "spot",
+                                lat: 40.7829,
+                                lng: -73.9654,
+                                date: "2024-07-22",
+                                description: "纽约最大的都市公园，占地341公顷，是城市中的绿洲。",
+                                icon: "🌳"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // 地图相关变量
+        let map;
+        let currentLayer;
+        let currentLevel = 'world';
+        let currentPath = [];
+        let markers = [];
+        let failedTiles = 0;
+        let totalTiles = 0;
+
+        // 地图源配置
+        const mapSources = {
+            cartodb: {
+                name: 'CartoDB',
+                url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright ">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions ">CARTO</a>',
+                subdomains: ['abcd', 'abcd', 'abcd', 'abcd'],
+                maxZoom: 19
+            },
+            osm: {
+                name: 'OpenStreetMap',
+                url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright ">OpenStreetMap</a>',
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: 19
+            },
+            stamen: {
+                name: 'Stamen',
+                url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright ">OpenStreetMap</a> &copy; <a href="http://stamen.com ">Stamen Design</a>',
+                subdomains: ['a', 'b', 'c', 'd'],
+                maxZoom: 18
+            },
+            esri: {
+                name: 'ESRI',
+                url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/ {z}/{y}/{x}',
+                attribution: '&copy; <a href="https://www.esri.com/ ">ESRI</a>',
+                subdomains: ['server', 'services'],
+                maxZoom: 18
+            }
+        };
+
+        // 初始化
+        function init() {
+            initMap();
+            renderTree();
+            updateStats();
+            document.getElementById('loading-indicator').style.display = 'none';
+        }
+
+        function initMap() {
+            showLoading(true);
+
+            map = L.map('map', {
+                zoomControl: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                boxZoom: false,
+                keyboard: false,
+                worldCopyJump: true
+            }).setView([30, 0], 3);
+
+            // 监听瓦片加载事件
+            map.on('tileloadstart', function() {
+                totalTiles++;
+            });
+
+            map.on('tileerror', function(e) {
+                failedTiles++;
+                if (failedTiles > 3) {
+                    showTileError(true);
+                }
+            });
+
+            map.on('load', function() {
+                showLoading(false);
+                if (failedTiles > 0) {
+                    showNotification(`加载完成，${failedTiles}个瓦片加载失败`);
+                }
+            });
+
+            // 添加默认图层
+            changeMapSource('cartodb');
+
+            // 监听地图移动事件
+            map.on('moveend', checkMapLoadStatus);
+
+            // 监听缩放事件
+            map.on('zoomend', function() {
+                document.getElementById('stat-zoom').textContent = map.getZoom();
+            });
+
+            // 显示世界视图
+            showLevel('world');
+        }
+
+        // 切换地图源
+        function changeMapSource(sourceName) {
+            if (currentLayer) {
+                map.removeLayer(currentLayer);
+            }
+
+            const source = mapSources[sourceName];
+            
+            currentLayer = L.tileLayer(source.url, {
+                attribution: source.attribution,
+                maxZoom: source.maxZoom,
+                subdomains: source.subdomains,
+                errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y1ZjVmNSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5Ij7lsIHpnaLlm77niYfmuLjmuLLvvIzkuI3mlLnlj5HkvZPvvIw+PC90ZXh0Pjwvc3ZnPg==',
+                timeout: 8000
+            });
+
+            currentLayer.on('load', function() {
+                showLoading(false);
+                if (failedTiles === 0) {
+                    showNotification('地图加载成功！', 'success');
+                }
+            });
+
+            currentLayer.on('error', function(e) {
+                showNotification('地图源加载失败，请尝试其他源', 'error');
+                showLoading(false);
+            });
+
+            currentLayer.addTo(map);
+
+            // 更新UI状态
+            document.querySelectorAll('.source-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`input[value="${sourceName}"]`).parentElement.classList.add('active');
+        }
+
+        // 显示指定层级
+        function showLevel(levelId, parentPath = []) {
+            currentLevel = levelId;
+            currentPath = parentPath;
+            
+            clearMarkers();
+            updateBreadcrumb();
+            
+            if (levelId === 'world') {
+                // 显示所有国家
+                geoData.forEach(country => {
+                    addMarker(country, 'country');
+                });
+                map.setView([30, 0], 2);
+            } else {
+                // 查找当前节点
+                let currentNode = findNode(geoData, levelId);
+                if (currentNode) {
+                    if (currentNode.children) {
+                        currentNode.children.forEach(child => {
+                            addMarker(child, child.type);
+                        });
+                        map.setView([currentNode.lat, currentNode.lng], currentNode.zoom || 5);
+                    } else {
+                        // 是景点，显示详情
+                        showSpotDetail(currentNode);
+                        map.setView([currentNode.lat, currentNode.lng], 16);
+                    }
+                }
+            }
+            
+            renderTree();
+        }
+
+        // 查找节点
+        function findNode(nodes, id) {
+            for (let node of nodes) {
+                if (node.id === id) return node;
+                if (node.children) {
+                    let found = findNode(node.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        // 添加标记
+        function addMarker(data, type) {
+            const iconClass = type === 'country' ? 'country' : type === 'city' ? 'city' : 'spot';
+            const iconSize = type === 'country' ? '24px' : type === 'city' ? '20px' : '16px';
+            
+            const icon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `
+                    <div class="marker-pin ${iconClass}">
+                        <div class="marker-icon" style="font-size: ${iconSize};">
+                            ${type === 'country' ? '🏳️' : type === 'city' ? '🏙️' : data.icon || '📍'}
+                        </div>
+                    </div>
+                `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 40]
+            });
+
+            const marker = L.marker([data.lat, data.lng], { icon: icon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="custom-popup">
+                        <h3>${data.name}</h3>
+                        <div class="popup-path">${getPathString()} > ${data.name}</div>
+                        ${data.date ? `<div class="popup-date">📅 ${data.date}</div>` : ''}
+                        ${data.description ? `<div class="popup-desc">${data.description}</div>` : ''}
+                    </div>
+                `);
+
+            marker.on('click', () => {
+                if (data.children && data.children.length > 0) {
+                    showLevel(data.id, [...currentPath, data]);
+                } else if (type === 'spot') {
+                    showSpotDetail(data);
+                }
+            });
+
+            marker.locationId = data.id;
+            markers.push(marker);
+        }
+
+        // 清除标记
+        function clearMarkers() {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+        }
+
+        // 更新面包屑
+        function updateBreadcrumb() {
+            const container = document.getElementById('breadcrumb');
+            let html = '<span class="breadcrumb-item" onclick="showLevel(\'world\')">世界</span>';
+            
+            currentPath.forEach((item, index) => {
+                html += `<span class="breadcrumb-separator">></span>`;
+                html += `<span class="breadcrumb-item" onclick="showLevel('${item.id}', ${JSON.stringify(currentPath.slice(0, index))})">${item.name}</span>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // 获取路径字符串
+        function getPathString() {
+            return ['世界', ...currentPath.map(p => p.name)].join(' > ');
+        }
+
+        // 渲染树形列表
+        function renderTree() {
+            const container = document.getElementById('tree-list');
+            container.innerHTML = '';
+            
+            let dataToRender = currentLevel === 'world' ? geoData : 
+                              findNode(geoData, currentLevel)?.children || [];
+            
+            // 如果当前是景点级别，显示同级景点
+            if (!dataToRender.length && currentPath.length > 0) {
+                let parent = currentPath[currentPath.length - 1];
+                dataToRender = parent.children || [];
+            }
+
+            dataToRender.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'tree-item';
+                
+                const hasChildren = item.children && item.children.length > 0;
+                const isActive = currentPath.some(p => p.id === item.id) || currentLevel === item.id;
+                
+                li.innerHTML = `
+                    <div class="tree-header ${isActive ? 'active' : ''}" onclick="handleTreeClick('${item.id}', ${hasChildren})">
+                        <div class="tree-icon icon-${item.type}">${getTypeIcon(item.type)}</div>
+                        <div class="tree-content">
+                            <div class="tree-title">${item.name}</div>
+                            <div class="tree-subtitle">${item.children ? item.children.length + ' 个子项' : (item.date || '景点')}</div>
+                        </div>
+                        ${hasChildren ? '<span class="expand-icon">▶</span>' : ''}
+                    </div>
+                `;
+                
+                container.appendChild(li);
+            });
+        }
+
+        function getTypeIcon(type) {
+            if (type === 'country') return '🏳️';
+            if (type === 'city') return '🏙️';
+            return '📍';
+        }
+
+        function handleTreeClick(id, hasChildren) {
+            let node = findNode(geoData, id);
+            if (!node) return;
+            
+            if (hasChildren) {
+                let newPath = [...currentPath];
+                if (currentLevel !== 'world') {
+                    let parent = findNode(geoData, currentLevel);
+                    if (parent) newPath.push(parent);
+                }
+                showLevel(id, newPath);
+            } else {
+                // 是景点
+                showSpotDetail(node);
+                map.setView([node.lat, node.lng], 16);
+                // 高亮对应标记
+                markers.forEach(m => {
+                    if (m.locationId === id) m.openPopup();
+                });
+            }
+        }
+
+        // 更新统计
+        function updateStats() {
+            let countries = 0, cities = 0, spots = 0;
+            
+            function count(node) {
+                if (node.type === 'country') countries++;
+                else if (node.type === 'city') cities++;
+                else if (node.type === 'spot') spots++;
+                
+                if (node.children) node.children.forEach(count);
+            }
+            
+            geoData.forEach(count);
+            
+            document.getElementById('stat-countries').textContent = countries;
+            document.getElementById('stat-cities').textContent = cities;
+            document.getElementById('stat-spots').textContent = spots;
+        }
+
+        // 地图控制功能
+        function zoomIn() {
+            if (map) map.zoomIn();
+        }
+
+        function zoomOut() {
+            if (map) map.zoomOut();
+        }
+
+        function zoomToLevel(level) {
+            if (map) map.setZoom(level);
+        }
+
+        function resetView() {
+            showLevel('world');
+            if (map) {
+                map.setView([30, 0], 2);
+            }
+            closeSpotCard();
+        }
+
+        function refreshMap() {
+            if (currentLayer) {
+                currentLayer.redraw();
+                showNotification('地图已刷新', 'success');
+            }
+        }
+
+        // 错误处理和加载状态
+        function showLoading(show) {
+            const indicator = document.getElementById('loading-indicator');
+            if (show) {
+                indicator.classList.add('show');
+            } else {
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 500);
+            }
+        }
+
+        function showTileError(show) {
+            const overlay = document.getElementById('tile-error-overlay');
+            if (show) {
+                overlay.classList.add('show');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                }, 5000);
+            } else {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('error-notification');
+            notification.textContent = message;
+            notification.style.background = type === 'error' ? '#ff5252' : 
+                                          type === 'warning' ? '#ff9800' : 
+                                          type === 'success' ? '#4CAF50' : '#2196F3';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        function checkMapLoadStatus() {
+            setTimeout(() => {
+                if (failedTiles > totalTiles * 0.1) {
+                    showNotification('地图加载质量较差，建议切换数据源', 'warning');
+                }
+            }, 2000);
+        }
+
+        // 地图源切换事件
+        document.querySelectorAll('input[name="mapSource"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                changeMapSource(this.value);
+            });
+        });
+
+        // 窗口调整
+        window.onresize = () => {
+            if (map) map.invalidateSize();
+        };
+
+        // 启动
+        window.onload = init;
+    </script>
+</body>
+</html>
