@@ -321,12 +321,16 @@
         <div class="map-source-selector">
             <h3>地图源</h3>
             <div class="source-option active">
-                <input type="radio" id="source4" name="mapSource" value="esri" checked>
-                <label for="source4">ESRI (推荐)</label>
+                <input type="radio" id="source1" name="mapSource" value="esri" checked>
+                <label for="source1">ESRI (推荐)</label>
             </div>
             <div class="source-option">
-                <input type="radio" id="source1" name="mapSource" value="cartodb">
-                <label for="source1">CartoDB (备用)</label>
+                <input type="radio" id="source2" name="mapSource" value="cartodb">
+                <label for="source2">CartoDB (备用)</label>
+            </div>
+            <div class="source-option">
+                <input type="radio" id="source3" name="mapSource" value="gaode">
+                <label for="source3">高德地图 (备用)</label>
             </div>
         </div>
 
@@ -368,6 +372,43 @@
             spot: { min: 5, max: 20, name: '景点' }
         };
 
+        /**
+        * WGS-84 转 GCJ-02（高德/腾讯地图通用）
+        * 返回 [lng, lat]
+        */
+        function wgs84_to_gcj02(lat, lng) {
+         const PI = Math.PI;
+         const A = 6378245.0;           // 长半轴
+         const EE = 0.00669342162296594323; // 扁率
+        
+         function outOfChina(lng, lat) {
+           return lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271;
+         }
+         function transformLat(lng, lat) {
+           let ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.001 * lat * lat * lat + 0.2 * Math.sin(PI * lng * 300.0 / 180.0);
+           ret += (20.0 * Math.sin(PI * lng * 6.0 / 180.0) + 20.0 * Math.sin(PI * lng * 2.0 / 180.0)) * 2.0 / 3.0;
+           ret += (20.0 * Math.sin(PI * lat * 2.0 / 180.0) + 40.0 * Math.sin(PI * lat * 4.0 / 180.0)) * 2.0 / 3.0;
+           return ret;
+         }
+         function transformLng(lng, lat) {
+           let ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.001 * lng * lng * lng + 0.1 * Math.sin(PI * lng * 300.0 / 180.0);
+           ret += (20.0 * Math.sin(PI * lng * 6.0 / 180.0) + 20.0 * Math.sin(PI * lng * 2.0 / 180.0)) * 2.0 / 3.0;
+           ret += (150.0 * Math.sin(PI * lng * 3.0 / 180.0) + 300.0 * Math.sin(PI * lng * 5.0 / 180.0)) * 2.0 / 3.0;
+           return ret;
+         }
+     
+         if (outOfChina(lng, lat)) return [lng, lat];
+     
+         let dLat = transformLat(lng - 105.0, lat - 35.0);
+         let dLng = transformLng(lng - 105.0, lat - 35.0);
+         const radLat = lat / 180.0 * PI;
+         let magic = Math.sin(radLat);
+         magic = 1 - EE * magic * magic;
+         const sqrtMagic = Math.sqrt(magic);
+         dLat = (dLat * 180.0) / ((A * (1 - EE)) / (magic * sqrtMagic) * PI);
+         dLng = (dLng * 180.0) / (A / sqrtMagic * Math.cos(radLat) * PI);
+         return [lat + dLat, lng + dLng];
+        }
         // 地图源配置
         const mapSources = {
             esri: {
@@ -384,6 +425,13 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
                 subdomains: ['a', 'b', 'c', 'd'],
                 maxZoom: 19
+            },
+            gaode: {
+                name: '高德地图',
+                url: 'https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+                attribution: '&copy; <a href="https://www.autonavi.com/">高德地图</a>',
+                subdomains: ['1', '2', '3', '4'],
+                maxZoom: 18
             },
         };
 
@@ -514,7 +562,7 @@
                 iconAnchor: [iconSize/2, iconSize/2]
             });
 
-            const marker = L.marker([data.lat, data.lng], { icon: icon })
+            const marker = L.marker(wgs84_to_gcj02(data.lat, data.lng), { icon: icon })
                 .addTo(map)
                 .bindPopup(`
                     <div class="custom-popup">
