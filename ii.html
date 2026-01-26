@@ -254,6 +254,26 @@ text-align:center;
   </div>
 </div>
 
+<!-- 足迹模块 -->
+<div class="module" id="footprintModule" style="cursor:pointer;" title="点击查看详情">
+    <h3>🌍 足迹</h3>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-value" id="stat-countries">0</div>
+            <div class="stat-label">国家</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-cities">0</div>
+            <div class="stat-label">城市</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-spots">0</div>
+            <div class="stat-label">景点</div>
+        </div>
+    </div>
+</div>
+
+
         </div>
     </div>
 
@@ -263,6 +283,7 @@ text-align:center;
 <script src="wealthggh/data.js"></script>
 <script src="summary/data.js"></script>
 <script src="portfolio/data.js"></script>
+<script src="footprint/data.js"></script>
 
 <script>
 /* =========================
@@ -470,6 +491,20 @@ function renderPortfolio(){
   document.getElementById('returnText').textContent = returnRate;
 }
 
+// 更新统计
+function updateStats() {
+    let countries = 0, cities = 0, spots = 0;
+    function count(node) {
+        if (node.type === 'country') countries++;
+        else if (node.type === 'city') cities++;
+        else if (node.type === 'spot') spots++;
+        if (node.children) node.children.forEach(count);
+    }
+    geoData.forEach(count);
+    document.getElementById('stat-countries').textContent = countries;
+    document.getElementById('stat-cities').textContent = cities;
+    document.getElementById('stat-spots').textContent = spots;
+}
 
 
 /* ===== 点击跳转 ===== */
@@ -494,7 +529,9 @@ window.open('cv/index.html','_blank');
 document.getElementById('portfolioModule').addEventListener('click', () => {
   window.open('portfolio/index.html', '_blank');
 });
-
+document.getElementById('footprintModule').addEventListener('click', () => {
+    window.open('footprint/index.html', '_blank');
+});
 
 /* =========================
    启动定时器
@@ -506,6 +543,7 @@ getWealth();
 getWealthggh();
 renderSummaryCloud();
 renderPortfolio();
+updateStats();
 
 setInterval(updateMainDisplay, 1000);
 </script>
