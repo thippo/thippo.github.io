@@ -63,23 +63,45 @@
             width: 100%;
             height: 8px;
             background: #ecf0f1;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
+            margin-bottom: 12px;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #3498db, #2ecc71);
             transition: width 0.3s ease;
-            border-radius: 4px;
+            border-radius: 3px;
+        }
+
+        /* 第二条进度条样式 - 修正版 */
+        .progress-bar-secondary {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill-secondary {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+            position: absolute;
+            left: 0;
+            top: 0;
         }
 
         .progress-info {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 5px;
             color: #7f8c8d;
             font-size: 0.9rem;
+            margin-bottom: 10px;
         }
 
         .modules-container {
@@ -166,6 +188,7 @@ text-align:center;
             </div>
             
             <div class="progress-container">
+                <!-- 主进度条 -->
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
@@ -174,9 +197,15 @@ text-align:center;
                     <span id="elapsedTime">已过去：0秒</span>
                     <span></span>
                 </div>
+                <div class="progress-bar-secondary">
+                    <div class="progress-fill-secondary" id="progressFillSecondary"></div>
+                </div>
+                <div class="progress-info">
+                    <span></span>
+                    <span id="elapsedTime2">已过去：0秒</span>
+                    <span></span>
+                </div>
             </div>
-
-
       
         </div>
 
@@ -292,6 +321,9 @@ text-align:center;
 const startTime = new Date('1991-02-01T15:05:00');
 const endTime   = new Date('2091-02-01T15:05:00');
 
+// 第二条时间轴的起点：2024年5月24日11时41分0秒
+const secondaryStartTime = new Date('2024-05-24T11:41:00');
+
 /* -------- 主刷新 -------- */
 function updateMainDisplay() {
   const now = new Date();
@@ -304,13 +336,24 @@ function updateMainDisplay() {
   }).replace(/\//g,'-');
   document.getElementById('currentTime').textContent = timeString;
 
-  /* 2. 进度条 */
+  /* 2. 主进度条 (1991-02-01 到 2091-02-01) */
   const total = endTime - startTime;
   const elapsed = now - startTime;
   const percent = Math.min(Math.max(elapsed / total, 0), 1);
   document.getElementById('progressFill').style.width = (percent * 100) + '%';
 
-  /* 3. 已走时长 */
+  // 当前在第二条时间轴上的进度
+  const secondaryStartPercent = (secondaryStartTime - startTime) / total;
+  const elapsed2 = now - secondaryStartTime;
+  const percent2 = Math.min(Math.max(elapsed2 / total, 0), 1);
+
+  const leftPos = secondaryStartPercent * 100;
+  
+  const secondaryFill = document.getElementById('progressFillSecondary');
+  secondaryFill.style.left = leftPos + '%';
+  secondaryFill.style.width = (percent2 * 100) + '%';
+
+  /* 4. 已走时长 */
   let y = now.getFullYear()  - startTime.getFullYear();
   let m = now.getMonth()     - startTime.getMonth();
   let d = now.getDate()      - startTime.getDate();
@@ -328,8 +371,28 @@ function updateMainDisplay() {
   }
   if(m<0){m+=12;y--;}
 
+  /* 5. 已走时长 */
+  let y2 = now.getFullYear()  - secondaryStartTime.getFullYear();
+  let m2 = now.getMonth()     - secondaryStartTime.getMonth();
+  let d2 = now.getDate()      - secondaryStartTime.getDate();
+  let h2 = now.getHours()     - secondaryStartTime.getHours();
+  let min2=now.getMinutes()   - secondaryStartTime.getMinutes();
+  let s2 =now.getSeconds()    - secondaryStartTime.getSeconds();
+
+  if(s2 <0){s2+=60;min2--;}
+  if(min2<0){min2+=60;h2--;}
+  if(h2<0){h2+=24;d2--;}
+  if(d2<0){
+    const prev2 = new Date(now.getFullYear(), now.getMonth(), 0);
+    d2 += prev2.getDate();
+    m2--;
+  }
+  if(m2<0){m2+=12;y2--;}
+
   document.getElementById('elapsedTime').textContent =
-    `已过去：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
+    `走过：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
+  document.getElementById('elapsedTime2').textContent =
+    `陪伴：${y2}年 ${m2}月 ${d2}日 ${h2}时 ${min2}分 ${s2}秒`;
 
 }
 

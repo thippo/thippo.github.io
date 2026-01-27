@@ -1,1 +1,0 @@
-paidin_capital_data = 1279205.20
