@@ -1,6 +1,6 @@
-const paidin_capital_data = 1279205.20;
-const reserves_capital_data = 0.0;
-const assets_data = [
+const paidin_capital_ggh_data = 1279205.20;
+const reserves_capital_ggh_data = 0.0;
+const assets_ggh_data = [
     ['货币资金', '现金', 0.0, '','cash'],
     ['货币资金', '建行银行数字人民币', 0.0, '','cash'],
     ['货币资金', '建行银行现金', 2091.26, '','cash'],
@@ -29,7 +29,7 @@ const assets_data = [
     ['货币资金', '京东零钱', 11.41, '','cash'],
     ['货币资金', '老公那的', 120473.42, '','cash'],
 ];
-const liability_data = [
+const liability_ggh_data = [
     ['短期借款', '工行牡丹卡', 0.0, ''],
     ['短期借款', '蚂蚁花呗', 0.0, ''],
     ['短期借款', '京东白条', 0.0, ''],
@@ -41,7 +41,7 @@ const liability_data = [
     ['长期借款', '儿子委托', 204703.21, ''],
 ];
 
-month_data = [
+month_ggh_data = [
 	//['2024/3/31', 0, 989437.5800000001, 0, 989437.5800000001 ],
 	['2024/4/30', 989437.58, 996554.1499999999, 989437.58, 996554.1499999999 ],
 	['2024/5/31', 996554.15, 993142.7699999999, 990721.8999999999, 998975.02 ],
@@ -67,7 +67,7 @@ month_data = [
 	//open, close, lowest, highest
 ]
 
-profitexpense_data = [
+profitexpense_ggh_data = [
 	//['2024/3/31', 986716.71, -7183.02],
 	['2024/4/30', 4695.70,-13027.19],
 	['2024/5/31', -5832.25, -13150.0],

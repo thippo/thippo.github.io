@@ -492,8 +492,8 @@
             paidInCapitalChart = echarts.init(chartDom);
             
             // 数据处理：[date, open, close, low, high] -> ECharts格式
-            const dates = month_data.map(item => item[0]);
-            const values = month_data.map(item => [item[1], item[2], item[3], item[4]]);
+            const dates = month_ggh_data.map(item => item[0]);
+            const values = month_ggh_data.map(item => [item[1], item[2], item[3], item[4]]);
             
             const option = {
                 backgroundColor: 'transparent',
@@ -686,9 +686,9 @@
             undistributedProfitChart = echarts.init(chartDom);
             
             // 数据处理
-            const dates = profitexpense_data.map(item => item[0]);
-            const profitData = profitexpense_data.map(item => item[1]); // 每月盈亏（柱状图）
-            const expenseData = profitexpense_data.map(item => item[2] === "-" ? null : item[2]); // 每月开销（折线图）
+            const dates = profitexpense_ggh_data.map(item => item[0]);
+            const profitData = profitexpense_ggh_data.map(item => item[1]); // 每月盈亏（柱状图）
+            const expenseData = profitexpense_ggh_data.map(item => item[2] === "-" ? null : item[2]); // 每月开销（折线图）
             
             // 计算最大值和最小值用于对齐Y轴
             const allValues = [...profitData, ...expenseData.filter(v => v !== null)];
@@ -922,7 +922,7 @@
             const categories = {};
             let totalAssets = 0;
 
-            assets_data.forEach(item => {
+            assets_ggh_data.forEach(item => {
                 const category = item[0];
                 const name = item[1];
                 const amount = item[2];
@@ -971,7 +971,7 @@
             const categories = {};
             let totalLiabilities = 0;
 
-            liability_data.forEach(item => {
+            liability_ggh_data.forEach(item => {
                 const category = item[0];
                 const name = item[1];
                 const amount = item[2];
@@ -1030,8 +1030,8 @@
         }
 
         function renderEquity(totalAssets, totalLiabilities) {
-            const paidInCapital = paidin_capital_data;
-            const reservesCapital = reserves_capital_data;
+            const paidInCapital = paidin_capital_ggh_data;
+            const reservesCapital = reserves_capital_ggh_data;
             const undistributedProfit = totalAssets - totalLiabilities - paidInCapital - reservesCapital;
             const totalEquity = paidInCapital + reservesCapital + undistributedProfit;
 
