@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>资产负债表</title>
+    <script src="echarts.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -17,6 +18,10 @@
             padding: 20px;
             line-height: 1.6;
             min-height: 100vh;
+        }
+        
+        body.modal-open {
+            overflow: hidden;
         }
         
         .container {
@@ -188,6 +193,15 @@
             font-weight: 500;
         }
         
+        .amount.clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .amount.clickable:hover {
+            opacity: 0.8;
+        }
+        
         .positive {
             color: #27ae60;
             font-weight: 600;
@@ -203,29 +217,93 @@
             font-weight: 500;
         }
         
-        .summary {
-            margin-top: 40px;
-            padding: 25px;
+        /* 弹窗样式 - 新增 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 5vh;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 80%;
+            height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 2px solid #3498db;
             background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
-            border-radius: 12px;
             color: white;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .summary h3 {
+        .modal-header h2 {
             font-size: 24px;
-            margin-bottom: 15px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin: 0;
         }
         
-        .summary-amount {
-            font-size: 42px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         @media (max-width: 768px) {
@@ -259,6 +337,12 @@
             
             .summary-amount {
                 font-size: 36px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                height: 85vh;
+                margin-top: 2vh;
             }
         }
         
@@ -307,6 +391,35 @@
     </style>
 </head>
 <body>
+
+    <!-- 弹窗结构 -->
+    <div id="paidInCapitalModal" class="modal-overlay" onclick="closeModalOutside(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>实收资本</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- K线图容器 -->
+                <div id="paidInCapitalChart" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗结构 -->
+    <div id="undistributedProfitModal" class="modal-overlay" onclick="closeModalOutside(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>未分配利润</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 组合图表容器（柱状图+折线图） -->
+                <div id="undistributedProfitChart" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <h1>资产负债表</h1>
 
@@ -334,7 +447,8 @@
                     <div class="section-title">所有者权益</div>
                     <div class="equity-item">
                         <span>实收资本</span>
-                        <span class="amount" id="paidInCapital">0.00</span>
+                        <!-- 修改为可点击的金额 -->
+                        <span class="amount clickable" id="paidInCapital" onclick="openpaidInCapitalModal()">0.00</span>
                     </div>
                     <div class="equity-item">
                         <span>盈余公积</span>
@@ -342,7 +456,7 @@
                     </div>
                     <div class="equity-item">
                         <span>未分配利润</span>
-                        <span class="amount" id="undistributedProfit">0.00</span>
+                        <span class="amount clickable" id="undistributedProfit" onclick="openundistributedProfitModal()">0.00</span>
                     </div>
                     <div class="equity-item total">
                         <span>所有者权益合计</span>
@@ -355,11 +469,433 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <script src="data.js"></script>
 
     <script>
+
+        let paidInCapitalChart = null;
+        let undistributedProfitChart = null;
+
+        // 初始化K线图
+        function initPaidInCapitalChart() {
+            if (paidInCapitalChart) {
+                setTimeout(() => paidInCapitalChart.resize(), 50);
+                return;
+            }
+            
+            const chartDom = document.getElementById('paidInCapitalChart');
+            if (!chartDom) return;
+            
+            paidInCapitalChart = echarts.init(chartDom);
+            
+            // 数据处理：[date, open, close, low, high] -> ECharts格式
+            const dates = month_data.map(item => item[0]);
+            const values = month_data.map(item => [item[1], item[2], item[3], item[4]]);
+            
+            const option = {
+                backgroundColor: 'transparent',
+                animation: true,
+                animationDuration: 1000,
+                grid: {
+                    left: '3%',
+                    right: '3%',
+                    bottom: '15%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    boundaryGap: true,
+                    axisLine: { 
+                        lineStyle: { color: '#ccc' },
+                        onZero: false
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        formatter: function(value) {
+                            return value.replace(/\//g, '-');
+                        }
+                    },
+                    splitLine: { show: false }
+                },
+                yAxis: {
+                    scale: true,
+                    splitArea: {
+                        show: true,
+                        areaStyle: {
+                            color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.1)']
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        formatter: function(value) {
+                            return value.toFixed(2);
+                        }
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#eee'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        bottom: '5%',
+                        height: 20,
+                        start: 0,
+                        end: 100,
+                        handleIcon: 'path://M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                        handleSize: '80%',
+                        handleStyle: {
+                            color: '#fff',
+                            shadowBlur: 3,
+                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                            shadowOffsetX: 2,
+                            shadowOffsetY: 2
+                        },
+                        borderColor: 'transparent',
+                        backgroundColor: '#f5f5f5',
+                        fillerColor: 'rgba(52, 152, 219, 0.2)',
+                        dataBackground: {
+                            lineStyle: {
+                                color: '#3498db'
+                            },
+                            areaStyle: {
+                                color: '#3498db',
+                                opacity: 0.1
+                            }
+                        },
+                        selectedDataBackground: {
+                            lineStyle: {
+                                color: '#2980b9'
+                            },
+                            areaStyle: {
+                                color: '#2980b9',
+                                opacity: 0.2
+                            }
+                        },
+                        textStyle: {
+                            color: '#666'
+                        }
+                    }
+                ],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        lineStyle: {
+                            color: '#999',
+                            type: 'dashed'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#3498db',
+                    borderWidth: 1,
+                    padding: [10, 15],
+                    textStyle: {
+                        color: '#333'
+                    },
+                    extraCssText: 'box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-radius: 8px;',
+                    formatter: function(params) {
+                        const param = params[0];
+                        const date = param.name;
+                        const data = param.data;
+                        const open = data[1];
+                        const close = data[2];
+                        const low = data[3];
+                        const high = data[4];
+                        const change = close - open;
+                        const changePercent = ((change / open) * 100).toFixed(2);
+                        const color = change >= 0 ? '#e74c3c' : '#27ae60';
+                        const sign = change >= 0 ? '+' : '';
+                        
+                        return `
+                            <div style="font-size:14px; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                                <strong>${date}</strong>
+                            </div>
+                            <div style="line-height:1.8;">
+                                <div style="display:flex; justify-content:space-between; gap:20px;">
+                                    <span style="color:#666;">开盘:</span>
+                                    <span style="font-weight:500;">${open.toFixed(2)}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; gap:20px;">
+                                    <span style="color:#666;">收盘:</span>
+                                    <span style="font-weight:500;">${close.toFixed(2)}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; gap:20px;">
+                                    <span style="color:#666;">最高:</span>
+                                    <span style="font-weight:500;">${high.toFixed(2)}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; gap:20px;">
+                                    <span style="color:#666;">最低:</span>
+                                    <span style="font-weight:500;">${low.toFixed(2)}</span>
+                                </div>
+                                <div style="margin-top:8px; padding-top:5px; border-top:1px solid #eee; display:flex; justify-content:space-between; gap:20px;">
+                                    <span style="color:#666;">涨跌:</span>
+                                    <span style="color:${color}; font-weight:600;">${sign}${change.toFixed(2)} (${sign}${changePercent}%)</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                },
+                series: [
+                    {
+                        type: 'candlestick',
+                        data: values,
+                        itemStyle: {
+                            color: '#e74c3c',      // 上涨 - 红色
+                            color0: '#27ae60',     // 下跌 - 绿色
+                            borderColor: '#e74c3c',
+                            borderColor0: '#27ae60',
+                            borderWidth: 1
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(0,0,0,0.2)'
+                            }
+                        }
+                    }
+                ]
+            };
+            
+            paidInCapitalChart.setOption(option);
+        }
+
+        // 初始化未分配利润图表（柱状图+折线图组合）
+        function initUndistributedProfitChart() {
+            if (undistributedProfitChart) {
+                setTimeout(() => undistributedProfitChart.resize(), 50);
+                return;
+            }
+            
+            const chartDom = document.getElementById('undistributedProfitChart');
+            if (!chartDom) return;
+            
+            undistributedProfitChart = echarts.init(chartDom);
+            
+            // 数据处理
+            const dates = profitexpense_data.map(item => item[0]);
+            const profitData = profitexpense_data.map(item => item[1]); // 每月盈亏（柱状图）
+            const expenseData = profitexpense_data.map(item => item[2] === "-" ? null : item[2]); // 每月开销（折线图）
+            
+            // 计算最大值和最小值用于对齐Y轴
+            const allValues = [...profitData, ...expenseData.filter(v => v !== null)];
+            const maxValue = Math.max(...allValues);
+            const minValue = Math.min(...allValues);
+            const padding = (maxValue - minValue) * 0.1;
+            
+            const option = {
+                backgroundColor: 'transparent',
+                animation: true,
+                animationDuration: 800,
+                grid: {
+                    left: '3%',
+                    right: '3%',
+                    bottom: '12%',
+                    top: '15%',
+                    containLabel: true
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#3498db',
+                    borderWidth: 1,
+                    padding: [10, 15],
+                    textStyle: {
+                        color: '#333'
+                    },
+                    extraCssText: 'box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-radius: 8px;',
+                    formatter: function(params) {
+                        let result = `<div style="font-size:14px; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                                        <strong>${params[0].name}</strong>
+                                      </div>`;
+                        params.forEach(param => {
+                            const value = param.value;
+                            const color = param.color;
+                            const name = param.seriesName;
+                            if (value !== null && value !== undefined) {
+                                const sign = value > 0 ? '+' : '';
+                                result += `<div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin:5px 0;">
+                                            <span style="display:flex; align-items:center;">
+                                                <span style="display:inline-block; width:10px; height:10px; background:${color}; border-radius:50%; margin-right:8px;"></span>
+                                                <span style="color:#666;">${name}:</span>
+                                            </span>
+                                            <span style="font-weight:600; color:${value >= 0 ? '#e74c3c' : '#27ae60'};">${sign}${value.toFixed(2)}</span>
+                                           </div>`;
+                            } else {
+                                result += `<div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin:5px 0; color:#999;">
+                                            <span style="display:flex; align-items:center;">
+                                                <span style="display:inline-block; width:10px; height:10px; background:#ccc; border-radius:50%; margin-right:8px;"></span>
+                                                <span>${name}:</span>
+                                            </span>
+                                            <span>无数据</span>
+                                           </div>`;
+                            }
+                        });
+                        return result;
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    axisLine: {
+                        lineStyle: { color: '#ccc' }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        formatter: function(value) {
+                            return value.replace(/\//g, '-');
+                        },
+                        rotate: 30
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    min: minValue - padding,
+                    max: maxValue + padding,
+                    axisLabel: {
+                        color: '#666',
+                        formatter: function(value) {
+                            return value.toFixed(0);
+                        }
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#eee',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    }
+                ],
+                series: [
+                    {
+                        name: '盈亏',
+                        type: 'bar',
+                        data: profitData,
+                        barWidth: '50%',
+                        itemStyle: {
+                            color: function(params) {
+                                return params.value >= 0 ? '#e74c3c' : '#27ae60';
+                            },
+                            borderRadius: [4, 4, 0, 0]
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.2)'
+                            }
+                        },
+                    },
+                    {
+                        name: '开销',
+                        type: 'line',
+                        data: expenseData,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        lineStyle: {
+                            color: '#3498db',
+                            width: 3,
+                            shadowColor: 'rgba(52, 152, 219, 0.3)',
+                            shadowBlur: 8,
+                            shadowOffsetY: 3
+                        },
+                        itemStyle: {
+                            color: '#3498db',
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        },
+                        emphasis: {
+                            scale: 1.5,
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(52, 152, 219, 0.5)'
+                            }
+                        },
+                        connectNulls: false
+                    }
+                ]
+            };
+            
+            undistributedProfitChart.setOption(option);
+        }
+
+        // 弹窗控制函数 - 新增
+        function openpaidInCapitalModal() {
+            const modal = document.getElementById('paidInCapitalModal');
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+            // 延迟初始化确保DOM已渲染且可见
+            setTimeout(initPaidInCapitalChart, 50);
+        }
+        function openundistributedProfitModal() {
+            const modal = document.getElementById('undistributedProfitModal');
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+            // 延迟初始化确保DOM已渲染且可见
+            setTimeout(initUndistributedProfitChart, 50);
+        }
+        
+        function closeModal() {
+            const paidInCapitalModal = document.getElementById('paidInCapitalModal');
+            paidInCapitalModal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+            const undistributedProfitModal = document.getElementById('undistributedProfitModal');
+            undistributedProfitModal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+        
+        function closeModalOutside(event) {
+            // 如果点击的是遮罩层本身（不是内容区域），则关闭
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        }
+        
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // 窗口大小改变时重置图表大小
+        window.addEventListener('resize', function() {
+            if (paidInCapitalChart) {
+                paidInCapitalChart.resize();
+            }
+            if (undistributedProfitChart) {
+                undistributedProfitChart.resize();
+            }
+        });
+
         // 格式化金额
         function formatAmount(amount) {
             if (amount === 0) return '0.00';
@@ -369,25 +905,24 @@
             });
         }
 
+        // 格式化总结
         function formatSummary(month) {
-            return month[0]+', '+month[1]+', '+month[2]+', '+month[3]
+            return month[0]+', '+month[1]+', '+month[2]+', '+month[3];
         }
 
-        // 获取金额样式类
+        // 其他原有函数保持不变...
         function getAmountClass(amount) {
             if (amount > 0) return 'positive';
             if (amount < 0) return 'negative';
             return 'zero';
         }
 
-        // 渲染资产部分
         function renderAssets() {
             const container = document.getElementById('assetsContent');
             const categories = {};
             let totalAssets = 0;
 
-            // 按类别分组
-            assets_ggh_data.forEach(item => {
+            assets_data.forEach(item => {
                 const category = item[0];
                 const name = item[1];
                 const amount = item[2];
@@ -404,7 +939,6 @@
                 totalAssets += amount;
             });
 
-            // 渲染HTML
             let html = '';
             for (const [category, data] of Object.entries(categories)) {
                 html += `
@@ -432,14 +966,12 @@
             return totalAssets;
         }
 
-        // 渲染负债部分
         function renderLiabilities() {
             const container = document.getElementById('liabilityContent');
             const categories = {};
             let totalLiabilities = 0;
 
-            // 按类别分组
-            liability_ggh_data.forEach(item => {
+            liability_data.forEach(item => {
                 const category = item[0];
                 const name = item[1];
                 const amount = item[2];
@@ -457,7 +989,6 @@
                 totalLiabilities += amount;
             });
 
-            // 渲染HTML
             let html = '';
             for (const [category, data] of Object.entries(categories)) {
                 html += `
@@ -493,16 +1024,14 @@
             return totalLiabilities;
         }
 
-        // 切换详情显示
         function toggleDetail(id) {
             const element = document.getElementById(id);
             element.classList.toggle('show');
         }
 
-        // 计算并渲染所有者权益
         function renderEquity(totalAssets, totalLiabilities) {
-            const paidInCapital = paidin_capital_ggh_data;
-            const reservesCapital = reserves_capital_ggh_data;
+            const paidInCapital = paidin_capital_data;
+            const reservesCapital = reserves_capital_data;
             const undistributedProfit = totalAssets - totalLiabilities - paidInCapital - reservesCapital;
             const totalEquity = paidInCapital + reservesCapital + undistributedProfit;
 
@@ -512,22 +1041,17 @@
             document.getElementById('totalEquity').textContent = formatAmount(totalEquity);
             document.getElementById('summary').textContent = formatSummary([paidInCapital.toFixed(2), totalEquity.toFixed(2), (Math.min(paidInCapital, paidInCapital + undistributedProfit)).toFixed(2), (Math.max(paidInCapital + reservesCapital, paidInCapital + reservesCapital + undistributedProfit)).toFixed(2)]);
 
-            // 设置样式
-            document.getElementById('paidInCapital').className = `amount ${getAmountClass(paidInCapital)}`;
+            document.getElementById('paidInCapital').className = `amount clickable ${getAmountClass(paidInCapital)}`;
             document.getElementById('reservesCapital').className = `amount ${getAmountClass(reservesCapital)}`;
-            document.getElementById('undistributedProfit').className = `amount ${getAmountClass(undistributedProfit)}`;
-
-            return totalEquity;
+            document.getElementById('undistributedProfit').className = `amount clickable ${getAmountClass(undistributedProfit)}`;
         }
 
-        // 初始化页面
         function init() {
             const totalAssets = renderAssets();
             const totalLiabilities = renderLiabilities();
-            const totalEquity = renderEquity(totalAssets, totalLiabilities);
+            renderEquity(totalAssets, totalLiabilities);
         }
 
-        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
