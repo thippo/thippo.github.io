@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海外资产</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f0f4f8 100%);
+            min-height: 100vh;
+            color: #1a202c;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 10px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .currency-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .currency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3b82f6, #06b6d4);
+        }
+
+        .currency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .currency-flag {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .currency-code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .currency-name {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .holding-amount {
+            text-align: right;
+        }
+
+        .amount-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .amount-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .conversion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .conversion-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .conversion-item:hover {
+            background: #f1f5f9;
+        }
+
+        .conversion-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .conversion-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #059669;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .conversion-value.eur {
+            color: #7c3aed;
+        }
+
+        .summary-card {
+            grid-column: 1 / -1;
+            background: #f8fafc;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-header {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+            color: #0f172a;
+        }
+
+        .summary-value.highlight {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .target-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .target-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .target-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .target-percentage {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .target-amount {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 6px;
+            color: transparent !important;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .error-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .date-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .date-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .date-label {
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .date-value {
+            color: #1e293b;
+            font-weight: 600;
+            font-family: 'Inter', monospace;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.75rem; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .conversion-grid { grid-template-columns: 1fr; }
+            .date-info { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>海外资产</h1>
+    </header>
+
+    <div class="dashboard-grid" id="dashboard">
+        <!-- 卡片将通过JS动态生成 -->
+    </div>
+</div>
+
+<div class="error-toast" id="errorToast">
+    汇率获取失败，请刷新页面重试
+</div>
+
+<script src="data.js"></script>
+
+<script>
+    // 状态
+    let state = {
+        rates: {},
+        lastUpdate: null
+    };
+
+    // 格式化数字
+    const formatNumber = (num, currency = '') => {
+        const formatted = new Intl.NumberFormat('zh-CN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(num);
+        return currency ? `${currency} ${formatted}` : formatted;
+    };
+
+    // 格式化时间
+    const formatTime = (date) => {
+        return new Intl.DateTimeFormat('zh-CN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).format(date);
+    };
+
+    // 格式化日期
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(date);
+    };
+
+    // 获取汇率数据
+    async function fetchRates() {
+        try {
+            const apiUrl = `https://v6.exchangerate-api.com/v6/${CONFIG.apiKey}/latest/USD`;
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error('API 请求次数已达上限');
+                } else if (response.status === 403) {
+                    throw new Error('API Key 无效');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+            
+            const data = await response.json();
+            
+            if (data.result === 'error') {
+                throw new Error(data['error-type'] || 'API 返回错误');
+            }
+            
+            state.rates = data.conversion_rates || data.rates;
+            state.lastUpdate = new Date(data.time_last_update_unix * 1000 || Date.now());
+            
+            updateUI();
+            hideError();
+            
+        } catch (error) {
+            console.error('获取汇率失败:', error);
+            showError(error.message);
+        }
+    };
+
+    // 计算金额
+    const calculateValue = (amount, fromCurrency, toCurrency) => {
+        if (!state.rates[fromCurrency] || !state.rates[toCurrency]) return 0;
+        
+        const inUSD = fromCurrency === 'USD' ? amount : amount / state.rates[fromCurrency];
+        return inUSD * state.rates[toCurrency];
+    };
+
+    // 创建货币卡片HTML
+    const createCurrencyCard = (code, data) => {
+        const amount = data.amount;
+        const cnyValue = calculateValue(amount, code, 'CNY');
+        const eurValue = calculateValue(amount, code, 'EUR');
+        const rateToCNY = state.rates[code] ? (state.rates['CNY'] / state.rates[code]).toFixed(4) : '--';
+        const rateToEUR = state.rates[code] ? (state.rates['EUR'] / state.rates[code]).toFixed(4) : '--';
+
+        return `
+            <div class="card currency-card" id="card-${code}">
+                <div class="currency-header">
+                    <div class="currency-info">
+                        <span class="currency-flag">${data.flag}</span>
+                        <div>
+                            <div class="currency-code">${code}</div>
+                            <div class="currency-name">${data.name}</div>
+                        </div>
+                    </div>
+                    <div class="holding-amount">
+                        <div class="amount-label">持仓金额</div>
+                        <div class="amount-value">${formatNumber(amount)}</div>
+                    </div>
+                </div>
+                
+                <div class="conversion-grid">
+                    <div class="conversion-item">
+                        <div class="conversion-label">
+                            <span>🇨🇳</span> CNY 等值
+                        </div>
+                        <div class="conversion-value ${!state.rates[code] ? 'loading-skeleton' : ''}">
+                            ¥${formatNumber(cnyValue)}
+                        </div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+                            汇率: 1 ${code} = ${rateToCNY} CNY
+                        </div>
+                    </div>
+                    <div class="conversion-item">
+                        <div class="conversion-label">
+                            <span>🇪🇺</span> EUR 等值
+                        </div>
+                        <div class="conversion-value eur ${!state.rates[code] ? 'loading-skeleton' : ''}">
+                            €${formatNumber(eurValue)}
+                        </div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+                            汇率: 1 ${code} = ${rateToEUR} EUR
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // 创建汇总卡片
+    const createSummaryCard = () => {
+        let totalCNY = 0;
+        let totalEUR = 0;
+
+        Object.keys(CONFIG.holdings).forEach(code => {
+            const holding = CONFIG.holdings[code];
+            totalCNY += calculateValue(holding.amount, code, 'CNY');
+            totalEUR += calculateValue(holding.amount, code, 'EUR');
+        });
+
+        const percentage = (totalEUR / CONFIG.targetEUR) * 100;
+        const progressWidth = Math.min(percentage, 100);
+        const updateTimeStr = state.lastUpdate ? formatTime(state.lastUpdate) : '--:--:--';
+
+        return `
+            <div class="card summary-card">
+                <div class="summary-header">资产汇总概览</div>
+                
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label">人民币总资产</div>
+                        <div class="summary-value">¥${formatNumber(totalCNY)}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">欧元总资产</div>
+                        <div class="summary-value highlight">€${formatNumber(totalEUR)}</div>
+                    </div>
+                </div>
+
+                <div class="target-section">
+                    <div class="target-header">
+                        <span class="target-label">目标 €${formatNumber(CONFIG.targetEUR)}</span>
+                        <span class="target-percentage">${percentage.toFixed(2)}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${progressWidth}%"></div>
+                    </div>
+                    <div class="target-amount">
+                        还需 €${formatNumber(Math.max(0, CONFIG.targetEUR - totalEUR))} 达成目标
+                    </div>
+                </div>
+
+                <div class="date-info">
+                    <div class="date-item">
+                        <span class="date-label">持仓日期:</span>
+                        <span class="date-value">${formatDate(CONFIG.date)}</span>
+                    </div>
+                    <div class="date-item">
+                        <span class="date-label">汇率更新时间:</span>
+                        <span class="date-value" id="rateUpdateTime">${updateTimeStr}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // 更新UI
+    function updateUI() {
+        const dashboard = document.getElementById('dashboard');
+        
+        // 生成汇总卡片（放在最前面）
+        const summaryCard = createSummaryCard();
+        
+        // 生成货币卡片
+        const currencyCards = Object.keys(CONFIG.holdings)
+            .map(code => createCurrencyCard(code, CONFIG.holdings[code]))
+            .join('');
+        
+        // 汇总卡片在前，货币卡片在后
+        dashboard.innerHTML = summaryCard + currencyCards;
+    };
+
+    // 显示错误提示
+    function showError(message) {
+        const toast = document.getElementById('errorToast');
+        toast.textContent = `汇率获取失败: ${message}`;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 5000);
+    };
+
+    function hideError() {
+        document.getElementById('errorToast').style.display = 'none';
+    };
+
+    // 初始化 - 仅在页面加载时执行一次
+    async function init() {
+        await fetchRates();
+    };
+
+    // 启动
+    init();
+</script>
+
+</body>
+</html>

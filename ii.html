@@ -160,22 +160,88 @@
             margin-top: 5px;
         }
 
-/* ===== 简历微卡片 ===== */
-.resume-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-top:12px;
-}
-.resume-grid .stat-item{
-background:#f8f9fa;
-padding:12px 4px;
-border-radius:8px;
-text-align:center;
-}
-.resume-grid .stat-value{font-size:1.15rem;font-weight:600;color:#2c3e50;}
-.resume-grid .stat-label{font-size:.8rem;color:#7f8c8d;margin-top:4px;}
+        /* ===== 简历微卡片 ===== */
+        .resume-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:12px;
+            margin-top:12px;
+        }
+        .resume-grid .stat-item{
+            background:#f8f9fa;
+            padding:12px 4px;
+            border-radius:8px;
+            text-align:center;
+        }
+        .resume-grid .stat-value{font-size:1.15rem;font-weight:600;color:#2c3e50;}
+        .resume-grid .stat-label{font-size:.8rem;color:#7f8c8d;margin-top:4px;}
 
+        /* ===== 海外资产 - 超紧凑版 ===== */
+        .overseas-compact {
+            margin-top: 8px;
+        }
+        
+        /* 第一行：进度条（内置百分比） */
+        .overseas-bar-wrap {
+            position: relative;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .overseas-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            min-width: 40px;
+        }
+        
+        .overseas-bar-text {
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+        
+        /* 第二行：当前金额 / 目标金额 + 更新时间 */
+        .overseas-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .overseas-amount {
+            font-weight: bold;
+            color: #764ba2;
+            font-size: 1.1rem;
+        }
+        
+        .overseas-target {
+            color: #95a5a6;
+            font-size: 0.85rem;
+            margin-left: 4px;
+        }
+        
+        .overseas-meta {
+            color: #bdc3c7;
+            font-size: 0.7rem;
+        }
+        
+        /* 加载状态 */
+        .loading-text {
+            color: #bdc3c7;
+            font-style: italic;
+        }
 
     </style>
 </head>
@@ -205,104 +271,136 @@ text-align:center;
                     <span id="elapsedTime2">已过去：0秒</span>
                     <span></span>
                 </div>
+                <div class="progress-bar-secondary">
+                    <div class="progress-fill-secondary" id="progressFillTertiary"></div>
+                </div>
+                <div class="progress-info">
+                    <span></span>
+                    <span id="elapsedTime3">已过去：0秒</span>
+                    <span></span>
+                </div>
             </div>
       
         </div>
 
         <div class="modules-container">
 
-<div class="module" id="eventdayModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>📅 即将来到的事件</h3>
-    <div class="stats-grid" id="eventList">
-        <!-- JS 动态插入 -->
-    </div>
-</div>
+            <div class="module" id="eventdayModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📅 即将来到的事件</h3>
+                <div class="stats-grid" id="eventList">
+                    <!-- JS 动态插入 -->
+                </div>
+            </div>
 
-<div class="module" id="birthdayModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>🎂 生日提醒</h3>
-    <div class="module-content" id="birthdayBox">
-        <!-- JS 动态生成 -->
-    </div>
-</div>
+            <div class="module" id="birthdayModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>🎂 生日提醒</h3>
+                <div class="module-content" id="birthdayBox">
+                    <!-- JS 动态生成 -->
+                </div>
+            </div>
 
-<!-- 资产负债紧凑行 -->
-<div class="module" id="wealthModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>📊 资产负债-TH</h3>
-    <!-- 紧凑行：value + label 同航 -->
-    <div id="compactBalance" style="line-height:1.6;font-size:1.05rem;color:#5a6c7d;">
-      <!-- JS 动态插入 -->
-    </div>
-</div>
+            <!-- 年度总结 文字云 -->
+            <div class="module" id="summaryModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📔 年度总结</h3>
+                <div id="summaryCloud" style="line-height:1.8; text-align:center; padding:10px 0;"></div>
+            </div>
 
-<!-- 资产负债紧凑行 -->
-<div class="module" id="wealthgghModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>📊 资产负债-GGH</h3>
-    <!-- 紧凑行：value + label 同航 -->
-    <div id="compactBalanceggh" style="line-height:1.6;font-size:1.05rem;color:#5a6c7d;">
-      <!-- JS 动态插入 -->
-    </div>
-</div>
+            <!-- 足迹模块 -->
+            <div class="module" id="footprintModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>🌍 足迹</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-countries">0</div>
+                        <div class="stat-label">国家</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-cities">0</div>
+                        <div class="stat-label">城市</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-spots">0</div>
+                        <div class="stat-label">景点</div>
+                    </div>
+                </div>
+            </div>
 
-<!-- 年度总结 文字云 -->
-<div class="module" id="summaryModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>📔 年度总结</h3>
-    <div id="summaryCloud" style="line-height:1.8; text-align:center; padding:10px 0;"></div>
-</div>
+            <!-- 资产负债紧凑行 -->
+            <div class="module" id="wealthModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📊 资产负债-TH</h3>
+                <!-- 紧凑行：value + label 同航 -->
+                <div id="compactBalance" style="line-height:1.6;font-size:1.05rem;color:#5a6c7d;">
+                  <!-- JS 动态插入 -->
+                </div>
+            </div>
 
-<!-- 个人简历 -->
-<div class="module" id="resumeModule" style="cursor:pointer;" title="点击查看详情">
-  <h3>📋 个人简历</h3>
-  <div class="module-content resume-grid">
-    <div class="stat-item">
-      <div class="stat-value">7+</div>
-      <div class="stat-label">年经验</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">CFA</div>
-      <div class="stat-label">持证人</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">跨领域</div>
-      <div class="stat-label">生物·计算·金融</div>
-    </div>
-  </div>
-</div>
+            <!-- 资产负债紧凑行 -->
+            <div class="module" id="wealthgghModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📊 资产负债-GGH</h3>
+                <!-- 紧凑行：value + label 同航 -->
+                <div id="compactBalanceggh" style="line-height:1.6;font-size:1.05rem;color:#5a6c7d;">
+                  <!-- JS 动态插入 -->
+                </div>
+            </div>
 
-<!-- 投资组合模块 -->
-<div class="module" id="portfolioModule" style="cursor:pointer;" title="点击查看详情">
-  <h3>📈 投资组合</h3>
-  <div class="module-content" style="display:flex;justify-content:center;gap:65px;font-size:1.2rem;">
-    <div style="text-align:center;">
-      <strong>投资周期</strong>
-      <div id="periodText" style="color:#3498db;font-weight:bold;line-height:1.2;"></div>
-    </div>
-    <div style="text-align:center;">
-      <strong>年化收益率</strong>
-      <div id="returnText" style="color:#2ecc71;font-weight:bold;line-height:1.2;font-size:1.3rem;"></div>
-    </div>
-  </div>
-</div>
+            <!-- 海外资产模块 - 超紧凑2行版 -->
+            <div class="module" id="overseasModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>🌍 海外资产</h3>
+                <div class="module-content">
+                    <!-- 第1行：进度条（带百分比） -->
+                    <div class="overseas-compact">
+                        <div class="overseas-bar-wrap">
+                            <div class="overseas-bar-fill" id="overseasBarFill" style="width: 0%">
+                                <span class="overseas-bar-text" id="overseasBarText">0%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 第2行：金额信息（左）+ 更新时间（右） -->
+                        <div class="overseas-info-row">
+                            <div>
+                                <span class="overseas-amount" id="overseasCurrent">--</span>
+                                <span class="overseas-target">/ €<span id="overseasTarget">500k</span></span>
+                            </div>
+                            <span class="overseas-meta" id="overseasMeta">更新中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<!-- 足迹模块 -->
-<div class="module" id="footprintModule" style="cursor:pointer;" title="点击查看详情">
-    <h3>🌍 足迹</h3>
-    <div class="stats-grid">
-        <div class="stat-item">
-            <div class="stat-value" id="stat-countries">0</div>
-            <div class="stat-label">国家</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="stat-cities">0</div>
-            <div class="stat-label">城市</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="stat-spots">0</div>
-            <div class="stat-label">景点</div>
-        </div>
-    </div>
-</div>
-
-
+            <!-- 投资组合模块 -->
+            <div class="module" id="portfolioModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📈 投资组合</h3>
+                <div class="module-content" style="display:flex;justify-content:center;gap:65px;font-size:1.2rem;">
+                  <div style="text-align:center;">
+                    <strong>投资周期</strong>
+                    <div id="periodText" style="color:#3498db;font-weight:bold;line-height:1.2;"></div>
+                  </div>
+                  <div style="text-align:center;">
+                    <strong>年化收益率</strong>
+                    <div id="returnText" style="color:#2ecc71;font-weight:bold;line-height:1.2;font-size:1.3rem;"></div>
+                  </div>
+                </div>
+              </div>
+    
+            <!-- 个人简历 -->
+            <div class="module" id="resumeModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📋 个人简历</h3>
+                <div class="module-content resume-grid">
+                  <div class="stat-item">
+                    <div class="stat-value">7+</div>
+                    <div class="stat-label">年经验</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">CFA</div>
+                    <div class="stat-label">持证人</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">跨领域</div>
+                    <div class="stat-label">生物·计算·金融</div>
+                  </div>
+                </div>
+              </div>
+  
+  
         </div>
     </div>
 
@@ -313,6 +411,7 @@ text-align:center;
 <script src="summary/data.js"></script>
 <script src="portfolio/data.js"></script>
 <script src="footprint/data.js"></script>
+<script src="overseas/data.js"></script>
 
 <script>
 /* =========================
@@ -322,7 +421,8 @@ const startTime = new Date('1991-02-01T15:05:00');
 const endTime   = new Date('2091-02-01T15:05:00');
 
 // 第二条时间轴的起点：2024年5月24日11时41分0秒
-const secondaryStartTime = new Date('2024-05-24T11:41:00');
+const secondaryStartTime = new Date('2019-10-14T20:28:00');
+const tertiaryStartTime = new Date('2024-05-24T11:41:00');
 
 /* -------- 主刷新 -------- */
 function updateMainDisplay() {
@@ -347,11 +447,22 @@ function updateMainDisplay() {
   const elapsed2 = now - secondaryStartTime;
   const percent2 = Math.min(Math.max(elapsed2 / total, 0), 1);
 
-  const leftPos = secondaryStartPercent * 100;
+  const leftPos2 = secondaryStartPercent * 100;
   
+  const tertiaryStartPercent = (tertiaryStartTime - startTime) / total;
+
+  const elapsed3 = now - tertiaryStartTime;
+  const percent3 = Math.min(Math.max(elapsed3 / total, 0), 1);
+
+  const leftPos3 = tertiaryStartPercent * 100;
+
   const secondaryFill = document.getElementById('progressFillSecondary');
-  secondaryFill.style.left = leftPos + '%';
+  secondaryFill.style.left = leftPos2 + '%';
   secondaryFill.style.width = (percent2 * 100) + '%';
+
+  const tertiaryFill = document.getElementById('progressFillTertiary');
+  tertiaryFill.style.left = leftPos3 + '%';
+  tertiaryFill.style.width = (percent3 * 100) + '%';
 
   /* 4. 已走时长 */
   let y = now.getFullYear()  - startTime.getFullYear();
@@ -389,10 +500,30 @@ function updateMainDisplay() {
   }
   if(m2<0){m2+=12;y2--;}
 
+  /* 5. 已走时长 */
+  let y3 = now.getFullYear()  - tertiaryStartTime.getFullYear();
+  let m3 = now.getMonth()     - tertiaryStartTime.getMonth();
+  let d3 = now.getDate()      - tertiaryStartTime.getDate();
+  let h3 = now.getHours()     - tertiaryStartTime.getHours();
+  let min3=now.getMinutes()   - tertiaryStartTime.getMinutes();
+  let s3 =now.getSeconds()    - tertiaryStartTime.getSeconds();
+
+  if(s3 <0){s3+=60;min3--;}
+  if(min3<0){min3+=60;h3--;}
+  if(h3<0){h3+=24;d3--;}
+  if(d3<0){
+    const prev3 = new Date(now.getFullYear(), now.getMonth(), 0);
+    d3 += prev3.getDate();
+    m3--;
+  }
+  if(m3<0){m3+=12;y3--;}
+
   document.getElementById('elapsedTime').textContent =
     `走过：${y}年 ${m}月 ${d}日 ${h}时 ${min}分 ${s}秒`;
   document.getElementById('elapsedTime2').textContent =
     `陪伴：${y2}年 ${m2}月 ${d2}日 ${h2}时 ${min2}分 ${s2}秒`;
+  document.getElementById('elapsedTime3').textContent =
+    `陪伴：${y3}年 ${m3}月 ${d3}日 ${h3}时 ${min3}分 ${s3}秒`;
 
 }
 
@@ -407,23 +538,25 @@ function renderEvents() {
   const box = document.getElementById('eventList');
   box.innerHTML = '';
 
-  eventday_data
-    .map(([ds,txt])=>{
-      const t = new Date(ds+'T00:00:00');
-      const daysLeft = Math.ceil((t - today)/86400000);
-      return {date:ds,text:txt,days:daysLeft};
-    })
-    .filter(e=>e.days>=0)
-    .sort((a,b)=>a.days-b.days)
-    .slice(0,6)
-    .forEach(e=>{
-      const div = document.createElement('div');
-      div.className = 'stat-item';
-      div.innerHTML = `
-        <div class="stat-value">${e.days}</div>
-        <div class="stat-label">${e.text}</div>`;
-      box.appendChild(div);
-    });
+  if(typeof eventday_data !== 'undefined') {
+    eventday_data
+      .map(([ds,txt])=>{
+        const t = new Date(ds+'T00:00:00');
+        const daysLeft = Math.ceil((t - today)/86400000);
+        return {date:ds,text:txt,days:daysLeft};
+      })
+      .filter(e=>e.days>=0)
+      .sort((a,b)=>a.days-b.days)
+      .slice(0,6)
+      .forEach(e=>{
+        const div = document.createElement('div');
+        div.className = 'stat-item';
+        div.innerHTML = `
+          <div class="stat-value">${e.days}</div>
+          <div class="stat-label">${e.text}</div>`;
+        box.appendChild(div);
+      });
+  }
 }
 
 
@@ -461,22 +594,24 @@ function getBirthdayList(){
 
   /* 渲染 */
   const box=document.getElementById('birthdayBox');
-box.innerHTML=`
-  <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
-    <span style="white-space:pre">昨日：</span><span>${yList.length?yList.join('、'):'——'}</span>
-  </div>
-  <div style="display:flex;font-family:monospace;font-size:1.1rem;line-height:1.6;color:#e67e22;font-weight:bold;margin:4px 0;">
-    <span style="white-space:pre">今日：</span><span>${todayList.length?todayList.join('、'):'——'}</span>
-  </div>
-  <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
-    <span style="white-space:pre">明日：</span><span>${tList.length?tList.join('、'):'——'}</span>
-  </div>
-`;
+  box.innerHTML=`
+    <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
+      <span style="white-space:pre">昨日：</span><span>${yList.length?yList.join('、'):'——'}</span>
+    </div>
+    <div style="display:flex;font-family:monospace;font-size:1.1rem;line-height:1.6;color:#e67e22;font-weight:bold;margin:4px 0;">
+      <span style="white-space:pre">今日：</span><span>${todayList.length?todayList.join('、'):'——'}</span>
+    </div>
+    <div style="display:flex;font-family:monospace;font-size:0.95rem;line-height:1.6;">
+      <span style="white-space:pre">明日：</span><span>${tList.length?tList.join('、'):'——'}</span>
+    </div>
+  `;
 }
 
 function getWealth(){
     /* —— 求和 —— */
     function sumArr(arr) { return arr.reduce((s,[,,v])=>s+(v||0),0); }
+    if(typeof assets_data === 'undefined' || typeof liability_data === 'undefined') return;
+    
     const assetTotal = sumArr(assets_data);
     const liabTotal  = sumArr(liability_data);
     const netWorth   = assetTotal - liabTotal;
@@ -501,6 +636,8 @@ function getWealth(){
 function getWealthggh(){
     /* —— 求和 —— */
     function sumArr(arr) { return arr.reduce((s,[,,v])=>s+(v||0),0); }
+    if(typeof assets_ggh_data === 'undefined' || typeof liability_ggh_data === 'undefined') return;
+    
     const assetTotal = sumArr(assets_ggh_data);
     const liabTotal  = sumArr(liability_ggh_data);
     const netWorth   = assetTotal - liabTotal;
@@ -549,6 +686,7 @@ function renderSummaryCloud(){
 
 /* ===== 投资组合渲染 ===== */
 function renderPortfolio(){
+  if(typeof period === 'undefined' || typeof returnRate === 'undefined') return;
   const [start, end] = period.split(' - ');
   document.getElementById('periodText').innerHTML = `${start}<br>${end}`;
   document.getElementById('returnText').textContent = returnRate;
@@ -556,6 +694,8 @@ function renderPortfolio(){
 
 // 更新统计
 function updateStats() {
+    if(typeof geoData === 'undefined') return;
+    
     let countries = 0, cities = 0, spots = 0;
     function count(node) {
         if (node.type === 'country') countries++;
@@ -567,6 +707,74 @@ function updateStats() {
     document.getElementById('stat-countries').textContent = countries;
     document.getElementById('stat-cities').textContent = cities;
     document.getElementById('stat-spots').textContent = spots;
+}
+
+/* ===== 海外资产渲染（超紧凑版） ===== */
+async function renderOverseas(){
+    const TARGET = CONFIG.targetEUR;
+    
+    // 简化目标显示为 500k 格式
+    const targetK = (TARGET / 1000).toFixed(0);
+    document.getElementById('overseasTarget').textContent = targetK + 'k';
+    
+    try {
+        // 获取实时汇率 (以EUR为基准)
+        const response = await fetch(`https://v6.exchangerate-api.com/v6/${CONFIG.apiKey}/latest/EUR`);
+        const data = await response.json();
+        
+        if (data.result !== 'success') {
+            throw new Error('汇率获取失败: ' + data['error-type']);
+        }
+        
+        const rates = data.conversion_rates;
+        let totalEUR = 0;
+        
+        // 计算各货币折合EUR的总和
+        for (const [currency, info] of Object.entries(CONFIG.holdings)) {
+            const rate = rates[currency];
+            if (rate) {
+                totalEUR += info.amount / rate;
+            }
+        }
+        
+        const current = totalEUR;
+        const percentage = Math.min((current / TARGET) * 100, 100);
+        
+        // 更新时间（只显示时间，更紧凑）
+        const updateTime = new Date(data.time_last_update_utc).toLocaleTimeString('zh-CN', {
+            hour: '2-digit', minute: '2-digit'
+        });
+        
+        // 动画更新进度条（宽度包含最小值确保文字可见）
+        setTimeout(() => {
+            const displayWidth = Math.max(percentage, 8); // 最小8%确保文字可见
+            document.getElementById('overseasBarFill').style.width = displayWidth + '%';
+        }, 100);
+        
+        // 格式化金额（缩写格式）
+        let amountText;
+        if (current >= 1000) {
+            amountText = '€' + (current / 1000).toFixed(2) + 'k';
+        } else {
+            amountText = '€' + current.toFixed(2);
+        }
+        
+        document.getElementById('overseasCurrent').textContent = amountText;
+        document.getElementById('overseasBarText').textContent = percentage.toFixed(1) + '%';
+        document.getElementById('overseasMeta').textContent = "更新时间："+updateTime;
+        
+    } catch (error) {
+        console.error('获取汇率失败:', error);
+        document.getElementById('overseasCurrent').textContent = '错误';
+        document.getElementById('overseasCurrent').style.color = '#e74c3c';
+        document.getElementById('overseasBarText').textContent = '--';
+        document.getElementById('overseasMeta').textContent = '更新失败';
+        
+        // 降级显示静态数据
+        const fallbackTotal = 25000; // 示例值
+        const percentage = Math.min((fallbackTotal / TARGET) * 100, 100);
+        document.getElementById('overseasBarFill').style.width = Math.max(percentage, 8) + '%';
+    }
 }
 
 
@@ -587,13 +795,16 @@ document.getElementById('summaryModule').addEventListener('click',()=>{
     window.open('summary/index.html','_blank');
 });
 document.getElementById('resumeModule').addEventListener('click',()=>{
-window.open('cv/index.html','_blank');
+    window.open('cv/index.html','_blank');
 });
 document.getElementById('portfolioModule').addEventListener('click', () => {
-  window.open('portfolio/index.html', '_blank');
+    window.open('portfolio/index.html', '_blank');
 });
 document.getElementById('footprintModule').addEventListener('click', () => {
     window.open('footprint/index.html', '_blank');
+});
+document.getElementById('overseasModule').addEventListener('click', () => {
+    window.open('overseas/index.html', '_blank');
 });
 
 /* =========================
@@ -607,8 +818,12 @@ getWealthggh();
 renderSummaryCloud();
 renderPortfolio();
 updateStats();
+renderOverseas(); // 异步执行，不阻塞其他渲染
 
 setInterval(updateMainDisplay, 1000);
+
+// 每5分钟自动刷新汇率
+setInterval(renderOverseas, 300000);
 </script>
 
 </body>
