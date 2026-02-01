@@ -56,6 +56,15 @@ const geoData = [
                     {
                         id: "cn-bj-zgshhyzx", name: "北京中国石化会议中心", type: "spot", lng: 116.270746, lat: 40.249710, date: "2021-03-28", description: "",
                     },
+                    {
+                        id: "cn-bj-bdlhxc", name: "八达岭滑雪场", type: "spot", lng: 115.962675, lat: 40.354469, date: "2017-07-16", description: "",
+                    },
+                    {
+                        id: "cn-bj-hylqlqhcz", name: "八达岭国家森林公园-红叶岭/青龙桥火车站", type: "spot", lng: 116.032274, lat: 40.352699, date: "2017-10-05", description: "",
+                    },
+                    {
+                        id: "cn-bj-bwsslgy", name: "百望山森林公园", type: "spot", lng: 116.261895, lat: 40.035963, date: "2019-07-14", description: "",
+                    },
                 ]
             },
             {
@@ -96,7 +105,18 @@ const geoData = [
                 id: "cn-bd", name: "保定", type: "city", lng: 115.995490, lat: 38.954348, zoom: 10,
                 children: [
                     {
+                        id: "cn-bd-lxthsz", name: "恋乡太行水镇", type: "spot", lng: 115.256467, lat: 39.294609, date: "2018-09-24", description: "",
+                    },
+                    {
                         id: "cn-bd-bydjq", name: "白洋淀景区", type: "spot", lng: 115.995490, lat: 38.954348, date: "2019-07-20", description: "",
+                    },
+                ]
+            },
+            {
+                id: "cn-cf", name: "赤峰", type: "city", lng: 118.261922, lat: 41.687308, zoom: 10,
+                children: [
+                    {
+                        id: "cn-qhd-mlgfjq", name: "美林谷风景区", type: "spot", lng: 118.261922, lat: 41.687308, date: "2016-08-13", description: "",
                     },
                 ]
             },
