@@ -73,6 +73,8 @@
             background: linear-gradient(90deg, #3498db, #2ecc71);
             transition: width 0.3s ease;
             border-radius: 3px;
+            position: relative;
+            overflow: hidden;
         }
 
         /* 第二条进度条样式 - 修正版 */
@@ -93,6 +95,23 @@
             position: absolute;
             left: 0;
             top: 0;
+        }
+
+        /* 添加扫光伪元素 */
+        .progress-fill::after, .progress-fill-secondary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
         }
 
         .progress-info {
@@ -243,7 +262,60 @@
             font-style: italic;
         }
 
+        /* 体重记录模块 - 自适应修正版 */
+        #weightGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        #weightGrid .stat-item {
+            padding: 12px 4px;
+            min-width: 0; /* 关键：防止内容撑开 */
+            overflow: hidden;
+        }
+        
+        /* 响应式字体，防止溢出 */
+        #weightGrid .stat-value {
+            font-size: clamp(1.5rem, 1.4vw, 1.8rem);
+            line-height: 1.2;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        
+        #weightGrid .stat-label {
+            font-size: clamp(0.7rem, 2.0vw, 0.8rem);
+            color: #7f8c8d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 超小屏幕（<400px）优化：改为纵向卡片式布局 */
+        @media (max-width: 400px) {
+            #weightGrid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            #weightGrid .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 15px;
+                text-align: left;
+            }
+            #weightGrid .stat-value {
+                margin-bottom: 0;
+                font-size: 1.2rem;
+            }
+            #weightGrid .stat-label {
+                font-size: 0.9rem;
+                text-align: right;
+            }
+        }
     </style>
+
 </head>
 <body>
     <div class="container">
@@ -299,11 +371,24 @@
                 </div>
             </div>
 
-            <!-- 年度总结 文字云 -->
-            <div class="module" id="summaryModule" style="cursor:pointer;" title="点击查看详情">
-                <h3>📔 年度总结</h3>
-                <div id="summaryCloud" style="line-height:1.8; text-align:center; padding:10px 0;"></div>
+        <!-- 体重记录模块 -->
+        <div class="module" id="weightModule" style="cursor:pointer;" title="点击查看详情">
+            <h3>⚖️ 体重记录</h3>
+            <div class="stats-grid" id="weightGrid">
+                <div class="stat-item">
+                    <div class="stat-value" id="weight-latest" style="color:#3498db;">--</div>
+                    <div class="stat-label" id="weight-date">最新</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="weight-max" style="color:#2ecc71;">--</div>
+                    <div class="stat-label">最高</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="weight-min" style="color:#e74c3c;">--</div>
+                    <div class="stat-label">最低</div>
+                </div>
             </div>
+        </div>
 
             <!-- 足迹模块 -->
             <div class="module" id="footprintModule" style="cursor:pointer;" title="点击查看详情">
@@ -380,7 +465,13 @@
                   </div>
                 </div>
               </div>
-    
+
+            <!-- 年度总结 文字云 -->
+            <div class="module" id="summaryModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>📔 年度总结</h3>
+                <div id="summaryCloud" style="line-height:1.8; text-align:center; padding:10px 0;"></div>
+            </div>
+
             <!-- 个人简历 -->
             <div class="module" id="resumeModule" style="cursor:pointer;" title="点击查看详情">
                 <h3>📋 个人简历</h3>
@@ -412,6 +503,7 @@
 <script src="portfolio/data.js"></script>
 <script src="footprint/data.js"></script>
 <script src="overseas/data.js"></script>
+<script src="weight/data.js"></script>
 
 <script>
 /* =========================
@@ -742,7 +834,13 @@ async function renderOverseas(){
         
         // 更新时间（只显示时间，更紧凑）
         const updateTime = new Date(data.time_last_update_utc).toLocaleTimeString('zh-CN', {
-            hour: '2-digit', minute: '2-digit'
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
         });
         
         // 动画更新进度条（宽度包含最小值确保文字可见）
@@ -777,6 +875,28 @@ async function renderOverseas(){
     }
 }
 
+/* ===== 体重记录渲染 ===== */
+function renderWeight(){
+    if(typeof weight_data === 'undefined' || weight_data.length === 0) return;
+    
+    // 解析数据
+    const parsed = weight_data.map(([date, weight]) => ({
+        date: date,
+        weight: parseFloat(weight)
+    }));
+    
+    // 计算统计值
+    const latest = parsed[parsed.length - 1];
+    const max = parsed.reduce((prev, curr) => prev.weight > curr.weight ? prev : curr);
+    const min = parsed.reduce((prev, curr) => prev.weight < curr.weight ? prev : curr);
+    
+    // 渲染
+    document.getElementById('weight-latest').textContent = latest.weight.toFixed(1);
+    document.getElementById('weight-date').textContent = latest.date + ' 最新';
+    document.getElementById('weight-max').textContent = max.weight.toFixed(1);
+    document.getElementById('weight-min').textContent = min.weight.toFixed(1);
+}
+
 
 /* ===== 点击跳转 ===== */
 document.getElementById('eventdayModule').addEventListener('click', () => {
@@ -806,6 +926,9 @@ document.getElementById('footprintModule').addEventListener('click', () => {
 document.getElementById('overseasModule').addEventListener('click', () => {
     window.open('overseas/index.html', '_blank');
 });
+document.getElementById('weightModule').addEventListener('click', () => {
+    window.open('weight/index.html', '_blank');
+});
 
 /* =========================
    启动定时器
@@ -818,12 +941,11 @@ getWealthggh();
 renderSummaryCloud();
 renderPortfolio();
 updateStats();
-renderOverseas(); // 异步执行，不阻塞其他渲染
+renderOverseas();
+renderWeight();
 
 setInterval(updateMainDisplay, 1000);
 
-// 每5分钟自动刷新汇率
-setInterval(renderOverseas, 300000);
 </script>
 
 </body>
