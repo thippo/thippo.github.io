@@ -65,6 +65,9 @@ const geoData = [
                     {
                         id: "cn-bj-bwsslgy", name: "百望山森林公园", type: "spot", lng: 116.261895, lat: 40.035963, date: "2019-07-14", description: "",
                     },
+                    {
+                        id: "cn-bj-hhcscc", name: "黄花城水长城", type: "spot", lng: 116.307302, lat: 40.41915, date: "2017-07-16", description: "",
+                    },
                 ]
             },
             {
