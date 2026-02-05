@@ -68,6 +68,9 @@ const geoData = [
                     {
                         id: "cn-bj-hhcscc", name: "黄花城水长城", type: "spot", lng: 116.307302, lat: 40.41915, date: "2017-07-16", description: "",
                     },
+                    {
+                        id: "cn-bj-hls", name: "红螺寺", type: "spot", lng: 116.631287, lat: 40.389483, date: "2021-04-18", description: "2022-8-27",
+                    },
                 ]
             },
             {
