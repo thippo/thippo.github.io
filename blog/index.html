@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #fafafa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --accent: #ff6b6b;
+            --card-bg: #ffffff;
+            --border: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.08);
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(250, 250, 250, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        /* 主布局容器 */
+        .main-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            gap: 3rem;
+        }
+
+        /* 左侧边栏 */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* 分类列表 */
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--bg-color);
+        }
+
+        .category-item:last-child {
+            border-bottom: none;
+        }
+
+        .category-item:hover {
+            color: var(--accent);
+            padding-left: 0.5rem;
+        }
+
+        .category-item.active {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .category-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-icon {
+            font-size: 1.1rem;
+        }
+
+        .category-count {
+            background: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .category-item:hover .category-count,
+        .category-item.active .category-count {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 标签云 */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-item {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+        }
+
+        .tag-item:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .tag-item.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .tag-count {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* 主内容区 */
+        .content-area {
+            flex: 1;
+            min-width: 0; /* 防止flex item溢出 */
+        }
+
+        /* 搜索框 */
+        .search-box {
+            width: 100%;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            background: var(--card-bg);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .search-box::after {
+            content: '🔍';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+
+        /* 当前筛选指示器 */
+        .filter-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .filter-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .filter-tag {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .filter-tag button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .clear-filters {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .clear-filters:hover {
+            color: var(--accent);
+        }
+
+        /* 文章网格 */
+        .blog-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .blog-card:nth-child(1) { animation-delay: 0.1s; }
+        .blog-card:nth-child(2) { animation-delay: 0.2s; }
+        .blog-card:nth-child(3) { animation-delay: 0.3s; }
+        .blog-card:nth-child(4) { animation-delay: 0.4s; }
+        .blog-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .blog-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #ffd93d);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .blog-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .card-category {
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .blog-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+            transition: color 0.2s;
+        }
+
+        .blog-card:hover h2 {
+            color: var(--accent);
+        }
+
+        .card-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            background: var(--bg-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .blog-card:hover .card-tag {
+            background: var(--border);
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: gap 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .blog-card:hover .read-more {
+            gap: 1rem;
+        }
+
+        /* 加载更多按钮 */
+        .load-more-container {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+
+        .load-more-btn {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .load-more-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+        }
+
+        .load-more-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .load-more-btn.hidden {
+            display: none;
+        }
+
+        /* 进度指示器 */
+        .progress-indicator {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* 文章详情页 */
+        .article-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .article-view.active {
+            display: block;
+        }
+
+        .article-header {
+            margin-bottom: 3rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content h3 {
+            margin: 2.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* 文章详情页标签容器 */
+        .article-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-tags-container .tag-item {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .article-tags-container .tag-item:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 响应式 - 平板 */
+        @media (max-width: 968px) {
+            .main-wrapper {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .sidebar-section {
+                margin-bottom: 0;
+            }
+        }
+
+        /* 响应式 - 手机 */
+        @media (max-width: 600px) {
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .blog-card {
+                padding: 1.5rem;
+            }
+            
+            .article-title {
+                font-size: 1.75rem;
+            }
+
+            .load-more-btn {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="showHome()">Blog</div>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <!-- 分类 -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">分类目录</h3>
+                <ul class="category-list" id="categoryList">
+                    <!-- 动态生成 -->
+                </ul>
+            </div>
+
+            <!-- 标签云 -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">热门标签</h3>
+                <div class="tag-cloud" id="tagCloud">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="content-area">
+            <!-- 首页视图 -->
+            <div id="home-view" class="home-view">
+
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索文章..." onkeyup="handleSearch()">
+                </div>
+
+                <!-- 筛选指示器 -->
+                <div class="filter-indicator" id="filterIndicator" style="display: none;">
+                    <span class="filter-label">当前筛选：</span>
+                    <span class="filter-tag" id="activeFilter">
+                        <span id="filterText"></span>
+                        <button onclick="clearFilters()">×</button>
+                    </span>
+                    <span class="clear-filters" onclick="clearFilters()">清除全部</span>
+                </div>
+
+                <div class="blog-grid" id="blogGrid">
+                    <!-- 文章卡片动态生成 -->
+                </div>
+
+                <div class="load-more-container" id="loadMoreContainer">
+                    <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">
+                        加载更多
+                    </button>
+                    <div class="progress-indicator" id="progressIndicator"></div>
+                </div>
+            </div>
+
+            <!-- 文章详情视图 -->
+            <div id="article-view" class="article-view">
+                <div class="back-btn" onclick="showHome()">
+                    <span>←</span> 返回列表
+                </div>
+                <article class="article-header">
+                    <h1 class="article-title" id="articleTitle"></h1>
+                    <div class="article-meta">
+                        <span id="articleDate"></span>
+                        <span id="articleCategory"></span>
+                    </div>
+                </article>
+                <div class="article-content" id="articleContent"></div>
+                <div class="article-tags-container" id="articleTags"></div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 Blog</p>
+    </footer>
+
+   	<script src="data.js"></script>
+
+    <script>
+
+        // 状态管理
+        let currentPosts = [...posts];
+        let displayedCount = 0;
+        const POSTS_PER_PAGE = 5;
+        let activeCategory = null;
+        let activeTag = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSidebar();
+            initPagination();
+        });
+
+        // 渲染侧边栏
+        function renderSidebar() {
+            renderCategories();
+            renderTags();
+        }
+
+        // 渲染分类
+        function renderCategories() {
+            const categories = {};
+            posts.forEach(post => {
+                categories[post.category] = (categories[post.category] || 0) + 1;
+            });
+
+            const categoryIcons = {
+                '投资': '📈',
+                '技术': '💻',
+                '记录': '📄',
+                '生活': '☕',
+                '感悟': '💭',
+                '旅行': '✈️'
+            };
+
+            const list = document.getElementById('categoryList');
+            list.innerHTML = Object.entries(categories).map(([cat, count]) => `
+                <li class="category-item ${activeCategory === cat ? 'active' : ''}" 
+                    onclick="filterByCategory('${cat}')">
+                    <span class="category-name">
+                        <span class="category-icon">${categoryIcons[cat] || '📄'}</span>
+                        ${cat}
+                    </span>
+                    <span class="category-count">${count}</span>
+                </li>
+            `).join('');
+        }
+
+        // 渲染标签云
+        function renderTags() {
+            const tagCounts = {};
+            posts.forEach(post => {
+                post.tags.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+            });
+
+            // 按出现次数排序，取前15个
+            const sortedTags = Object.entries(tagCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 15);
+
+            const cloud = document.getElementById('tagCloud');
+            cloud.innerHTML = sortedTags.map(([tag, count]) => `
+                <span class="tag-item ${activeTag === tag ? 'active' : ''}" 
+                      onclick="filterByTag('${tag}')">
+                    ${tag}
+                    <span class="tag-count">${count}</span>
+                </span>
+            `).join('');
+        }
+
+        // 按分类筛选
+        function filterByCategory(category) {
+            activeCategory = activeCategory === category ? null : category;
+            activeTag = null;
+            applyFilters();
+            renderSidebar(); // 重新渲染以更新激活状态
+        }
+
+        // 按标签筛选
+        function filterByTag(tag) {
+            activeTag = activeTag === tag ? null : tag;
+            activeCategory = null;
+            applyFilters();
+            renderSidebar();
+        }
+
+        // 应用筛选
+        function applyFilters() {
+            if (activeCategory) {
+                currentPosts = posts.filter(p => p.category === activeCategory);
+                showFilterIndicator(`分类: ${activeCategory}`);
+            } else if (activeTag) {
+                currentPosts = posts.filter(p => p.tags.includes(activeTag));
+                showFilterIndicator(`标签: ${activeTag}`);
+            } else {
+                currentPosts = [...posts];
+                hideFilterIndicator();
+            }
+            
+            initPagination();
+        }
+
+        // 显示筛选指示器
+        function showFilterIndicator(text) {
+            document.getElementById('filterText').textContent = text;
+            document.getElementById('filterIndicator').style.display = 'flex';
+        }
+
+        // 隐藏筛选指示器
+        function hideFilterIndicator() {
+            document.getElementById('filterIndicator').style.display = 'none';
+        }
+
+        // 清除筛选
+        function clearFilters() {
+            activeCategory = null;
+            activeTag = null;
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+            renderSidebar();
+        }
+
+        // 初始化分页
+        function initPagination() {
+            displayedCount = 0;
+            document.getElementById('blogGrid').innerHTML = '';
+            loadMore();
+        }
+
+        // 加载更多
+        function loadMore() {
+            const grid = document.getElementById('blogGrid');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            
+            const start = displayedCount;
+            const end = Math.min(start + POSTS_PER_PAGE, currentPosts.length);
+            const postsToShow = currentPosts.slice(start, end);
+            
+            const html = postsToShow.map((post, index) => `
+                <article class="blog-card" onclick="showArticle(${post.id})" 
+                         style="animation-delay: ${(index % POSTS_PER_PAGE) * 0.1}s">
+                    <div class="card-meta">
+                        <span class="card-category">${post.category}</span>
+                        <span>${post.date}</span>
+                    </div>
+                    <h2>${post.title}</h2>
+                    <p class="card-excerpt">${post.excerpt}</p>
+                    <div class="card-tags">
+                        ${post.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="read-more">
+                        阅读全文 <span>→</span>
+                    </div>
+                </article>
+            `).join('');
+            
+            grid.insertAdjacentHTML('beforeend', html);
+            
+            displayedCount = end;
+            updateProgressIndicator();
+            
+            if (displayedCount >= currentPosts.length) {
+                loadMoreBtn.classList.add('hidden');
+            } else {
+                loadMoreBtn.classList.remove('hidden');
+            }
+            
+            if (start > 0) {
+                setTimeout(() => {
+                    const newCards = grid.querySelectorAll('.blog-card');
+                    const lastNewCard = newCards[newCards.length - 1];
+                    lastNewCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+        }
+
+        // 更新进度
+        function updateProgressIndicator() {
+            const indicator = document.getElementById('progressIndicator');
+            if (currentPosts.length === 0) {
+                indicator.textContent = '没有找到相关文章';
+            } else {
+                indicator.textContent = `已显示 ${displayedCount} / ${currentPosts.length} 篇文章`;
+            }
+        }
+
+        // 搜索
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (query === '') {
+                if (!activeCategory && !activeTag) {
+                    currentPosts = [...posts];
+                }
+            } else {
+                currentPosts = posts.filter(post => 
+                    post.title.toLowerCase().includes(query) || 
+                    post.excerpt.toLowerCase().includes(query) ||
+                    post.tags.some(tag => tag.toLowerCase().includes(query))
+                );
+                hideFilterIndicator(); // 搜索时隐藏分类/标签筛选指示器
+            }
+            
+            displayedCount = 0;
+            document.getElementById('blogGrid').innerHTML = '';
+            
+            if (currentPosts.length === 0) {
+                document.getElementById('blogGrid').innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                        <p>没有找到匹配的文章</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">试试其他关键词？</p>
+                    </div>
+                `;
+                document.getElementById('loadMoreBtn').classList.add('hidden');
+                updateProgressIndicator();
+            } else {
+                loadMore();
+            }
+        }
+
+        // 显示文章
+        function showArticle(id) {
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            document.getElementById('articleTitle').textContent = post.title;
+            document.getElementById('articleDate').textContent = post.date;
+            document.getElementById('articleCategory').textContent = post.category;
+            document.getElementById('articleContent').innerHTML = post.content;
+            
+            const tagsContainer = document.getElementById('articleTags');
+            tagsContainer.innerHTML = post.tags.map(tag => 
+                `<span class="tag-item" onclick="filterByTag('${tag}'); showHome();">${tag}</span>`
+            ).join('');
+
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('article-view').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // 返回首页
+        function showHome() {
+            document.getElementById('article-view').classList.remove('active');
+            document.getElementById('home-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
