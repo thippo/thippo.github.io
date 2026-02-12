@@ -258,8 +258,12 @@
             return daysInMonth[month];
         }
 
+        // 修复：将周一到周日映射为 0-6，与 weekdayNames 对齐
+        // JavaScript getDay() 返回 0(周日)-6(周六)，需要转换为 周一=0, 周日=6
         function getFirstDayOfMonth(year, month) {
-            return new Date(year, month, 1).getDay();
+            const jsDay = new Date(year, month, 1).getDay(); // 0=周日, 1=周一, ..., 6=周六
+            // 转换为：周一=0, 周二=1, ..., 周六=5, 周日=6
+            return jsDay === 0 ? 6 : jsDay - 1;
         }
 
         function isDatePast(year, month, day) {
@@ -309,8 +313,9 @@
             const prevYear    = month === 0 ? year - 1 : year;
             const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
 
-            for (let i = 1; i < firstDay; i++) {
-                const day = daysInPrevMonth - firstDay + i + 1;   // 正确对应日期
+            // 修复：循环条件改为 i < firstDay，因为 firstDay 已经是 0-6 的索引
+            for (let i = 0; i < firstDay; i++) {
+                const day = daysInPrevMonth - firstDay + i + 1;
                 const dayDiv = createDayElement(prevYear, prevMonth, day, true);
                 daysDiv.appendChild(dayDiv);
             }
@@ -322,9 +327,12 @@
             }
 
             // 下个月的日期
-            const remainingDays = 42 - (firstDay + daysInMonth);
+            const totalCells = firstDay + daysInMonth;
+            const remainingDays = 42 - totalCells;
             for (let day = 1; day <= remainingDays; day++) {
-                const dayDiv = createDayElement(year, month + 1, day, true);
+                const nextMonth = month === 11 ? 0 : month + 1;
+                const nextYear = month === 11 ? year + 1 : year;
+                const dayDiv = createDayElement(nextYear, nextMonth, day, true);
                 daysDiv.appendChild(dayDiv);
             }
 
