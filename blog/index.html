@@ -788,6 +788,9 @@
 
         // 按分类筛选
         function filterByCategory(category) {
+            document.getElementById('article-view').classList.remove('active');
+            document.getElementById('home-view').style.display = 'block';
+            window.scrollTo(0, 0);
             activeCategory = activeCategory === category ? null : category;
             activeTag = null;
             applyFilters();
@@ -796,6 +799,9 @@
 
         // 按标签筛选
         function filterByTag(tag) {
+            document.getElementById('article-view').classList.remove('active');
+            document.getElementById('home-view').style.display = 'block';
+            window.scrollTo(0, 0);
             activeTag = activeTag === tag ? null : tag;
             activeCategory = null;
             applyFilters();
