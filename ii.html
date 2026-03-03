@@ -855,7 +855,7 @@
             const max = parsed.reduce((prev, curr) => prev.weight > curr.weight ? prev : curr);
             const min = parsed.reduce((prev, curr) => prev.weight < curr.weight ? prev : curr);
             document.getElementById('weight-latest').textContent = latest.weight.toFixed(1);
-            document.getElementById('weight-date').textContent = latest.date + ' 最新';
+            document.getElementById('weight-date').textContent = latest.date;
             document.getElementById('weight-max').textContent = max.weight.toFixed(1);
             document.getElementById('weight-min').textContent = min.weight.toFixed(1);
         }
