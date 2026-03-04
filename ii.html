@@ -527,7 +527,14 @@
               </div>
             </div>
   
-  
+            <!-- 胰腺状态模块 -->
+            <div class="module" id="pancreasModule" style="cursor:pointer;" title="点击查看详情">
+                <h3>🏥 胰腺状态</h3>
+                <div class="module-content" id="pancreasContent">
+                    <!-- JS 动态插入 -->
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -540,6 +547,7 @@
 <script src="footprint/data.js"></script>
 <script src="overseas/data.js"></script>
 <script src="weight/data.js"></script>
+<script src="pancreas/data.js"></script>
 
 <script>
         /* ====== 百年时光轴主逻辑 ====== */
@@ -860,6 +868,45 @@
             document.getElementById('weight-min').textContent = min.weight.toFixed(1);
         }
 
+        /* ===== 胰腺状态渲染 ===== */
+        function renderPancreas(){
+            if(typeof MRCP === 'undefined' || typeof biomarkers === 'undefined') return;
+            
+            const getLatestDate = (obj) => Object.keys(obj).sort().pop();
+            const mrcpDate = getLatestDate(MRCP);
+            const bioDate = getLatestDate(biomarkers);
+            
+            const mrcpData = MRCP[mrcpDate];
+            const bioData = biomarkers[bioDate];
+            
+            const cea = bioData[0] !== "" ? bioData[0] : '-';
+            const ca199 = bioData[1] !== "" ? bioData[1] : '-';
+            const ca125 = bioData[2] !== "" ? bioData[2] : '-';
+            
+            document.getElementById('pancreasContent').innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-size:0.8rem;color:#7f8c8d;">MRCP<br>${mrcpDate}</span>
+                    <div style="display:flex;gap:12px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:1.1rem;font-weight:bold;color:#3498db;">${mrcpData[0]}<span style="font-size:0.7rem;color:#95a5a6;margin-left:2px;">mm</span></div>
+                            <div style="font-size:0.65rem;color:#7f8c8d;">直径1</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:1.1rem;font-weight:bold;color:#3498db;">${mrcpData[1]}<span style="font-size:0.7rem;color:#95a5a6;margin-left:2px;">mm</span></div>
+                            <div style="font-size:0.65rem;color:#7f8c8d;">直径2</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;">
+                    <span style="font-size:0.8rem;color:#7f8c8d;">肿瘤标志物<br>${bioDate}</span>
+                    <div style="display:flex;gap:10px;font-size:0.9rem;">
+                        <span>CEA:<strong style="color:${cea > 5 ? '#e74c3c' : '#2ecc71'};margin-left:3px;">${cea}</strong></span>
+                        <span>CA199:<strong style="color:${ca199 > 37 ? '#e74c3c' : '#2ecc71'};margin-left:3px;">${ca199}</strong></span>
+                        <span>CA125:<strong style="color:${ca125 > 35 ? '#e74c3c' : '#2ecc71'};margin-left:3px;">${ca125}</strong></span>
+                    </div>
+                </div>
+            `;
+        }
 
         document.getElementById('eventdayModule').addEventListener('click', () => {
             window.open('calendar/index.html', '_blank');
@@ -894,6 +941,9 @@
         document.getElementById('blogModule').addEventListener('click', () => {
             window.open('blog/index.html', '_blank');
         });
+        document.getElementById('pancreasModule').addEventListener('click', () => {
+            window.open('pancreas/index.html', '_blank');
+        });
 
         updateMainDisplay();
         renderEvents();
@@ -905,6 +955,7 @@
         updateStats();
         renderOverseas();
         renderWeight();
+        renderPancreas();
 
         setInterval(updateMainDisplay, 1000);
 

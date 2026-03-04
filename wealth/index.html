@@ -659,47 +659,47 @@ function initPaidInCapitalChart() {
                     }
                 },
                 // 添加标记线以标识特定日期
-markLine: {
-    symbol: ['none', 'none'],
-    silent: true,
-    label: {
-        position: 'end',        // 改为 'end'（线段的顶端/上方）
-        distance: 15,           // 增加距离，避免被裁剪
-        formatter: '{b}',
-        color: '#2c3e50',
-        fontSize: 12,
-        fontWeight: 'bold',
-        backgroundColor: 'rgba(255,255,255,0.95)',
-        padding: [6, 10],
-        borderRadius: 4,
-        borderColor: '#3498db',
-        borderWidth: 1,
-        shadowBlur: 4,
-        shadowColor: 'rgba(0,0,0,0.1)'
-    },
-    lineStyle: {
-        color: '#3498db',
-        type: 'dashed',
-        width: 2,
-        opacity: 0.8
-    },
-    // 确保动画不会影响初始位置
-    animation: false,
-    data: [
-        {
-            xAxis: '2022/1/31',
-            name: '历史->市值'
-        },
-        {
-            xAxis: '2023/5/31',
-            name: '考虑外汇'
-        },
-        {
-            xAxis: '2025/8/31',
-            name: '剔除外汇'
-        }
-    ]
-}
+                markLine: {
+                    symbol: ['none', 'none'],
+                    silent: true,
+                    label: {
+                        position: 'end',        // 改为 'end'（线段的顶端/上方）
+                        distance: 15,           // 增加距离，避免被裁剪
+                        formatter: '{b}',
+                        color: '#2c3e50',
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        backgroundColor: 'rgba(255,255,255,0.95)',
+                        padding: [6, 10],
+                        borderRadius: 4,
+                        borderColor: '#3498db',
+                        borderWidth: 1,
+                        shadowBlur: 4,
+                        shadowColor: 'rgba(0,0,0,0.1)'
+                    },
+                    lineStyle: {
+                        color: '#3498db',
+                        type: 'dashed',
+                        width: 2,
+                        opacity: 0.8
+                    },
+                    // 确保动画不会影响初始位置
+                    animation: false,
+                    data: [
+                        {
+                            xAxis: '2022/1/31',
+                            name: '历史->市值'
+                        },
+                        {
+                            xAxis: '2023/5/31',
+                            name: '考虑外汇'
+                        },
+                        {
+                            xAxis: '2025/8/31',
+                            name: '剔除外汇'
+                        }
+                    ]
+                }
             }
         ]
     };

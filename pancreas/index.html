@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肿瘤监测数据可视化</title>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="39819c8f-f1cd-4efb-84da-85bbfa514f8d"></script>
+    <script src="echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 1024px) {
+            .charts-wrapper {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+            
+            .chart-card {
+                padding: 15px;
+            }
+            
+            .chart-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chart-container {
+                height: 250px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+
+        .legend-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .data-table {
+            margin-top: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            min-width: 0;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .trend-up {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .trend-down {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .trend-stable {
+            color: #f39c12;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+
+        .data-source {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            font-weight: normal;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* 小屏幕优化 */
+        @media (max-width: 640px) {
+            .legend-item {
+                display: flex;
+                margin-right: 10px;
+                font-size: 0.85rem;
+            }
+            
+            .legend-info {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            th, td {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 肿瘤监测数据可视化面板</h1>
+        
+        <div class="charts-wrapper">
+            <!-- MRCP 图表 -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <div class="chart-icon">📊</div>
+                    MRCP 肿瘤大小监测 (mm)
+                </div>
+                <div id="mrcpChart" class="chart-container"></div>
+                <div class="legend-info">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>肿瘤直径1</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>肿瘤直径2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 肿瘤标记物图表 -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <div class="chart-icon">🔬</div>
+                    肿瘤标记物监测
+                </div>
+                <div id="biomarkerChart" class="chart-container"></div>
+                <div class="legend-info">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #9b59b6;"></div>
+                        <span>CEA (癌胚抗原)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e67e22;"></div>
+                        <span>CA199</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1abc9c;"></div>
+                        <span>CA125</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统一数据表格 -->
+        <div class="data-table">
+            <div class="table-title">
+                <div class="chart-icon">📋</div>
+                详细数据记录
+            </div>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>MRCP 直径1 (mm)</th>
+                        <th>MRCP 直径2 (mm)</th>
+                        <th>CEA</th>
+                        <th>CA199</th>
+                        <th>CA125</th>
+                        <th>补充</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+
+    <script>
+
+        // 获取所有唯一日期并排序
+        const allDates = [...new Set([...Object.keys(MRCP), ...Object.keys(biomarkers)])].sort();
+        
+        // 处理数据 - 转换为时间戳格式用于时间轴
+        const mrcpDates = Object.keys(MRCP).sort();
+        const biomarkerDates = Object.keys(biomarkers).sort();
+        
+        // 将数据转换为 [timestamp, value] 格式
+        const processTimeData = (dataObj, dates, index) => {
+            return dates.map(date => {
+                const timestamp = new Date(date).getTime();
+                const values = dataObj[date] || [];
+                const value = values[index];
+                return [timestamp, value === "" || value === undefined ? null : value];
+            });
+        };
+
+        const mrcpData1 = processTimeData(MRCP, mrcpDates, 0);
+        const mrcpData2 = processTimeData(MRCP, mrcpDates, 1);
+        const ceaData = processTimeData(biomarkers, biomarkerDates, 0);
+        const ca199Data = processTimeData(biomarkers, biomarkerDates, 1);
+        const ca125Data = processTimeData(biomarkers, biomarkerDates, 2);
+
+        // 初始化 MRCP 图表
+        const mrcpChart = echarts.init(document.getElementById('mrcpChart'));
+        const mrcpOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                borderColor: '#ddd',
+                borderWidth: 1,
+                textStyle: { color: '#333' },
+                formatter: function(params) {
+                    const date = new Date(params[0].value[0]);
+                    const dateStr = date.toLocaleDateString('zh-CN');
+                    let result = `<strong>${dateStr}</strong><br/>`;
+                    params.forEach(item => {
+                        if (item.value[1] !== null) {
+                            result += `${item.marker} ${item.seriesName}: <strong>${item.value[1]} mm</strong><br/>`;
+                        }
+                    });
+                    return result;
+                }
+            },
+            legend: {
+                data: ['肿瘤直径1', '肿瘤直径2'],
+                bottom: 0,
+                textStyle: { fontSize: 12 }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                top: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'time',
+                nameGap: 30,
+                axisLabel: {
+                    formatter: '{yyyy}-{MM}-{dd}',
+                    rotate: 30,
+                    fontSize: 11
+                },
+                axisLine: { lineStyle: { color: '#ccc' } },
+                splitLine: { show: false }
+            },
+            yAxis: {
+                type: 'value',
+                name: '大小 (mm)',
+                nameTextStyle: { padding: [0, 0, 0, 20] },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { lineStyle: { color: '#f0f0f0' } }
+            },
+            series: [
+                {
+                    name: '肿瘤直径1',
+                    type: 'line',
+                    data: mrcpData1,
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    connectNulls: true,
+                    lineStyle: { width: 3, color: '#e74c3c' },
+                    itemStyle: { color: '#e74c3c', borderWidth: 2, borderColor: '#fff' },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(231, 76, 60, 0.3)' },
+                            { offset: 1, color: 'rgba(231, 76, 60, 0.05)' }
+                        ])
+                    },
+                    markPoint: {
+                        data: [
+                            { type: 'max', name: '最大值' },
+                            { type: 'min', name: '最小值' }
+                        ]
+                    }
+                },
+                {
+                    name: '肿瘤直径2',
+                    type: 'line',
+                    data: mrcpData2,
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    connectNulls: true,
+                    lineStyle: { width: 3, color: '#3498db' },
+                    itemStyle: { color: '#3498db', borderWidth: 2, borderColor: '#fff' },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(52, 152, 219, 0.3)' },
+                            { offset: 1, color: 'rgba(52, 152, 219, 0.05)' }
+                        ])
+                    }
+                },
+            ],
+        };
+        mrcpChart.setOption(mrcpOption);
+
+        // 初始化肿瘤标记物图表
+        const biomarkerChart = echarts.init(document.getElementById('biomarkerChart'));
+        const biomarkerOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                borderColor: '#ddd',
+                borderWidth: 1,
+                textStyle: { color: '#333' },
+                formatter: function(params) {
+                    const date = new Date(params[0].value[0]);
+                    const dateStr = date.toLocaleDateString('zh-CN');
+                    let result = `<strong>${dateStr}</strong><br/>`;
+                    params.forEach(item => {
+                        if (item.value[1] !== null) {
+                            result += `${item.marker} ${item.seriesName}: <strong>${item.value[1]}</strong><br/>`;
+                        }
+                    });
+                    return result;
+                }
+            },
+            legend: {
+                data: ['CEA', 'CA199', 'CA125'],
+                bottom: 0,
+                textStyle: { fontSize: 12 }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                top: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'time',
+                nameGap: 30,
+                axisLabel: {
+                    formatter: '{yyyy}-{MM}-{dd}',
+                    rotate: 30,
+                    fontSize: 11
+                },
+                axisLine: { lineStyle: { color: '#ccc' } },
+                splitLine: { show: false }
+            },
+            yAxis: {
+                type: 'value',
+                name: '数值',
+                nameTextStyle: { padding: [0, 0, 0, 20] },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { lineStyle: { color: '#f0f0f0' } }
+            },
+            series: [
+                {
+                    name: 'CEA',
+                    type: 'line',
+                    data: ceaData,
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    connectNulls: true,
+                    lineStyle: { width: 3, color: '#9b59b6' },
+                    itemStyle: { color: '#9b59b6', borderWidth: 2, borderColor: '#fff' }
+                },
+                {
+                    name: 'CA199',
+                    type: 'line',
+                    data: ca199Data,
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    connectNulls: true,
+                    lineStyle: { width: 3, color: '#e67e22' },
+                    itemStyle: { color: '#e67e22', borderWidth: 2, borderColor: '#fff' }
+                },
+                {
+                    name: 'CA125',
+                    type: 'line',
+                    data: ca125Data,
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    connectNulls: true,
+                    lineStyle: { width: 3, color: '#1abc9c' },
+                    itemStyle: { color: '#1abc9c', borderWidth: 2, borderColor: '#fff' }
+                }
+            ]
+        };
+        biomarkerChart.setOption(biomarkerOption);
+
+        // 填充统一数据表格
+        const tableBody = document.getElementById('tableBody');
+        
+        // 准备 MRCP 数据映射（用于计算趋势）
+        const mrcpDateMap = {};
+        let mrcpPrevValues = {};
+        Object.keys(MRCP).sort().forEach((date, index) => {
+            mrcpDateMap[date] = MRCP[date];
+        });
+
+        // 计算趋势的函数
+        const getTrend = (current, prev) => {
+            if (prev === undefined || current === "" || prev === "" || current === null || prev === null) return '';
+            const curr = parseFloat(current);
+            const previous = parseFloat(prev);
+            if (isNaN(curr) || isNaN(previous)) return '';
+            if (curr > previous) return '<span class="trend-up">↑</span>';
+            if (curr < previous) return '<span class="trend-down">↓</span>';
+            return '<span class="trend-stable">→</span>';
+        };
+
+        // 记录每个指标上一次的有效值（用于趋势计算）
+        let lastMrcp1 = null, lastMrcp2 = null;
+        let lastCea = null, lastCa199 = null, lastCa125 = null;
+
+        const tableRows = [];
+
+        allDates.forEach(date => {
+            const row = document.createElement('tr');
+            
+            // 获取 MRCP 数据
+            const mrcpValues = MRCP[date] || [null, null];
+            const mrcp1 = mrcpValues[0] !== undefined ? mrcpValues[0] : null;
+            const mrcp2 = mrcpValues[1] !== undefined ? mrcpValues[1] : null;
+            
+            // 获取肿瘤标记物数据
+            const bioValues = biomarkers[date] || [null, null, null];
+            const cea = bioValues[0] !== "" && bioValues[0] !== undefined ? bioValues[0] : null;
+            const ca199 = bioValues[1] !== "" && bioValues[1] !== undefined ? bioValues[1] : null;
+            const ca125 = bioValues[2] !== "" && bioValues[2] !== undefined ? bioValues[2] : null;
+
+            var note = notes[date]
+            if (note == null) {
+                note = ""
+            }
+
+            // 计算趋势
+            const mrcp1Trend = getTrend(mrcp1, lastMrcp1);
+            const mrcp2Trend = getTrend(mrcp2, lastMrcp2);
+            
+            // 更新上一次的有效值
+            if (mrcp1 !== null) lastMrcp1 = mrcp1;
+            if (mrcp2 !== null) lastMrcp2 = mrcp2;
+            if (cea !== null) lastCea = cea;
+            if (ca199 !== null) lastCa199 = ca199;
+            if (ca125 !== null) lastCa125 = ca125;
+
+            // 格式化显示
+            const formatCell = (value, trend = '') => {
+                if (value === null || value === "") return '<span style="color: #bdc3c7;">-</span>';
+                return `${value} ${trend}`;
+            };
+
+            // 判断数据来源（用于显示标签）
+            const hasMrcp = mrcp1 !== null || mrcp2 !== null;
+            const hasBiomarker = cea !== null || ca199 !== null || ca125 !== null;
+            const hasNote = note !== null;
+
+            let dateLabel = '';
+            if (hasMrcp && hasBiomarker) {
+                dateLabel = '<span class="data-source">(MRCP+标记物)</span>';
+            } else if (hasMrcp) {
+                dateLabel = '<span class="data-source">(仅MRCP)</span>';
+            } else if (hasBiomarker) {
+                dateLabel = '<span class="data-source">(仅标记物)</span>';
+            }
+
+            tableRows.push(
+                `\
+                <td class="date-cell">${date}${dateLabel}</td>\
+                <td>${formatCell(mrcp1, mrcp1Trend)}</td>\
+                <td>${formatCell(mrcp2, mrcp2Trend)}</td>\
+                <td>${formatCell(cea)}</td>\
+                <td>${formatCell(ca199)}</td>\
+                <td>${formatCell(ca125)}</td>\
+                <td>${note}</td>\
+                `
+            );
+        });
+
+        tableRows.reverse();
+
+        const fragment = document.createDocumentFragment();
+        tableRows.forEach(rowData => {
+            const row = document.createElement('tr');
+            row.innerHTML = rowData;
+            fragment.appendChild(row);
+        });
+        tableBody.appendChild(fragment);
+
+        // 修复：使用防抖函数优化 resize 性能
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 响应式处理 - 使用防抖避免频繁调用
+        const handleResize = debounce(function() {
+            mrcpChart.resize();
+            biomarkerChart.resize();
+        }, 250);
+
+        window.addEventListener('resize', handleResize);
+
+        // 使用 ResizeObserver 监听容器大小变化（更精确的响应式）
+        // 修复：移除循环调用问题，使用防抖处理
+        const resizeObserver = new ResizeObserver(entries => {
+            // 使用 requestAnimationFrame 确保在下一帧渲染前执行
+            requestAnimationFrame(() => {
+                handleResize();
+            });
+        });
+
+        // 只监听图表卡片容器，而不是图表容器本身，避免循环触发
+        document.querySelectorAll('.chart-card').forEach(card => {
+            resizeObserver.observe(card);
+        });
+
+        // 页面可见性变化时重新调整（处理切换标签页后返回的情况）
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                setTimeout(() => {
+                    mrcpChart.resize();
+                    biomarkerChart.resize();
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
